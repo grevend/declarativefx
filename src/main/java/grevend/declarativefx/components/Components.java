@@ -1,8 +1,11 @@
 package grevend.declarativefx.components;
 
-import grevend.declarativefx.ObservableValue;
+import grevend.declarativefx.components.context.Consumer;
+import grevend.declarativefx.components.context.Provider;
 import grevend.declarativefx.components.fx.FX;
 import grevend.declarativefx.components.fx.FXContainer;
+import grevend.declarativefx.util.ObservableValue;
+import grevend.declarativefx.util.VarArgsFunction;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -11,11 +14,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,17 +30,17 @@ import java.util.function.Supplier;
 
 public class Components {
 
-    public static @NotNull <P extends Parent> Root<P> Root(Component<P> component) {
+    public static @NotNull <P extends Parent> Root<P> Root(@NotNull Component<P> component) {
         return new Root<>(component);
     }
 
     @SafeVarargs
-    public static @NotNull FXContainer<HBox> HBox(Component<? extends Node>... components) {
+    public static @NotNull FXContainer<HBox> HBox(@NotNull Component<? extends Node>... components) {
         return FXContainer(new HBox(), components);
     }
 
     @SafeVarargs
-    public static @NotNull FXContainer<VBox> VBox(Component<? extends Node>... components) {
+    public static @NotNull FXContainer<VBox> VBox(@NotNull Component<? extends Node>... components) {
         return FXContainer(new VBox(), components);
     }
 
@@ -82,16 +87,8 @@ public class Components {
         return Provider(id, supplier.get());
     }
 
-    @SuppressWarnings("unchecked")
     public static @NotNull <V> Component<?> Provider(@NotNull String id, V value) {
-        return Component.of("Provider", null, component -> null, component -> {
-            var providers = component.getRoot().getProviders();
-            if (providers.get(id) != null) {
-                ((ObservableValue<V>) providers.get(id)).set(value);
-            } else {
-                component.getRoot().getProviders().put(id, new ObservableValue<>(value));
-            }
-        });
+        return new Provider<>(id, value);
     }
 
     public static @NotNull <N extends Node, V> Component<N> Consumer(@NotNull String id,
@@ -99,23 +96,49 @@ public class Components {
         return new Consumer<>(id, function);
     }
 
-    public static @NotNull <N extends Node, V, V2> Component<N> Consumer(@NotNull String first, @NotNull String second,
-                                                                         @NotNull BiFunction<ObservableValue<V>, ObservableValue<V2>, ? extends Component<N>> function) {
-        return new BiConsumer<>(first, second, function);
+    public static @NotNull <N extends Node, V, U> Component<N> Consumer(@NotNull String first, @NotNull String second,
+                                                                        @NotNull BiFunction<ObservableValue<V>, ObservableValue<U>, ? extends Component<N>> function) {
+        return new Consumer<>(first, second, function);
     }
 
-    public static @NotNull <N extends Node> FX<N> FX(N node) {
+    public static @NotNull <N extends Node> Component<N> Consumer(@NotNull String[] identifiers,
+                                                                  @NotNull VarArgsFunction<ObservableValue<?>, ? extends Component<N>> function) {
+        return new Consumer<>(identifiers, function);
+    }
+
+    public static @NotNull <N extends Node> FX<N> FX(@Nullable N node) {
         return new FX<>(node);
     }
 
     @SafeVarargs
     public static @NotNull <P extends Pane> FXContainer<P> FXContainer(@NotNull P pane,
-                                                                       Component<? extends Node>... components) {
+                                                                       @NotNull Component<? extends Node>... components) {
         return new FXContainer<>(pane, components);
     }
 
     public static @NotNull FX<ScrollPane> ScrollPane(@NotNull Component<? extends Node> component) {
         return new FX<>(new ScrollPane(component.construct()));
+    }
+
+    public static @NotNull FX<BorderPane> BorderPane(@NotNull Component<? extends Node> centerComponent) {
+        return new FX<>(new BorderPane(centerComponent.construct()));
+    }
+
+    public static @NotNull FX<BorderPane> BorderPane(@NotNull Component<? extends Node> centerComponent,
+                                                     @NotNull Component<? extends Node> rightComponent,
+                                                     @NotNull Component<? extends Node> leftComponent) {
+        return new FX<>(new BorderPane(centerComponent.construct(), null, rightComponent.construct(), null,
+            leftComponent.construct()));
+    }
+
+    public static @NotNull FX<BorderPane> BorderPane(@NotNull Component<? extends Node> centerComponent,
+                                                     @NotNull Component<? extends Node> topComponent,
+                                                     @NotNull Component<? extends Node> rightComponent,
+                                                     @NotNull Component<? extends Node> bottomComponent,
+                                                     @NotNull Component<? extends Node> leftComponent) {
+        return new FX<>(
+            new BorderPane(centerComponent.construct(), topComponent.construct(), rightComponent.construct(),
+                bottomComponent.construct(), leftComponent.construct()));
     }
 
 }

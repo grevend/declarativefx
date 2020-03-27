@@ -1,4 +1,4 @@
-package grevend.declarativefx;
+package grevend.declarativefx.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,17 +60,20 @@ public class ObservableValue<V> {
         return this.orElse(supplier.get());
     }
 
-    public @NotNull <V2> ObservableValue<V> compute(@NotNull ObservableValue<V2> dependency, @NotNull BiFunction<ObservableValue<V2>, ObservableValue<V>, V> function) {
+    public @NotNull <V2> ObservableValue<V> compute(@NotNull ObservableValue<V2> dependency,
+                                                    @NotNull BiFunction<ObservableValue<V2>, ObservableValue<V>, V> function) {
         dependency.subscribe((value) -> set(function.apply(dependency, this)));
         return this;
     }
 
-    public @NotNull <V2> ObservableValue<V> compute(@NotNull ObservableValue<V2> dependency, @NotNull Function<ObservableValue<V>, V> function) {
+    public @NotNull <V2> ObservableValue<V> compute(@NotNull ObservableValue<V2> dependency,
+                                                    @NotNull Function<ObservableValue<V>, V> function) {
         dependency.subscribe((value) -> set(function.apply(this)));
         return this;
     }
 
-    public @NotNull <V2> ObservableValue<V> compute(@NotNull ObservableValue<V2> dependency, @NotNull Supplier<V> supplier) {
+    public @NotNull <V2> ObservableValue<V> compute(@NotNull ObservableValue<V2> dependency,
+                                                    @NotNull Supplier<V> supplier) {
         dependency.subscribe((value) -> set(supplier.get()));
         return this;
     }
@@ -80,7 +83,7 @@ public class ObservableValue<V> {
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "ObservableValue{" +
             "value=" + value +
             '}';

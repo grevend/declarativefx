@@ -1,6 +1,6 @@
 package grevend.declarativefx.components;
 
-import grevend.declarativefx.ObservableValue;
+import grevend.declarativefx.util.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,19 +14,22 @@ import java.util.Map;
 public class Root<P extends Parent> extends Component<P> {
 
     private final Map<String, ObservableValue<?>> providers;
-
-    private Stage stage;
     private final Component<P> component;
-    private P parent;
+    private Stage stage;
+    private P child;
 
-    public Root(Component<P> component) {
+    public Root(@NotNull Component<P> component) {
         this.providers = new HashMap<>();
         this.component = component;
         this.component.setParent(this);
     }
 
+    public @Nullable P getNode() {
+        return this.child;
+    }
+
     @Override
-    public Component<? extends Node> getParent() {
+    public @Nullable Component<? extends Node> getParent() {
         return null;
     }
 
@@ -49,8 +52,8 @@ public class Root<P extends Parent> extends Component<P> {
     }
 
     public @NotNull Root<P> setStyle(String style) {
-        if(this.parent != null) {
-            this.parent.setStyle(style);
+        if (this.child != null) {
+            this.child.setStyle(style);
         }
         return this;
     }
@@ -61,8 +64,8 @@ public class Root<P extends Parent> extends Component<P> {
     }
 
     @Override
-    public P construct() {
-        return (this.parent = this.component.construct());
+    public @Nullable P construct() {
+        return (this.child = this.component.construct());
     }
 
     @Override
@@ -74,14 +77,17 @@ public class Root<P extends Parent> extends Component<P> {
         this.stage = stage;
         this.beforeConstruction();
         var tree = this.construct();
-        this.afterConstruction();
-        stage.setScene(new Scene(tree));
-        stage.show();
-        this.stage = stage;
+        if (tree != null) {
+            this.afterConstruction();
+            stage.setScene(new Scene(tree));
+            stage.show();
+        } else {
+            throw new IllegalStateException("Component hierarchy construction failed.");
+        }
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "Root";
     }
 

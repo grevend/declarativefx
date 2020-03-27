@@ -12,7 +12,7 @@ public class Example extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         stage.setWidth(175);
         stage.setHeight(100);
 

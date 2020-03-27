@@ -2,11 +2,10 @@ package grevend.declarativefx.components.fx;
 
 import grevend.declarativefx.components.Component;
 import grevend.declarativefx.components.ContainerComponent;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FXContainer<P extends Pane> extends ContainerComponent<P> {
 
@@ -19,16 +18,11 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P> {
     }
 
     @Override
-    public P construct() {
-        for (Component<? extends Node> component : components) {
-            if(component != null) {
-                var node = component.construct();
-                if (node != null) {
-                    if (this.pane instanceof FlowPane) {
-                        FlowPane.setMargin(node, new Insets(5));
-                    }
-                    this.pane.getChildren().add(node);
-                }
+    public @Nullable P construct() {
+        for (Component<? extends Node> component : this.getComponents()) {
+            var node = component.construct();
+            if (node != null) {
+                this.pane.getChildren().add(node);
             }
         }
         return this.pane;
