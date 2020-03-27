@@ -18,6 +18,50 @@
 *.zip
 *.tar.gz
 *.rar
+*.swp
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# Maven #
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+.flattened-pom.xml
+
+# Intellij #
+.idea/**/gradle.xml
+.idea/**/libraries
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/**/contentModel.xml
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+out/*
+tmp/*
+.idea/httpRequests
+.idea/modules.xml
+.idea/*.iml
+.idea/misc.xml
+.idea/vcs.xml
+.idea/modules
+*.iml
+*.ipr
+
+# VisualStudioCode #
+.history
