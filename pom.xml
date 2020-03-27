@@ -4,9 +4,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>grevend.declarativefx</groupId>
-    <artifactId>DeclarativeFX</artifactId>
+    <groupId>grevend</groupId>
+    <artifactId>declarativefx</artifactId>
+    <name>DeclarativeFX</name>
+    <url>https://github.com/grevend/DeclarativeFX</url>
     <version>0.1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <distributionManagement>
+        <repository>
+            <id>declarativefx</id>
+            <name>DeclarativeFX Public Github Package</name>
+            <url>https://maven.pkg.github.com/grevend/DeclarativeFX</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
