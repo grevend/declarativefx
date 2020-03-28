@@ -1,5 +1,6 @@
 package grevend.declarativefx;
 
+import grevend.declarativefx.components.fx.TextArea;
 import grevend.declarativefx.components.fx.TextField;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -34,7 +35,11 @@ public class Example extends Application {
                     new TextField("placeholder!", (arr)->{
                         System.out.println(arr[0]);
                         System.out.println(arr[1]);
-                    }, "test")
+                    }, "test"),
+                    new TextArea((arr)->{
+                        System.out.println(arr[0]);
+                        System.out.println(arr[1]);
+                    }, "textarea")
                 )
             )
 
