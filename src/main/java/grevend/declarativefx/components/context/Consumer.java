@@ -1,6 +1,7 @@
 package grevend.declarativefx.components.context;
 
 import grevend.declarativefx.components.Component;
+import grevend.declarativefx.components.ContainerComponent;
 import grevend.declarativefx.util.ObservableValue;
 import grevend.declarativefx.util.VarArgsFunction;
 import javafx.scene.Node;
@@ -14,6 +15,8 @@ public class Consumer<N extends Node, V, U> extends Component<N> {
 
     private final String[] identifiers;
     private final ObservableValue<?>[] values;
+
+    private Component<N> child;
 
     private Function<ObservableValue<V>, ? extends Component<N>> functionOne;
     private BiFunction<ObservableValue<V>, ObservableValue<U>, ? extends Component<N>> functionTwo;
@@ -48,12 +51,13 @@ public class Consumer<N extends Node, V, U> extends Component<N> {
     @SuppressWarnings("unchecked")
     public @Nullable N construct() {
         if (identifiers.length == 1) {
-            return this.functionOne.apply((ObservableValue<V>) this.values[0]).construct();
+            return (this.child = this.functionOne.apply((ObservableValue<V>) this.values[0])).construct();
         } else if (identifiers.length == 2) {
-            return this.functionTwo.apply((ObservableValue<V>) this.values[0], (ObservableValue<U>) this.values[1])
+            return (this.child =
+                this.functionTwo.apply((ObservableValue<V>) this.values[0], (ObservableValue<U>) this.values[1]))
                 .construct();
         } else if (identifiers.length > 2) {
-            return this.functionVarArgs.apply(this.values).construct();
+            return (this.child = this.functionVarArgs.apply(this.values)).construct();
         }
         return null;
     }
@@ -62,6 +66,16 @@ public class Consumer<N extends Node, V, U> extends Component<N> {
     public void afterConstruction() {
         for (var i = 0; i < this.identifiers.length; i++) {
             this.getRoot().getProviders().putIfAbsent(this.identifiers[i], this.values[i]);
+        }
+    }
+
+    public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix,
+                                   @NotNull String childPrefix) {
+        super.stringifyHierarchy(builder, prefix, childPrefix);
+        if (this.child != null) {
+            this.child.stringifyHierarchy(builder, childPrefix + "└── ", childPrefix + "    ");
+        } else {
+            throw new IllegalStateException("Hierarchy has not been constructed yet.");
         }
     }
 

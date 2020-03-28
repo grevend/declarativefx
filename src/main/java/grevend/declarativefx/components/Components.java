@@ -131,14 +131,17 @@ public class Components {
             leftComponent.construct()));
     }
 
-    public static @NotNull FX<BorderPane> BorderPane(@NotNull Component<? extends Node> centerComponent,
-                                                     @NotNull Component<? extends Node> topComponent,
-                                                     @NotNull Component<? extends Node> rightComponent,
-                                                     @NotNull Component<? extends Node> bottomComponent,
-                                                     @NotNull Component<? extends Node> leftComponent) {
+    public static @NotNull FX<BorderPane> BorderPane(@Nullable Component<? extends Node> centerComponent,
+                                                     @Nullable Component<? extends Node> topComponent,
+                                                     @Nullable Component<? extends Node> rightComponent,
+                                                     @Nullable Component<? extends Node> bottomComponent,
+                                                     @Nullable Component<? extends Node> leftComponent) {
         return new FX<>(
-            new BorderPane(centerComponent.construct(), topComponent.construct(), rightComponent.construct(),
-                bottomComponent.construct(), leftComponent.construct()));
+            new BorderPane(centerComponent != null ? centerComponent.construct() : null,
+                topComponent != null ? topComponent.construct() : null,
+                rightComponent != null ? rightComponent.construct() : null,
+                bottomComponent != null ? bottomComponent.construct() : null,
+                leftComponent != null ? leftComponent.construct() : null));
     }
 
 }
