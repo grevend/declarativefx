@@ -32,6 +32,17 @@ public abstract class Component<N extends Node> {
     public void afterConstruction() {
     }
 
+    public String stringifyHierarchy() {
+        var builder = new StringBuilder();
+        this.stringifyHierarchy(builder, "", "");
+        return builder.toString();
+    }
+
+    public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix,
+                                   @NotNull String childPrefix) {
+        builder.append(prefix).append(this.toString()).append(System.lineSeparator());
+    }
+
     @Override
     public @NotNull String toString() {
         return this.getClass().getTypeName();

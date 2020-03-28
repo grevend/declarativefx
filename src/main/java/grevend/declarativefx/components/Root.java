@@ -65,12 +65,27 @@ public class Root<P extends Parent> extends Component<P> {
 
     @Override
     public @Nullable P construct() {
-        return (this.child = this.component.construct());
+        if (this.child == null) {
+            return (this.child = this.component.construct());
+        } else {
+            return this.child;
+        }
     }
 
     @Override
     public void afterConstruction() {
         this.component.afterConstruction();
+    }
+
+    @Override
+    public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix,
+                                   @NotNull String childPrefix) {
+        super.stringifyHierarchy(builder, prefix, childPrefix);
+        if (this.component != null) {
+            this.component.stringifyHierarchy(builder, childPrefix + "└── ", childPrefix + "    ");
+        } else {
+            throw new IllegalStateException("Hierarchy has not been constructed yet.");
+        }
     }
 
     public void launch(@NotNull Stage stage) {

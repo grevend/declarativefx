@@ -38,4 +38,15 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P> {
         return this;
     }
 
+    @Override
+    public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix,
+                                   @NotNull String childPrefix) {
+        super.stringifyHierarchy(builder, prefix, childPrefix);
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return "FXContainer[" + this.pane.getClass().getTypeName() + "]";
+    }
+
 }
