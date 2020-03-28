@@ -19,7 +19,10 @@ public class TextField extends Component<javafx.scene.control.TextField> {
      */
     public TextField(String placeholder, Consumer<String[]> callback, String id) {
         this.textField = new javafx.scene.control.TextField();
-        this.textField.setOnAction((e)-> onChange());
+        //this.textField.setOnAction((e)-> onChange()); // old method of viewing changes
+        textField.textProperty().addListener((observable, oldValue, newValue) -> { // new method of viewing changes
+           onChange();
+        });
         this.callback = callback;
         this.textField.setPromptText(placeholder);
         this.textField.setId(id);
