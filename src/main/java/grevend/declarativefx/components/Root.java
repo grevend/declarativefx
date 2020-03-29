@@ -1,6 +1,8 @@
 package grevend.declarativefx.components;
 
-import grevend.declarativefx.util.ObservableValue;
+import grevend.declarativefx.Component;
+import grevend.declarativefx.util.BindableValue;
+import grevend.declarativefx.util.LifecycleException;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -13,7 +15,7 @@ import java.util.Map;
 
 public class Root<P extends Parent> extends Component<P> {
 
-    private final Map<String, ObservableValue<?>> providers;
+    private final Map<String, BindableValue<?>> providers;
     private final Component<P> component;
     private Stage stage;
     private P child;
@@ -38,7 +40,7 @@ public class Root<P extends Parent> extends Component<P> {
         throw new IllegalStateException();
     }
 
-    public @NotNull Map<String, ObservableValue<?>> getProviders() {
+    public @NotNull Map<String, BindableValue<?>> getProviders() {
         return providers;
     }
 
@@ -78,13 +80,13 @@ public class Root<P extends Parent> extends Component<P> {
     }
 
     @Override
-    public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix,
-                                   @NotNull String childPrefix) {
-        super.stringifyHierarchy(builder, prefix, childPrefix);
+    public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix,
+                                   @NotNull Verbosity verbosity) {
+        super.stringifyHierarchy(builder, prefix, childPrefix, verbosity);
         if (this.component != null) {
-            this.component.stringifyHierarchy(builder, childPrefix + "└── ", childPrefix + "    ");
+            this.component.stringifyHierarchy(builder, childPrefix + "└── ", childPrefix + "    ", verbosity);
         } else {
-            throw new IllegalStateException("Hierarchy has not been constructed yet.");
+            throw new LifecycleException("Hierarchy has not been constructed yet.");
         }
     }
 
@@ -99,11 +101,6 @@ public class Root<P extends Parent> extends Component<P> {
         } else {
             throw new IllegalStateException("Component hierarchy construction failed.");
         }
-    }
-
-    @Override
-    public @NotNull String toString() {
-        return "Root";
     }
 
 }

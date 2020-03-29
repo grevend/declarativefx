@@ -1,4 +1,4 @@
-package grevend.declarativefx.components;
+package grevend.declarativefx;
 
 import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
@@ -35,14 +35,14 @@ public abstract class ContainerComponent<N extends Node> extends Component<N> {
     }
 
     @Override
-    public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix,
-                                   @NotNull String childPrefix) {
-        super.stringifyHierarchy(builder, prefix, childPrefix);
+    public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix,
+                                   @NotNull Verbosity verbosity) {
+        super.stringifyHierarchy(builder, prefix, childPrefix, verbosity);
         for (var componentIter = Arrays.stream(this.getComponents()).iterator(); componentIter.hasNext(); ) {
             var nextComponent = componentIter.next();
             var hasNextComponent = componentIter.hasNext();
             nextComponent.stringifyHierarchy(builder, childPrefix + (hasNextComponent ? "├── " : "└── "),
-                childPrefix + (hasNextComponent ? "│   " : "    "));
+                childPrefix + (hasNextComponent ? "│   " : "    "), verbosity);
         }
     }
 

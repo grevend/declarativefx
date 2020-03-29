@@ -1,13 +1,16 @@
-package grevend.declarativefx.components.fx;
+package grevend.declarativefx.components;
 
-import grevend.declarativefx.components.Component;
-import grevend.declarativefx.components.ContainerComponent;
+import grevend.declarativefx.Component;
+import grevend.declarativefx.ContainerComponent;
+import grevend.declarativefx.properties.Fluent;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FXContainer<P extends Pane> extends ContainerComponent<P> {
+import java.util.function.Consumer;
+
+public class FXContainer<P extends Pane> extends ContainerComponent<P> implements Fluent<P, FXContainer<P>> {
 
     private P pane;
 
@@ -39,14 +42,28 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P> {
     }
 
     @Override
-    public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix,
-                                   @NotNull String childPrefix) {
-        super.stringifyHierarchy(builder, prefix, childPrefix);
+    public @NotNull String toString() {
+        return this.pane.getClass().getTypeName();
+    }
+
+    public @NotNull FXContainer<P> set(@NotNull String property, @Nullable Object value) {
+        if (this.pane != null) {
+            this.pane.getProperties().put(property, value);
+        }
+        return this;
+    }
+
+    public @Nullable Object get(@NotNull String property) {
+        if (this.pane != null) {
+            return this.pane.getProperties().get(property);
+        }
+        return null;
     }
 
     @Override
-    public @NotNull String toString() {
-        return "FXContainer[" + this.pane.getClass().getTypeName() + "]";
+    public @NotNull FXContainer<P> fluent(@NotNull Consumer<P> consumer) {
+        consumer.accept(this.pane);
+        return this;
     }
 
 }
