@@ -19,16 +19,12 @@ import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
 public class FX<N extends Node> extends Component<N>
     implements Fluent<N, FX<N>>, Bindable<N, FX<N>>, Listenable<N, FX<N>>, Identifiable<N, FX<N>> {
-
-    public final static Map<Class<? extends Node>, Map<String, String>> propertyNames =
-        new HashMap<>();
 
     private final N node;
     private final String defaultProperty;
@@ -81,57 +77,28 @@ public class FX<N extends Node> extends Component<N>
     }
 
     @Override
-    public @NotNull String toString() {
-        if (this.node != null) {
-            return this.node.getClass().getTypeName();
-        }
-        return "FX[N]";
-    }
-
-    private synchronized @Nullable ObservableValue<?> getObservableValue(@NotNull String property) {
-        if (this.node != null) {
-            var nodeClass = this.node.getClass();
-            if (this.properties.containsKey(property)) {
-                return this.properties.get(property);
-            } else {
-                if (!propertyNames.containsKey(nodeClass)) {
-                    propertyNames.put(nodeClass, Utils.getPropertyNames(nodeClass));
-                }
-                if (propertyNames.get(nodeClass).containsKey(property)) {
-                    try {
-                        this.properties.put(property,
-                            (ObservableValue<?>) nodeClass.getMethod(propertyNames.get(nodeClass).get(property))
-                                .invoke(this.node));
-                        return this.properties.get(property);
-                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return null;
-            }
-        }
-        throw new LifecycleException("Hierarchy has not been constructed yet.");
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public synchronized @NotNull FX<N> set(@NotNull String property, @Nullable Object value) {
-        if (property.equals("id")) {
+        if (property.toLowerCase().equals("id")) {
             if (value instanceof String) {
                 this.setId((String) value);
             }
-        } else if (property.equals("style")) {
+        } else if (property.toLowerCase().equals("style")) {
             if (value instanceof String) {
                 this.setStyle((String) value);
             }
         } else {
-            var observableValue = this.getObservableValue(property);
-            if (observableValue != null) {
-                if (observableValue instanceof WritableObjectValue) {
-                    ((WritableObjectValue<Object>) observableValue).setValue(value);
+            if (this.node != null) {
+                var observableValue = Utils.getObservableValue(this.node, this.properties, property);
+                if (observableValue != null) {
+                    if (observableValue instanceof WritableObjectValue) {
+                        ((WritableObjectValue<Object>) observableValue).setValue(value);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Property " + property.toLowerCase() + " does not exist.");
                 }
             } else {
-                throw new IllegalArgumentException("Property " + property + " does not exist.");
+                throw new LifecycleException("Hierarchy has not been constructed yet.");
             }
         }
         return this;
@@ -139,11 +106,15 @@ public class FX<N extends Node> extends Component<N>
 
     @Override
     public synchronized @Nullable Object get(@NotNull String property) {
-        var observableValue = this.getObservableValue(property);
-        if (observableValue != null) {
-            return observableValue.getValue();
+        if (this.node != null) {
+            var observableValue = Utils.getObservableValue(this.node, this.properties, property);
+            if (observableValue != null) {
+                return observableValue.getValue();
+            } else {
+                throw new IllegalArgumentException("Property " + property.toLowerCase() + " does not exist.");
+            }
         } else {
-            throw new IllegalArgumentException("Property " + property + " does not exist.");
+            throw new LifecycleException("Hierarchy has not been constructed yet.");
         }
     }
 
@@ -161,20 +132,24 @@ public class FX<N extends Node> extends Component<N>
     @Override
     @SuppressWarnings("unchecked")
     public <V> FX<N> bind(@NotNull String property, @NotNull BindableValue<V> bindableValue) {
-        var observableValue = this.getObservableValue(property);
-        if (observableValue != null) {
-            observableValue.addListener(observable -> bindableValue.set((V) observableValue.getValue()));
-            if (observableValue instanceof WritableObjectValue) {
-                bindableValue.subscribe(((WritableObjectValue<Object>) observableValue)::setValue);
+        if (this.node != null) {
+            var observableValue = Utils.getObservableValue(this.node, this.properties, property);
+            if (observableValue != null) {
+                observableValue.addListener(observable -> bindableValue.set((V) observableValue.getValue()));
+                if (observableValue instanceof WritableObjectValue) {
+                    bindableValue.subscribe(((WritableObjectValue<Object>) observableValue)::setValue);
+                }
+            } else {
+                throw new IllegalArgumentException("Property " + property.toLowerCase() + " does not exist.");
             }
         } else {
-            throw new IllegalArgumentException("Property " + property + " does not exist.");
+            throw new LifecycleException("Hierarchy has not been constructed yet.");
         }
         return this;
     }
 
     @Override
-    public <E extends Event> FX<N> on(EventType<E> type, EventHandler<E> handler) {
+    public <E extends Event> FX<N> on(@NotNull EventType<E> type, @NotNull EventHandler<E> handler) {
         if (this.node != null) {
             this.node.addEventHandler(type, handler);
         } else {
@@ -185,25 +160,41 @@ public class FX<N extends Node> extends Component<N>
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> FX<N> on(String property, ChangeListener<T> listener) {
-        var observableValue = this.getObservableValue(property);
-        if (observableValue != null) {
-            observableValue.addListener((ChangeListener<Object>) listener);
+    public <T> FX<N> on(@NotNull String property, @NotNull ChangeListener<T> listener) {
+        if (this.node != null) {
+            var observableValue = Utils.getObservableValue(this.node, this.properties, property);
+            if (observableValue != null) {
+                observableValue.addListener((ChangeListener<Object>) listener);
+            } else {
+                throw new IllegalArgumentException("Property " + property.toLowerCase() + " does not exist.");
+            }
         } else {
-            throw new IllegalArgumentException("Property " + property + " does not exist.");
+            throw new LifecycleException("Hierarchy has not been constructed yet.");
         }
         return this;
     }
 
     @Override
-    public <T> FX<N> on(String property, InvalidationListener listener) {
-        var observableValue = this.getObservableValue(property);
-        if (observableValue != null) {
-            observableValue.addListener(listener);
+    public FX<N> on(@NotNull String property, @NotNull InvalidationListener listener) {
+        if (this.node != null) {
+            var observableValue = Utils.getObservableValue(this.node, this.properties, property);
+            if (observableValue != null) {
+                observableValue.addListener(listener);
+            } else {
+                throw new IllegalArgumentException("Property " + property.toLowerCase() + " does not exist.");
+            }
         } else {
-            throw new IllegalArgumentException("Property " + property + " does not exist.");
+            throw new LifecycleException("Hierarchy has not been constructed yet.");
         }
         return null;
+    }
+
+    @Override
+    public @NotNull String toString() {
+        if (this.node != null) {
+            return this.node.getClass().getTypeName() + (this.getId() != null ? ("#" + this.getId()) : "");
+        }
+        return "FX[N]" + (this.getId() != null ? ("#" + this.getId()) : "");
     }
 
 }

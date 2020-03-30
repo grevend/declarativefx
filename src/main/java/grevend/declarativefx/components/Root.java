@@ -1,6 +1,7 @@
 package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
+import grevend.declarativefx.properties.Identifiable;
 import grevend.declarativefx.util.BindableValue;
 import grevend.declarativefx.util.LifecycleException;
 import javafx.scene.Node;
@@ -13,11 +14,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Root<P extends Parent> extends Component<P> {
+public class Root<P extends Parent> extends Component<P> implements Identifiable<P, Root<P>> {
 
     private final Map<String, BindableValue<?>> providers;
     private final Component<P> component;
     private Stage stage;
+    private String id;
     private P child;
 
     public Root(@NotNull Component<P> component) {
@@ -101,6 +103,17 @@ public class Root<P extends Parent> extends Component<P> {
         } else {
             throw new IllegalStateException("Component hierarchy construction failed.");
         }
+    }
+
+    @Override
+    public @Nullable String getId() {
+        return this.id;
+    }
+
+    @Override
+    public Root<P> setId(@NotNull String id) {
+        this.id = id;
+        return this;
     }
 
 }

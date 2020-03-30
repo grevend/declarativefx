@@ -1,6 +1,7 @@
 package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
+import grevend.declarativefx.properties.Identifiable;
 import grevend.declarativefx.util.BindableValue;
 import grevend.declarativefx.util.LifecycleException;
 import grevend.declarativefx.util.VarArgsFunction;
@@ -11,11 +12,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class Binding<N extends Node, V, U> extends Component<N> {
+public class Binding<N extends Node, V, U> extends Component<N> implements Identifiable<N, Binding<N, V, U>> {
 
     private final String[] identifiers;
     private final BindableValue<?>[] values;
 
+    private String id;
     private Component<N> child;
 
     private Function<BindableValue<V>, ? extends Component<N>> functionOne;
@@ -78,6 +80,17 @@ public class Binding<N extends Node, V, U> extends Component<N> {
         } else {
             throw new LifecycleException("Hierarchy has not been constructed yet.");
         }
+    }
+
+    @Override
+    public @Nullable String getId() {
+        return this.id;
+    }
+
+    @Override
+    public Binding<N, V, U> setId(@NotNull String id) {
+        this.id = id;
+        return this;
     }
 
 }

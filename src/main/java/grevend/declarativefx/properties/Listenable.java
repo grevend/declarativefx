@@ -7,13 +7,14 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Node;
+import org.jetbrains.annotations.NotNull;
 
 public interface Listenable<N extends Node, C extends Component<N>> {
 
-    <E extends Event> C on(EventType<E> type, EventHandler<E> handler);
+    <E extends Event> C on(@NotNull EventType<E> type, @NotNull EventHandler<E> handler);
 
-    <T> C on(String property, ChangeListener<T> listener);
+    <T> C on(@NotNull String property, @NotNull ChangeListener<T> listener);
 
-    <T> C on(String property, InvalidationListener listener);
+    C on(@NotNull String property, @NotNull InvalidationListener listener);
 
 }
