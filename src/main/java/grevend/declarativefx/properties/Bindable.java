@@ -1,6 +1,7 @@
 package grevend.declarativefx.properties;
 
 import grevend.declarativefx.Component;
+import grevend.declarativefx.util.BindException;
 import grevend.declarativefx.util.BindableValue;
 import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,8 @@ public interface Bindable<N extends Node, C extends Component<N>> {
     default <V> C bind(@NotNull BindableValue<V> bindableValue) {
         if (this.getDefaultProperty() != null) {
             this.bind(this.getDefaultProperty(), bindableValue);
+        } else {
+            throw new BindException(this.toString() + " does not provide a default property.");
         }
         return (C) this;
     }
