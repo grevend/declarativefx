@@ -1,10 +1,9 @@
 package grevend.declarativefx;
 
-import grevend.declarativefx.components.Components;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import static grevend.declarativefx.components.Components.*;
+import static grevend.declarativefx.Components.*;
 
 public class Example extends Application {
 
@@ -19,16 +18,15 @@ public class Example extends Application {
 
         var root = Root(
             HBox(
-                Provider("num", 0),
                 VBox(
-                    Consumer("num", "text", (num, text) ->
+                    Binding("num", "text", (num, text) ->
                         VBox(
                             Text(text.compute(num, () -> "Value: " + num.get(0))),
                             Button("Increment", event -> {
                                 num.set((int) num.get(0) + 1);
                             }),
                             VBox(
-                                Consumer("num", Components::Text),
+                                Binding("num", Components::Text),
                                 VBox(
                                     Text("1"),
                                     Text("2")

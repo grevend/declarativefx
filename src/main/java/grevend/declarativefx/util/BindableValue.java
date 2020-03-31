@@ -7,27 +7,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.*;
 
-public class ObservableValue<V> {
+public class BindableValue<V> {
 
-    private final List<Consumer<V>> subscribers;
+    private final List<Consumer<V>> consumers;
     private V value, defaultValue;
 
-    public ObservableValue() {
+    public BindableValue() {
         this(null);
     }
 
-    public ObservableValue(@Nullable V value) {
-        this.subscribers = new ArrayList<>();
+    public BindableValue(@Nullable V value) {
+        this.consumers = new ArrayList<>();
         this.value = value;
     }
 
     public void subscribe(@NotNull Consumer<V> consumer) {
-        this.subscribers.add(consumer);
+        this.consumers.add(consumer);
         consumer.accept(this.get());
     }
 
     public void unsubscribe(@NotNull Consumer<V> consumer) {
-        this.subscribers.remove(consumer);
+        this.consumers.remove(consumer);
     }
 
     public @Nullable V get() {
@@ -36,7 +36,7 @@ public class ObservableValue<V> {
 
     public void set(@Nullable V value) {
         this.value = value;
-        subscribers.forEach(consumer -> consumer.accept(value));
+        this.consumers.forEach(consumer -> consumer.accept(value));
     }
 
     public void update(@NotNull UnaryOperator<V> function) {
@@ -51,40 +51,40 @@ public class ObservableValue<V> {
         return this.defaultValue != null;
     }
 
-    public @NotNull ObservableValue<V> orElse(@NotNull V defaultValue) {
+    public @NotNull BindableValue<V> orElse(@NotNull V defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }
 
-    public @NotNull ObservableValue<V> orElse(@NotNull Supplier<V> supplier) {
+    public @NotNull BindableValue<V> orElse(@NotNull Supplier<V> supplier) {
         return this.orElse(supplier.get());
     }
 
-    public @NotNull <V2> ObservableValue<V> compute(@NotNull ObservableValue<V2> dependency,
-                                                    @NotNull BiFunction<ObservableValue<V2>, ObservableValue<V>, V> function) {
+    public @NotNull <U> BindableValue<V> compute(@NotNull BindableValue<U> dependency,
+                                                 @NotNull BiFunction<BindableValue<U>, BindableValue<V>, V> function) {
         dependency.subscribe((value) -> set(function.apply(dependency, this)));
         return this;
     }
 
-    public @NotNull <V2> ObservableValue<V> compute(@NotNull ObservableValue<V2> dependency,
-                                                    @NotNull Function<ObservableValue<V>, V> function) {
+    public @NotNull <U> BindableValue<V> compute(@NotNull BindableValue<U> dependency,
+                                                 @NotNull Function<BindableValue<V>, V> function) {
         dependency.subscribe((value) -> set(function.apply(this)));
         return this;
     }
 
-    public @NotNull <V2> ObservableValue<V> compute(@NotNull ObservableValue<V2> dependency,
-                                                    @NotNull Supplier<V> supplier) {
+    public @NotNull <U> BindableValue<V> compute(@NotNull BindableValue<U> dependency,
+                                                 @NotNull Supplier<V> supplier) {
         dependency.subscribe((value) -> set(supplier.get()));
         return this;
     }
 
-    public @NotNull List<Consumer<V>> getSubscribers() {
-        return subscribers;
+    public @NotNull List<Consumer<V>> getConsumers() {
+        return consumers;
     }
 
     @Override
     public @NotNull String toString() {
-        return "ObservableValue{" +
+        return "BindableValue{" +
             "value=" + value +
             '}';
     }

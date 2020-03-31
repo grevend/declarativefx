@@ -1,10 +1,10 @@
-package grevend.declarativefx.components;
+package grevend.declarativefx;
 
-import grevend.declarativefx.components.context.Consumer;
-import grevend.declarativefx.components.context.Provider;
-import grevend.declarativefx.components.fx.FX;
-import grevend.declarativefx.components.fx.FXContainer;
-import grevend.declarativefx.util.ObservableValue;
+import grevend.declarativefx.components.Binding;
+import grevend.declarativefx.components.FX;
+import grevend.declarativefx.components.FXContainer;
+import grevend.declarativefx.components.Root;
+import grevend.declarativefx.util.BindableValue;
 import grevend.declarativefx.util.VarArgsFunction;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,6 +12,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -25,8 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class Components {
 
@@ -48,16 +50,58 @@ public class Components {
         return new FX<>(new Text(text));
     }
 
-    public static @NotNull <V> FX<Text> Text(@NotNull ObservableValue<V> observableValue) {
-        return Text(observableValue,
+    public static @NotNull <V> FX<Text> Text(@NotNull BindableValue<V> bindableValue) {
+        return Text(bindableValue,
             (value) -> value == null ? "" : (value instanceof String ? (String) value : value.toString()));
     }
 
-    public static @NotNull <V> FX<Text> Text(@NotNull ObservableValue<V> observableValue,
+    public static @NotNull <V> FX<Text> Text(@NotNull BindableValue<V> bindableValue,
                                              @NotNull Function<V, String> function) {
         var node = new Text();
-        observableValue.subscribe(value -> node.setText(function.apply(value)));
+        bindableValue.subscribe(value -> node.setText(function.apply(value)));
         return FX(node);
+    }
+
+    public static @NotNull FX<TextField> TextField(@NotNull String placeholder) {
+        return FX(new TextField()).set("prompttext", placeholder);
+    }
+
+    public static @NotNull FX<TextField> TextField(@NotNull Consumer<String> consumer) {
+        return FX(new TextField()).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
+    }
+
+    public static @NotNull FX<TextField> TextField(@NotNull String placeholder, @NotNull Consumer<String> consumer) {
+        return TextField(placeholder).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
+    }
+
+    public static @NotNull <V> FX<TextField> TextField(@NotNull BindableValue<V> bindableValue) {
+        return FX(new TextField()).bind(bindableValue);
+    }
+
+    public static @NotNull <V> FX<TextField> TextField(@NotNull BindableValue<V> bindableValue,
+                                                       @NotNull String placeholder) {
+        return TextField(bindableValue).set("prompttext", placeholder);
+    }
+
+    public static @NotNull FX<TextArea> TextArea(@NotNull String placeholder) {
+        return FX(new TextArea()).set("prompttext", placeholder);
+    }
+
+    public static @NotNull FX<TextArea> TextArea(@NotNull Consumer<String> consumer) {
+        return FX(new TextArea()).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
+    }
+
+    public static @NotNull FX<TextArea> TextArea(@NotNull String placeholder, @NotNull Consumer<String> consumer) {
+        return TextArea(placeholder).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
+    }
+
+    public static @NotNull <V> FX<TextArea> TextArea(@NotNull BindableValue<V> bindableValue) {
+        return FX(new TextArea()).bind(bindableValue);
+    }
+
+    public static @NotNull <V> FX<TextArea> TextArea(@NotNull BindableValue<V> bindableValue,
+                                                     @NotNull String placeholder) {
+        return TextArea(bindableValue).set("prompttext", placeholder);
     }
 
     public static @NotNull FX<ImageView> Image(@NotNull Image image) {
@@ -83,27 +127,19 @@ public class Components {
         return FX(node);
     }
 
-    public static @NotNull <V> Component<?> Provider(@NotNull String id, @NotNull Supplier<V> supplier) {
-        return Provider(id, supplier.get());
+    public static @NotNull <N extends Node, V> Component<N> Binding(@NotNull String id,
+                                                                    @NotNull Function<BindableValue<V>, ? extends Component<N>> function) {
+        return new Binding<>(id, function);
     }
 
-    public static @NotNull <V> Component<?> Provider(@NotNull String id, V value) {
-        return new Provider<>(id, value);
+    public static @NotNull <N extends Node, V, U> Component<N> Binding(@NotNull String first, @NotNull String second,
+                                                                       @NotNull BiFunction<BindableValue<V>, BindableValue<U>, ? extends Component<N>> function) {
+        return new Binding<>(first, second, function);
     }
 
-    public static @NotNull <N extends Node, V> Component<N> Consumer(@NotNull String id,
-                                                                     @NotNull Function<ObservableValue<V>, ? extends Component<N>> function) {
-        return new Consumer<>(id, function);
-    }
-
-    public static @NotNull <N extends Node, V, U> Component<N> Consumer(@NotNull String first, @NotNull String second,
-                                                                        @NotNull BiFunction<ObservableValue<V>, ObservableValue<U>, ? extends Component<N>> function) {
-        return new Consumer<>(first, second, function);
-    }
-
-    public static @NotNull <N extends Node> Component<N> Consumer(@NotNull String[] identifiers,
-                                                                  @NotNull VarArgsFunction<ObservableValue<?>, ? extends Component<N>> function) {
-        return new Consumer<>(identifiers, function);
+    public static @NotNull <N extends Node> Component<N> Binding(@NotNull String[] identifiers,
+                                                                 @NotNull VarArgsFunction<BindableValue<Object>, ? extends Component<N>> function) {
+        return new Binding<>(identifiers, function);
     }
 
     public static @NotNull <N extends Node> FX<N> FX(@Nullable N node) {
@@ -113,6 +149,11 @@ public class Components {
     @SafeVarargs
     public static @NotNull <P extends Pane> FXContainer<P> FXContainer(@NotNull P pane,
                                                                        @NotNull Component<? extends Node>... components) {
+        return new FXContainer<>(pane, components);
+    }
+
+    public static @NotNull <P extends Pane> FXContainer<P> FXContainer(@NotNull P pane,
+                                                                       @NotNull Iterable<Component<? extends Node>> components) {
         return new FXContainer<>(pane, components);
     }
 
