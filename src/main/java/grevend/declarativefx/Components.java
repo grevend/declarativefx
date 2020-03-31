@@ -93,7 +93,7 @@ public class Components {
     }
 
     public static @NotNull <N extends Node> Component<N> Binding(@NotNull String[] identifiers,
-                                                                 @NotNull VarArgsFunction<BindableValue<?>, ? extends Component<N>> function) {
+                                                                 @NotNull VarArgsFunction<BindableValue<Object>, ? extends Component<N>> function) {
         return new Binding<>(identifiers, function);
     }
 
@@ -104,6 +104,11 @@ public class Components {
     @SafeVarargs
     public static @NotNull <P extends Pane> FXContainer<P> FXContainer(@NotNull P pane,
                                                                        @NotNull Component<? extends Node>... components) {
+        return new FXContainer<>(pane, components);
+    }
+
+    public static @NotNull <P extends Pane> FXContainer<P> FXContainer(@NotNull P pane,
+                                                                       @NotNull Iterable<Component<? extends Node>> components) {
         return new FXContainer<>(pane, components);
     }
 

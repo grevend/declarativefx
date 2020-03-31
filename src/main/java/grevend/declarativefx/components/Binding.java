@@ -1,6 +1,7 @@
 package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
+import grevend.declarativefx.properties.Findable;
 import grevend.declarativefx.properties.Identifiable;
 import grevend.declarativefx.util.BindableValue;
 import grevend.declarativefx.util.LifecycleException;
@@ -12,18 +13,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class Binding<N extends Node, V, U> extends Component<N> implements Identifiable<N, Binding<N, V, U>> {
+public class Binding<N extends Node, V, U> extends Component<N>
+    implements Identifiable<N, Binding<N, V, U>>, Findable<N, Binding<N, V, U>> {
 
     private final String[] identifiers;
-    private final BindableValue<?>[] values;
+    private final BindableValue<Object>[] values;
 
     private String id;
     private Component<N> child;
 
     private Function<BindableValue<V>, ? extends Component<N>> functionOne;
     private BiFunction<BindableValue<V>, BindableValue<U>, ? extends Component<N>> functionTwo;
-    private VarArgsFunction<BindableValue<?>, ? extends Component<N>> functionVarArgs;
+    private VarArgsFunction<BindableValue<Object>, ? extends Component<N>> functionVarArgs;
 
+    @SuppressWarnings("unchecked")
     private Binding(@NotNull String[] identifiers) {
         this.identifiers = identifiers;
         this.values = new BindableValue[this.identifiers.length];
@@ -44,7 +47,7 @@ public class Binding<N extends Node, V, U> extends Component<N> implements Ident
     }
 
     public Binding(@NotNull String[] identifiers,
-                   @NotNull VarArgsFunction<BindableValue<?>, ? extends Component<N>> function) {
+                   @NotNull VarArgsFunction<BindableValue<Object>, ? extends Component<N>> function) {
         this(identifiers);
         this.functionVarArgs = function;
     }
@@ -91,6 +94,19 @@ public class Binding<N extends Node, V, U> extends Component<N> implements Ident
     public Binding<N, V, U> setId(@NotNull String id) {
         this.id = id;
         return this;
+    }
+
+    @Override
+    public @Nullable Component<? extends Node> find(@NotNull String id) {
+        if(this.getId() != null && this.getId().equals(id)) {
+            return this;
+        } else {
+            if (this.child instanceof Findable) {
+                return ((Findable<?, ?>) this.child).find(id);
+            }
+            return null;
+        }
+
     }
 
 }

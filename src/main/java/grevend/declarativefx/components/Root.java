@@ -1,6 +1,7 @@
 package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
+import grevend.declarativefx.properties.Findable;
 import grevend.declarativefx.properties.Identifiable;
 import grevend.declarativefx.util.BindableValue;
 import grevend.declarativefx.util.LifecycleException;
@@ -13,14 +14,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class Root<P extends Parent> extends Component<P> implements Identifiable<P, Root<P>> {
+public class Root<P extends Parent> extends Component<P> implements Identifiable<P, Root<P>>, Findable<P, Root<P>> {
 
     private final Map<String, BindableValue<?>> providers;
     private final Component<P> component;
     private Stage stage;
     private String id;
     private P child;
+    private Scene scene;
 
     public Root(@NotNull Component<P> component) {
         this.providers = new HashMap<>();
@@ -98,7 +101,7 @@ public class Root<P extends Parent> extends Component<P> implements Identifiable
         var tree = this.construct();
         if (tree != null) {
             this.afterConstruction();
-            stage.setScene(new Scene(tree));
+            stage.setScene((this.scene = new Scene(tree)));
             stage.show();
         } else {
             throw new IllegalStateException("Component hierarchy construction failed.");
@@ -114,6 +117,21 @@ public class Root<P extends Parent> extends Component<P> implements Identifiable
     public Root<P> setId(@NotNull String id) {
         this.id = id;
         return this;
+    }
+
+    @Override
+    public @Nullable Component<? extends Node> find(@NotNull String id) {
+        if(this.getId() != null && this.getId().equals(id)) {
+            return this;
+        } else if(this.component instanceof Findable) {
+            return ((Findable<?, ?>) this.component).find(id);
+        } else {
+            return null;
+        }
+    }
+
+    public @Nullable Scene getScene() {
+        return scene;
     }
 
 }

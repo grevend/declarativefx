@@ -1,10 +1,7 @@
 package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
-import grevend.declarativefx.properties.Bindable;
-import grevend.declarativefx.properties.Fluent;
-import grevend.declarativefx.properties.Identifiable;
-import grevend.declarativefx.properties.Listenable;
+import grevend.declarativefx.properties.*;
 import grevend.declarativefx.util.BindableValue;
 import grevend.declarativefx.util.LifecycleException;
 import grevend.declarativefx.util.Utils;
@@ -21,10 +18,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class FX<N extends Node> extends Component<N>
-    implements Fluent<N, FX<N>>, Bindable<N, FX<N>>, Listenable<N, FX<N>>, Identifiable<N, FX<N>> {
+    implements Fluent<N, FX<N>>, Bindable<N, FX<N>>, Listenable<N, FX<N>>, Identifiable<N, FX<N>>, Findable<N, FX<N>> {
 
     private final N node;
     private final String defaultProperty;
@@ -65,6 +63,15 @@ public class FX<N extends Node> extends Component<N>
             throw new LifecycleException("Hierarchy has not been constructed yet.");
         }
         return this;
+    }
+
+    @Override
+    public @Nullable Component<? extends Node> find(@NotNull String id) {
+        if (this.getId() != null && this.getId().equals(id)) {
+            return this;
+        } else {
+            return null;
+        }
     }
 
     public @NotNull FX<N> setStyle(@NotNull String style) {
@@ -142,6 +149,17 @@ public class FX<N extends Node> extends Component<N>
             } else {
                 throw new IllegalArgumentException("Property " + property.toLowerCase() + " does not exist.");
             }
+        } else {
+            throw new LifecycleException("Hierarchy has not been constructed yet.");
+        }
+        return this;
+    }
+
+    @Override
+    public <E extends Event> FX<N> on(@NotNull EventType<E> type,
+                                      grevend.declarativefx.util.@NotNull EventHandler<E> handler) {
+        if (this.node != null) {
+            this.node.addEventHandler(type, event -> handler.onEvent(event, this));
         } else {
             throw new LifecycleException("Hierarchy has not been constructed yet.");
         }

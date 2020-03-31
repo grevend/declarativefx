@@ -2,10 +2,7 @@ package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
 import grevend.declarativefx.ContainerComponent;
-import grevend.declarativefx.properties.Bindable;
-import grevend.declarativefx.properties.Fluent;
-import grevend.declarativefx.properties.Identifiable;
-import grevend.declarativefx.properties.Listenable;
+import grevend.declarativefx.properties.*;
 import grevend.declarativefx.util.BindableValue;
 import grevend.declarativefx.util.LifecycleException;
 import grevend.declarativefx.util.Utils;
@@ -24,13 +21,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.StreamSupport;
 
 public class FXContainer<P extends Pane> extends ContainerComponent<P>
     implements Fluent<P, FXContainer<P>>, Bindable<P, FXContainer<P>>, Listenable<P, ContainerComponent<P>>,
-    Identifiable<P, ContainerComponent<P>> {
+    Identifiable<P, ContainerComponent<P>>, Findable<P, ContainerComponent<P>> {
 
     private final Map<String, ObservableValue<?>> properties;
     private P pane;
+
+    public FXContainer(@NotNull P pane, @NotNull Iterable<Component<? extends Node>> components) {
+        super(StreamSupport.stream(components.spliterator(), false).toArray(Component<?>[]::new));
+        this.pane = pane;
+        this.properties = new HashMap<>();
+    }
 
     @SafeVarargs
     public FXContainer(@NotNull P pane, Component<? extends Node>... components) {
@@ -77,6 +81,23 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
             throw new LifecycleException("Hierarchy has not been constructed yet.");
         }
         return this;
+    }
+
+    @Override
+    public @Nullable Component<? extends Node> find(@NotNull String id) {
+        if (this.getId() != null && this.getId().equals(id)) {
+            return this;
+        } else {
+            for (Component<? extends Node> component : this.getComponents()) {
+                if (component instanceof Findable) {
+                    var comp = ((Findable<?, ?>) component).find(id);
+                    if (comp != null) {
+                        return comp;
+                    }
+                }
+            }
+            return null;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -138,6 +159,17 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
             } else {
                 throw new IllegalArgumentException("Property " + property.toLowerCase() + " does not exist.");
             }
+        } else {
+            throw new LifecycleException("Hierarchy has not been constructed yet.");
+        }
+        return this;
+    }
+
+    @Override
+    public <E extends Event> ContainerComponent<P> on(@NotNull EventType<E> type,
+                                                      grevend.declarativefx.util.@NotNull EventHandler<E> handler) {
+        if (this.pane != null) {
+            this.pane.addEventHandler(type, event -> handler.onEvent(event, this));
         } else {
             throw new LifecycleException("Hierarchy has not been constructed yet.");
         }
