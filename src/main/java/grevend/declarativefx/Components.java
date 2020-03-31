@@ -12,6 +12,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -25,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Components {
@@ -57,6 +60,48 @@ public class Components {
         var node = new Text();
         bindableValue.subscribe(value -> node.setText(function.apply(value)));
         return FX(node);
+    }
+
+    public static @NotNull FX<TextField> TextField(@NotNull String placeholder) {
+        return FX(new TextField()).set("prompttext", placeholder);
+    }
+
+    public static @NotNull FX<TextField> TextField(@NotNull Consumer<String> consumer) {
+        return FX(new TextField()).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
+    }
+
+    public static @NotNull FX<TextField> TextField(@NotNull String placeholder, @NotNull Consumer<String> consumer) {
+        return TextField(placeholder).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
+    }
+
+    public static @NotNull <V> FX<TextField> TextField(@NotNull BindableValue<V> bindableValue) {
+        return FX(new TextField()).bind(bindableValue);
+    }
+
+    public static @NotNull <V> FX<TextField> TextField(@NotNull BindableValue<V> bindableValue,
+                                                       @NotNull String placeholder) {
+        return TextField(bindableValue).set("prompttext", placeholder);
+    }
+
+    public static @NotNull FX<TextArea> TextArea(@NotNull String placeholder) {
+        return FX(new TextArea()).set("prompttext", placeholder);
+    }
+
+    public static @NotNull FX<TextArea> TextArea(@NotNull Consumer<String> consumer) {
+        return FX(new TextArea()).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
+    }
+
+    public static @NotNull FX<TextArea> TextArea(@NotNull String placeholder, @NotNull Consumer<String> consumer) {
+        return TextArea(placeholder).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
+    }
+
+    public static @NotNull <V> FX<TextArea> TextArea(@NotNull BindableValue<V> bindableValue) {
+        return FX(new TextArea()).bind(bindableValue);
+    }
+
+    public static @NotNull <V> FX<TextArea> TextArea(@NotNull BindableValue<V> bindableValue,
+                                                     @NotNull String placeholder) {
+        return TextArea(bindableValue).set("prompttext", placeholder);
     }
 
     public static @NotNull FX<ImageView> Image(@NotNull Image image) {

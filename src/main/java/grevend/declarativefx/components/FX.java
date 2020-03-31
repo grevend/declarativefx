@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public class FX<N extends Node> extends Component<N>
@@ -66,9 +65,11 @@ public class FX<N extends Node> extends Component<N>
     }
 
     @Override
-    public @Nullable Component<? extends Node> find(@NotNull String id) {
+    public @Nullable Component<? extends Node> find(@NotNull String id, boolean root) {
         if (this.getId() != null && this.getId().equals(id)) {
             return this;
+        } else if (root) {
+            return this.getRoot().find(id, false);
         } else {
             return null;
         }

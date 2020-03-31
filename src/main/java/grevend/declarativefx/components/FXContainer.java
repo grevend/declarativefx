@@ -84,19 +84,23 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
     }
 
     @Override
-    public @Nullable Component<? extends Node> find(@NotNull String id) {
+    public @Nullable Component<? extends Node> find(@NotNull String id, boolean root) {
         if (this.getId() != null && this.getId().equals(id)) {
             return this;
         } else {
-            for (Component<? extends Node> component : this.getComponents()) {
-                if (component instanceof Findable) {
-                    var comp = ((Findable<?, ?>) component).find(id);
-                    if (comp != null) {
-                        return comp;
+            if (root) {
+                return this.getRoot().find(id, false);
+            } else {
+                for (Component<? extends Node> component : this.getComponents()) {
+                    if (component instanceof Findable) {
+                        var comp = ((Findable<?, ?>) component).find(id, false);
+                        if (comp != null) {
+                            return comp;
+                        }
                     }
                 }
+                return null;
             }
-            return null;
         }
     }
 

@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class Root<P extends Parent> extends Component<P> implements Identifiable<P, Root<P>>, Findable<P, Root<P>> {
 
@@ -120,11 +119,11 @@ public class Root<P extends Parent> extends Component<P> implements Identifiable
     }
 
     @Override
-    public @Nullable Component<? extends Node> find(@NotNull String id) {
-        if(this.getId() != null && this.getId().equals(id)) {
+    public @Nullable Component<? extends Node> find(@NotNull String id, boolean root) {
+        if (this.getId() != null && this.getId().equals(id)) {
             return this;
-        } else if(this.component instanceof Findable) {
-            return ((Findable<?, ?>) this.component).find(id);
+        } else if (this.component instanceof Findable) {
+            return ((Findable<?, ?>) this.component).find(id, false);
         } else {
             return null;
         }
