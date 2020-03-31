@@ -28,12 +28,16 @@ import grevend.declarativefx.Component;
 import grevend.declarativefx.util.BindableValue;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.function.Function;
 
 import static grevend.declarativefx.components.Compat.FX;
@@ -48,6 +52,19 @@ public class Layout {
     public static @NotNull <V> FX<javafx.scene.text.Text> Text(@NotNull BindableValue<V> bindableValue) {
         return Text(bindableValue,
             (value) -> value == null ? "" : (value instanceof String ? (String) value : value.toString()));
+    }
+
+    public static @NotNull FX<ImageView> Image(@NotNull Image image) {
+        return FX(new ImageView(image));
+    }
+
+    public static @NotNull FX<ImageView> Image(@NotNull String image) {
+        try {
+            return new FX<>(new ImageView(new Image(new FileInputStream(image))));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return FX(null);
     }
 
     public static @NotNull <V> FX<javafx.scene.text.Text> Text(@NotNull BindableValue<V> bindableValue,
