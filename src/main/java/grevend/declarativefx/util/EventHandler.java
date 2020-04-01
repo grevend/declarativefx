@@ -24,9 +24,13 @@
 
 package grevend.declarativefx.util;
 
-@FunctionalInterface
-public interface VarArgsFunction<T, R> {
+import grevend.declarativefx.Component;
+import javafx.event.Event;
+import javafx.scene.Node;
 
-    R apply(T... ts);
+@FunctionalInterface
+public interface EventHandler<E extends Event> {
+
+    void onEvent(E event, Component<? extends Node> component);
 
 }

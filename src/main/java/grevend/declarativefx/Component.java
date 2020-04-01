@@ -22,11 +22,29 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.util;
+package grevend.declarativefx;
 
-@FunctionalInterface
-public interface VarArgsFunction<T, R> {
+import javafx.scene.Node;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-    R apply(T... ts);
+public abstract class Component<N extends Node> implements BaseComponent<N> {
+
+    private Component<? extends Node> parent;
+
+    @Override
+    public @Nullable Component<? extends Node> getParent() {
+        return this.parent;
+    }
+
+    @Override
+    public void setParent(@NotNull Component<? extends Node> parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getTypeName();
+    }
 
 }

@@ -24,9 +24,26 @@
 
 package grevend.declarativefx.util;
 
-@FunctionalInterface
-public interface VarArgsFunction<T, R> {
+import org.jetbrains.annotations.NotNull;
 
-    R apply(T... ts);
+public interface StringifiableHierarchy {
+
+    default @NotNull String stringifyHierarchy() {
+        return stringifyHierarchy(Verbosity.NORMAL);
+    }
+
+    default @NotNull String stringifyHierarchy(@NotNull Verbosity verbosity) {
+        var builder = new StringBuilder();
+        this.stringifyHierarchy(builder, "", "", verbosity);
+        return builder.toString();
+    }
+
+    void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix,
+                            @NotNull Verbosity verbosity);
+
+    enum Verbosity {
+        SIMPLIFIED, NORMAL, DETAILED;
+    }
+
 
 }

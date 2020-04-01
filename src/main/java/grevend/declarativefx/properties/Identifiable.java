@@ -22,11 +22,17 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.util;
+package grevend.declarativefx.properties;
 
-@FunctionalInterface
-public interface VarArgsFunction<T, R> {
+import grevend.declarativefx.Component;
+import javafx.scene.Node;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-    R apply(T... ts);
+public interface Identifiable<N extends Node, C extends Component<N>> {
+
+    @Nullable String getId();
+
+    C setId(@NotNull String id);
 
 }

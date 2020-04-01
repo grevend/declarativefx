@@ -24,9 +24,12 @@
 
 package grevend.declarativefx.util;
 
-@FunctionalInterface
-public interface VarArgsFunction<T, R> {
+import org.jetbrains.annotations.NotNull;
 
-    R apply(T... ts);
+public class BindException extends RuntimeException {
+
+    public BindException(@NotNull String msg) {
+        super(msg);
+    }
 
 }

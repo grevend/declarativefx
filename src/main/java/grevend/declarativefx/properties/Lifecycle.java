@@ -22,11 +22,23 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.util;
+package grevend.declarativefx.properties;
 
-@FunctionalInterface
-public interface VarArgsFunction<T, R> {
+import javafx.scene.Node;
+import org.jetbrains.annotations.Nullable;
 
-    R apply(T... ts);
+public interface Lifecycle<N extends Node> {
+
+    default void beforeConstruction() {
+    }
+
+    @Nullable N construct();
+
+    default void afterConstruction() {
+    }
+
+    default void deconstruct() {
+    }
+
 
 }

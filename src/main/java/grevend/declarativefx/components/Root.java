@@ -1,6 +1,34 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2020 David Greven
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package grevend.declarativefx.components;
 
-import grevend.declarativefx.util.ObservableValue;
+import grevend.declarativefx.Component;
+import grevend.declarativefx.properties.Findable;
+import grevend.declarativefx.properties.Identifiable;
+import grevend.declarativefx.util.BindableValue;
+import grevend.declarativefx.util.LifecycleException;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,12 +39,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Root<P extends Parent> extends Component<P> {
+public class Root<P extends Parent> extends Component<P> implements Identifiable<P, Root<P>>, Findable<P, Root<P>> {
 
-    private final Map<String, ObservableValue<?>> providers;
+    private final Map<String, BindableValue<?>> providers;
     private final Component<P> component;
     private Stage stage;
+    private String id;
     private P child;
+    private Scene scene;
 
     public Root(@NotNull Component<P> component) {
         this.providers = new HashMap<>();
@@ -38,7 +68,7 @@ public class Root<P extends Parent> extends Component<P> {
         throw new IllegalStateException();
     }
 
-    public @NotNull Map<String, ObservableValue<?>> getProviders() {
+    public @NotNull Map<String, BindableValue<?>> getProviders() {
         return providers;
     }
 
@@ -78,13 +108,13 @@ public class Root<P extends Parent> extends Component<P> {
     }
 
     @Override
-    public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix,
-                                   @NotNull String childPrefix) {
-        super.stringifyHierarchy(builder, prefix, childPrefix);
+    public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix,
+                                   @NotNull Verbosity verbosity) {
+        super.stringifyHierarchy(builder, prefix, childPrefix, verbosity);
         if (this.component != null) {
-            this.component.stringifyHierarchy(builder, childPrefix + "└── ", childPrefix + "    ");
+            this.component.stringifyHierarchy(builder, childPrefix + "└── ", childPrefix + "    ", verbosity);
         } else {
-            throw new IllegalStateException("Hierarchy has not been constructed yet.");
+            throw new LifecycleException("Hierarchy has not been constructed yet.");
         }
     }
 
@@ -94,7 +124,7 @@ public class Root<P extends Parent> extends Component<P> {
         var tree = this.construct();
         if (tree != null) {
             this.afterConstruction();
-            stage.setScene(new Scene(tree));
+            stage.setScene((this.scene = new Scene(tree)));
             stage.show();
         } else {
             throw new IllegalStateException("Component hierarchy construction failed.");
@@ -102,8 +132,29 @@ public class Root<P extends Parent> extends Component<P> {
     }
 
     @Override
-    public @NotNull String toString() {
-        return "Root";
+    public @Nullable String getId() {
+        return this.id;
+    }
+
+    @Override
+    public Root<P> setId(@NotNull String id) {
+        this.id = id;
+        return this;
+    }
+
+    @Override
+    public @Nullable Component<? extends Node> find(@NotNull String id, boolean root) {
+        if (this.getId() != null && this.getId().equals(id)) {
+            return this;
+        } else if (this.component instanceof Findable) {
+            return ((Findable<?, ?>) this.component).find(id, false);
+        } else {
+            return null;
+        }
+    }
+
+    public @Nullable Scene getScene() {
+        return scene;
     }
 
 }

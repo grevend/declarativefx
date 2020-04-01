@@ -8,7 +8,7 @@
     <artifactId>declarativefx</artifactId>
     <name>DeclarativeFX</name>
     <url>https://github.com/grevend/DeclarativeFX</url>
-    <version>0.1.2-SNAPSHOT</version>
+    <version>0.1.7-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <distributionManagement>
