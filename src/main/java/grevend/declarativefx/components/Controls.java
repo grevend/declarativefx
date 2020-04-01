@@ -31,11 +31,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-//import javafx.scene.image.Image;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
-//import static grevend.declarativefx.components;
 
 import java.util.function.Consumer;
 
@@ -67,7 +65,6 @@ public class Controls {
     }
 
     /**
-     *
      * @param placeholder temporary visual only data to be displayed before user types
      * @return .. if you dont know what this returns then why are you even using it?
      */
@@ -86,7 +83,6 @@ public class Controls {
     }
 
     /**
-     *
      * @param bindableValue
      * @param <V>
      * @return
@@ -101,8 +97,7 @@ public class Controls {
     }
 
     /**
-     *
-     * @param text  the text to be displayed in the button
+     * @param text the text to be displayed in the button
      * @return FX element of type button.. used in page builder
      */
     public static @NotNull FX<Button> Button(@NotNull String text) {
@@ -118,34 +113,27 @@ public class Controls {
     }
 
     /**
-     *
-     * @param text Text to be used inside the button
-     * @param img image to be loaded in the button (filepath or URL)
+     * @param text    Text to be used inside the button
+     * @param img     image to be loaded in the button (filepath or URL)
      * @param imgSize ([0]= width    [1]= height)
      * @return FX<Button> (Node to be used in decFX tree)
      */
-    public static @NotNull FX<Button> Button(@NotNull String text,
-                                             String img,
-                                             double[] imgSize) {
-        var btn = new javafx.scene.control.Button(text);
-        if(img.contains("http") || img.contains("https")){ // loading via url
-            Image image ;
-            // Ternary Operator
-            image = imgSize[0] == -1 ? new Image(img) : new Image(img, imgSize[0], imgSize[1], true, true);
-
-            btn.setGraphic(new ImageView(image));
-        }else{ // loading via file.
+    public static @NotNull FX<Button> Button(@NotNull String text, @NotNull String img, double[] imgSize) {
+        var node = new javafx.scene.control.Button(text);
+        if (img.contains("http") || img.contains("https")) {
+            Image image = imgSize[0] == -1 ? new Image(img) : new Image(img, imgSize[0], imgSize[1], true, true);
+            node.setGraphic(new ImageView(image));
+        } else {
             //TODO: loading via file currently cannot take a size.
-            btn.setGraphic(Layout.Image(img).construct());
+            node.setGraphic(Layout.Image(img).construct());
         }
-        return FX(btn);
+        return FX(node);
     }
 
-    public static @NotNull FX<Button> Button(@NotNull String text,
-                                             String img) {
+    public static @NotNull FX<Button> Button(@NotNull String text, @NotNull String img) {
         return Button(text, img, new double[]{-1, -1});
     }
-  
+
     @Deprecated
     public static @NotNull FX<Button> Button(@NotNull String text, @NotNull EventHandler<ActionEvent> handler) {
         return Button(text).on(ActionEvent.ACTION, handler);
