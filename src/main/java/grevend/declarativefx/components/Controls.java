@@ -30,7 +30,11 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+//import javafx.scene.image.Image;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
+//import static grevend.declarativefx.components;
 
 import java.util.function.Consumer;
 
@@ -88,6 +92,24 @@ public class Controls {
         var node = new Button(text);
         node.setOnAction(handler);
         return FX(node);
+    }
+
+    // TODO: finish this....
+    public static @NotNull FX<Button> Button(@NotNull String text,
+                                             String img,
+                                             double[] imgSize) {
+        var btn = new javafx.scene.control.Button(text);
+        if(img.contains("http") || img.contains("https")){ // url
+           var image = new Image(img, imgSize[0], imgSize[1], true, true);
+            btn.setGraphic(new ImageView(image));
+        }else{
+            // file??
+//            Image temp = new Image("file:"+img, imgSize[0], imgSize[1], true, true);
+            btn.setGraphic(Layout.Image(img).construct());
+        }
+        //Image temp = new Image(getClass().getResourceAsStream(img), imgSize[0], imgSize[1], true, true);
+
+        return FX(new Button(text));
     }
 
 }
