@@ -5,21 +5,22 @@ An experimental thin and declarative wrapper for JavaFX.
 ## Usage
 
 ```java
-Root(
+BindableValue counter = new BindableValue(0);
+
+var root = Root(
   HBox(
-    Provider("num", 0),
     VBox(
-      Consumer("num", "text", (num, text) ->
-        VBox(
-          Text(text.compute(num, () -> "Value: " + num.get(0))),
-          Button("Increment", event -> {
-            num.set((int) num.get(0) + 1);
-          })
-        )
+      VBox(
+        Text("Value: 0").compute(counter, () -> "Value: " + counter.get()),
+        Button("Increment").on((event, component) -> {
+          counter.update(before -> (int) before + 1);
+        })
       )
     )
   )
-).launch(stage);
+);
+
+root.launch(stage);
 ```
 
 ## License
