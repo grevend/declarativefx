@@ -53,7 +53,8 @@ public class Example extends Application {
                         Button("Increment").on((event, component) -> {
                             counter.update(before -> (int) before + 1);
                         })
-                    )
+                    ),
+                    Button("text", "https://png.pngtree.com/png-vector/20190115/ourmid/pngtree-vector-location-icon-png-image_317888.jpg")
                 )
             )
         );
