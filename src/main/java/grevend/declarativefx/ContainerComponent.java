@@ -24,10 +24,12 @@
 
 package grevend.declarativefx;
 
+import grevend.declarativefx.components.FX;
 import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public abstract class ContainerComponent<N extends Node> extends Component<N> {
 
@@ -42,6 +44,11 @@ public abstract class ContainerComponent<N extends Node> extends Component<N> {
 
     public @NotNull Collection<Component<? extends Node>> getComponents() {
         return components;
+    }
+
+    public @NotNull Collection<Node> getNodes() {
+        return this.getComponents().stream().filter(component -> component instanceof FX)
+            .map(component -> ((FX<?>) component).getNode()).collect(Collectors.toList());
     }
 
     @Override

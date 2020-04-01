@@ -74,6 +74,7 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
 
     @Override
     public @Nullable P construct() {
+        this.pane.getChildren().clear();
         for (Component<? extends Node> component : this.getComponents()) {
             var node = component.construct();
             if (node != null) {
@@ -81,6 +82,18 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
             }
         }
         return this.pane;
+    }
+
+    public FXContainer<P> add(Component<? extends Node> component) {
+        this.getComponents().add(component);
+        this.construct();
+        return this;
+    }
+
+    public FXContainer<P> remove(Component<? extends Node> component) {
+        this.getComponents().remove(component);
+        this.construct();
+        return this;
     }
 
     public @NotNull FXContainer<P> setStyle(@NotNull String style) {
@@ -260,6 +273,12 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
                 }
             }
         }
+        this.getComponents().forEach(Component::afterConstruction);
+    }
+
+    @Override
+    public void deconstruct() {
+        this.getComponents().forEach(Component::deconstruct);
     }
 
     @Override

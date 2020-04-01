@@ -49,8 +49,10 @@ public interface Listenable<N extends Node, C extends Component<N>> {
     }
 
     @SuppressWarnings("unchecked")
-    default @NotNull <T> C on(@NotNull String property, @NotNull BiConsumer<Object, Object> consumer) {
-        this.on(property, (observable, oldValue, newValue) -> consumer.accept(oldValue, newValue));
+    default @NotNull <T> C on(@NotNull String property,
+                              @NotNull BiConsumer<Component<? extends Node>, Object> consumer) {
+        this.on(property,
+            (observable, oldValue, newValue) -> consumer.accept((Component<? extends Node>) this, newValue));
         return (C) this;
     }
 

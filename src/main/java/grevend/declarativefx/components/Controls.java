@@ -28,6 +28,7 @@ import grevend.declarativefx.util.BindableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import org.jetbrains.annotations.NotNull;
@@ -107,6 +108,10 @@ public class Controls {
     public static @NotNull FX<Button> Button(@NotNull String text,
                                              @NotNull grevend.declarativefx.util.EventHandler<ActionEvent> handler) {
         return Button(text).on(ActionEvent.ACTION, handler);
+    }
+
+    public static @NotNull FX<Label> Label(@NotNull String text) {
+        return FX(new Label(text));
     }
 
 }
