@@ -24,6 +24,7 @@
 
 package grevend.declarativefx;
 
+import grevend.declarativefx.properties.Bindable;
 import grevend.declarativefx.util.BindableValue;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -49,7 +50,7 @@ public class Example extends Application {
             HBox(
                 VBox(
                     VBox(
-                        Text("Value: 0").compute(counter, () -> "Value: " + counter.get()),
+                        Text("Value: 0").compute(counter, () -> "Value: " + counter.get()).setId("id"),
                         Button("Increment", (event, component) -> {
                             counter.update(before -> (int) before + 1);
                         })
@@ -60,6 +61,7 @@ public class Example extends Application {
         root.construct();
         System.out.println(root.stringifyHierarchy());
         root.launch(stage);
+        System.out.println(((Bindable)root.find("id")).getLateBindings());
     }
 
 }

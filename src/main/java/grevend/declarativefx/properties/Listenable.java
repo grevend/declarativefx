@@ -33,11 +33,26 @@ import javafx.event.EventType;
 import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
 public interface Listenable<N extends Node, C extends Component<N>> {
 
     @NotNull <E extends Event> C on(@NotNull EventType<E> type, @NotNull EventHandler<E> handler);
 
     @NotNull <E extends Event> C on(@NotNull EventType<E> type, @NotNull javafx.event.EventHandler<E> handler);
+
+    @SuppressWarnings("unchecked")
+    default @NotNull <T> C on(@NotNull String property, @NotNull Consumer<Object> consumer) {
+        this.on(property, (observable, oldValue, newValue) -> consumer.accept(newValue));
+        return (C) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    default @NotNull <T> C on(@NotNull String property, @NotNull BiConsumer<Object, Object> consumer) {
+        this.on(property, (observable, oldValue, newValue) -> consumer.accept(oldValue, newValue));
+        return (C) this;
+    }
 
     @NotNull <T> C on(@NotNull String property, @NotNull ChangeListener<T> listener);
 

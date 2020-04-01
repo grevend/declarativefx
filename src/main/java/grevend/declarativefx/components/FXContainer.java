@@ -44,7 +44,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.StreamSupport;
 
 public class FXContainer<P extends Pane> extends ContainerComponent<P>
     implements Fluent<P, FXContainer<P>>, Bindable<P, FXContainer<P>>, Listenable<P, ContainerComponent<P>>,
@@ -56,13 +55,17 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
     private P pane;
     private String defaultProperty;
 
-    public FXContainer(@NotNull P pane, @NotNull Iterable<Component<? extends Node>> components) {
-        this(pane, StreamSupport.stream(components.spliterator(), false).toArray(Component<?>[]::new));
+    public FXContainer(@NotNull P pane, @NotNull Collection<Component<? extends Node>> components) {
+        super(components);
+        this.pane = pane;
+        this.bindableProperties = new HashMap<>();
+        this.observableProperties = new HashMap<>();
+        this.lateBindings = new ArrayList<>();
     }
 
     @SafeVarargs
     public FXContainer(@NotNull P pane, Component<? extends Node>... components) {
-        super(components);
+        super(Arrays.asList(components));
         this.pane = pane;
         this.bindableProperties = new HashMap<>();
         this.observableProperties = new HashMap<>();

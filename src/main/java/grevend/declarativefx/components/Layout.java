@@ -36,8 +36,6 @@ import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.function.Function;
 
 import static grevend.declarativefx.components.Compat.FX;
@@ -70,12 +68,7 @@ public class Layout {
     }
 
     public static @NotNull FX<ImageView> Image(@NotNull String image) {
-        try {
-            return new FX<>(new ImageView(new Image(new FileInputStream(image))));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return FX(null);
+        return FX(new ImageView(new Image(image)));
     }
 
     @SafeVarargs

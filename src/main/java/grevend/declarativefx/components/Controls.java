@@ -46,10 +46,12 @@ public class Controls {
         return FX(new TextField()).set("prompttext", placeholder);
     }
 
+    @Deprecated
     public static @NotNull FX<TextField> TextField(@NotNull Consumer<String> consumer) {
         return FX(new TextField()).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
     }
 
+    @Deprecated
     public static @NotNull FX<TextField> TextField(@NotNull String placeholder, @NotNull Consumer<String> consumer) {
         return TextField(placeholder).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
     }
@@ -71,10 +73,12 @@ public class Controls {
         return FX(new TextArea()).set("prompttext", placeholder);
     }
 
+    @Deprecated
     public static @NotNull FX<TextArea> TextArea(@NotNull Consumer<String> consumer) {
         return FX(new TextArea()).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
     }
 
+    @Deprecated
     public static @NotNull FX<TextArea> TextArea(@NotNull String placeholder, @NotNull Consumer<String> consumer) {
         return TextArea(placeholder).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
     }
@@ -92,12 +96,14 @@ public class Controls {
         return FX(new Button(text));
     }
 
+    @Deprecated
     public static @NotNull FX<Button> Button(@NotNull String text, @NotNull EventHandler<ActionEvent> handler) {
         var node = new Button(text);
         node.setOnAction(handler);
         return FX(node);
     }
 
+    @Deprecated
     public static @NotNull FX<Button> Button(@NotNull String text,
                                              @NotNull grevend.declarativefx.util.EventHandler<ActionEvent> handler) {
         return Button(text).on(ActionEvent.ACTION, handler);
