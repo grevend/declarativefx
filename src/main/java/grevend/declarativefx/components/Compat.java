@@ -42,23 +42,27 @@ public class Compat {
         return new Root<>(component);
     }
 
-    public static @NotNull <N extends Node, V> Component<N> Binding(@NotNull String id,
-                                                                    @NotNull Function<BindableValue<V>, ? extends Component<N>> function) {
+    public static @NotNull <N extends Node> Component<N> Binding(@NotNull String id,
+                                                                 @NotNull Function<BindableValue, ? extends Component<N>> function) {
         return new Binding<>(id, function);
     }
 
-    public static @NotNull <N extends Node, V, U> Component<N> Binding(@NotNull String first, @NotNull String second,
-                                                                       @NotNull BiFunction<BindableValue<V>, BindableValue<U>, ? extends Component<N>> function) {
+    public static @NotNull <N extends Node> Component<N> Binding(@NotNull String first, @NotNull String second,
+                                                                 @NotNull BiFunction<BindableValue, BindableValue, ? extends Component<N>> function) {
         return new Binding<>(first, second, function);
     }
 
     public static @NotNull <N extends Node> Component<N> Binding(@NotNull String[] identifiers,
-                                                                 @NotNull VarArgsFunction<BindableValue<Object>, ? extends Component<N>> function) {
+                                                                 @NotNull VarArgsFunction<BindableValue, ? extends Component<N>> function) {
         return new Binding<>(identifiers, function);
     }
 
     public static @NotNull <N extends Node> FX<N> FX(@Nullable N node) {
         return new FX<>(node);
+    }
+
+    public static @NotNull <N extends Node> FX<N> FX(@Nullable N node, @NotNull String property) {
+        return new FX<>(node, property);
     }
 
     @SafeVarargs

@@ -33,6 +33,6 @@ public interface Identifiable<N extends Node, C extends Component<N>> {
 
     @Nullable String getId();
 
-    C setId(@NotNull String id);
+    @NotNull C setId(@NotNull String id);
 
 }

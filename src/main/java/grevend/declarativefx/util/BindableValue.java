@@ -31,43 +31,43 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.*;
 
-public class BindableValue<V> {
+public class BindableValue {
 
-    private final List<Consumer<V>> consumers;
-    private V value, defaultValue;
+    private final List<Consumer<Object>> consumers;
+    private Object value, defaultValue;
 
     public BindableValue() {
         this(null);
     }
 
-    public BindableValue(@Nullable V value) {
+    public BindableValue(@Nullable Object value) {
         this.consumers = new ArrayList<>();
         this.value = value;
     }
 
-    public void subscribe(@NotNull Consumer<V> consumer) {
+    public void subscribe(@NotNull Consumer<Object> consumer) {
         this.consumers.add(consumer);
         consumer.accept(this.get());
     }
 
-    public void unsubscribe(@NotNull Consumer<V> consumer) {
+    public void unsubscribe(@NotNull Consumer<Object> consumer) {
         this.consumers.remove(consumer);
     }
 
-    public @Nullable V get() {
+    public @Nullable Object get() {
         return this.value == null ? this.defaultValue : this.value;
     }
 
-    public void set(@Nullable V value) {
+    public void set(@Nullable Object value) {
         this.value = value;
         this.consumers.forEach(consumer -> consumer.accept(value));
     }
 
-    public void update(@NotNull UnaryOperator<V> function) {
+    public void update(@NotNull UnaryOperator<Object> function) {
         this.set(function.apply(this.get()));
     }
 
-    public @NotNull V get(@NotNull V defaultValue) {
+    public @NotNull Object get(@NotNull Object defaultValue) {
         return this.value == null ? defaultValue : this.value;
     }
 
@@ -75,34 +75,34 @@ public class BindableValue<V> {
         return this.defaultValue != null;
     }
 
-    public @NotNull BindableValue<V> orElse(@NotNull V defaultValue) {
+    public @NotNull BindableValue orElse(@NotNull Object defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }
 
-    public @NotNull BindableValue<V> orElse(@NotNull Supplier<V> supplier) {
+    public @NotNull BindableValue orElse(@NotNull Supplier<Object> supplier) {
         return this.orElse(supplier.get());
     }
 
-    public @NotNull <U> BindableValue<V> compute(@NotNull BindableValue<U> dependency,
-                                                 @NotNull BiFunction<BindableValue<U>, BindableValue<V>, V> function) {
+    public @NotNull BindableValue compute(@NotNull BindableValue dependency,
+                                          @NotNull BiFunction<BindableValue, BindableValue, Object> function) {
         dependency.subscribe((value) -> set(function.apply(dependency, this)));
         return this;
     }
 
-    public @NotNull <U> BindableValue<V> compute(@NotNull BindableValue<U> dependency,
-                                                 @NotNull Function<BindableValue<V>, V> function) {
+    public @NotNull BindableValue compute(@NotNull BindableValue dependency,
+                                          @NotNull Function<BindableValue, Object> function) {
         dependency.subscribe((value) -> set(function.apply(this)));
         return this;
     }
 
-    public @NotNull <U> BindableValue<V> compute(@NotNull BindableValue<U> dependency,
-                                                 @NotNull Supplier<V> supplier) {
+    public @NotNull BindableValue compute(@NotNull BindableValue dependency,
+                                          @NotNull Supplier<Object> supplier) {
         dependency.subscribe((value) -> set(supplier.get()));
         return this;
     }
 
-    public @NotNull List<Consumer<V>> getConsumers() {
+    public @NotNull List<Consumer<Object>> getConsumers() {
         return consumers;
     }
 

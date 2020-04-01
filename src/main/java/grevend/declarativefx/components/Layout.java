@@ -45,13 +45,24 @@ import static grevend.declarativefx.components.Compat.FXContainer;
 
 public class Layout {
 
-    public static @NotNull FX<javafx.scene.text.Text> Text(@NotNull String text) {
-        return new FX<>(new javafx.scene.text.Text(text));
+    public static @NotNull FX<javafx.scene.text.Text> Text() {
+        return Text("");
     }
 
-    public static @NotNull <V> FX<javafx.scene.text.Text> Text(@NotNull BindableValue<V> bindableValue) {
+    public static @NotNull FX<javafx.scene.text.Text> Text(@NotNull String text) {
+        return new FX<>(new javafx.scene.text.Text(text), "text").bind(new BindableValue(text));
+    }
+
+    public static @NotNull FX<javafx.scene.text.Text> Text(@NotNull BindableValue bindableValue) {
         return Text(bindableValue,
             (value) -> value == null ? "" : (value instanceof String ? (String) value : value.toString()));
+    }
+
+    public static @NotNull FX<javafx.scene.text.Text> Text(@NotNull BindableValue bindableValue,
+                                                           @NotNull Function<Object, String> function) {
+        var node = new javafx.scene.text.Text();
+        bindableValue.subscribe(value -> node.setText(function.apply(value)));
+        return FX(node, "text").bind(bindableValue);
     }
 
     public static @NotNull FX<ImageView> Image(@NotNull Image image) {
@@ -65,13 +76,6 @@ public class Layout {
             e.printStackTrace();
         }
         return FX(null);
-    }
-
-    public static @NotNull <V> FX<javafx.scene.text.Text> Text(@NotNull BindableValue<V> bindableValue,
-                                                               @NotNull Function<V, String> function) {
-        var node = new javafx.scene.text.Text();
-        bindableValue.subscribe(value -> node.setText(function.apply(value)));
-        return FX(node);
     }
 
     @SafeVarargs

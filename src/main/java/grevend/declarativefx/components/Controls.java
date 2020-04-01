@@ -38,6 +38,10 @@ import static grevend.declarativefx.components.Compat.FX;
 
 public class Controls {
 
+    public static @NotNull FX<TextField> TextField() {
+        return FX(new TextField());
+    }
+
     public static @NotNull FX<TextField> TextField(@NotNull String placeholder) {
         return FX(new TextField()).set("prompttext", placeholder);
     }
@@ -50,13 +54,17 @@ public class Controls {
         return TextField(placeholder).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
     }
 
-    public static @NotNull <V> FX<TextField> TextField(@NotNull BindableValue<V> bindableValue) {
+    public static @NotNull FX<TextField> TextField(@NotNull BindableValue bindableValue) {
         return FX(new TextField()).bind(bindableValue);
     }
 
-    public static @NotNull <V> FX<TextField> TextField(@NotNull BindableValue<V> bindableValue,
-                                                       @NotNull String placeholder) {
+    public static @NotNull FX<TextField> TextField(@NotNull BindableValue bindableValue,
+                                                   @NotNull String placeholder) {
         return TextField(bindableValue).set("prompttext", placeholder);
+    }
+
+    public static @NotNull FX<TextArea> TextArea() {
+        return FX(new TextArea());
     }
 
     public static @NotNull FX<TextArea> TextArea(@NotNull String placeholder) {
@@ -71,12 +79,12 @@ public class Controls {
         return TextArea(placeholder).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
     }
 
-    public static @NotNull <V> FX<TextArea> TextArea(@NotNull BindableValue<V> bindableValue) {
+    public static @NotNull FX<TextArea> TextArea(@NotNull BindableValue bindableValue) {
         return FX(new TextArea()).bind(bindableValue);
     }
 
-    public static @NotNull <V> FX<TextArea> TextArea(@NotNull BindableValue<V> bindableValue,
-                                                     @NotNull String placeholder) {
+    public static @NotNull FX<TextArea> TextArea(@NotNull BindableValue bindableValue,
+                                                 @NotNull String placeholder) {
         return TextArea(bindableValue).set("prompttext", placeholder);
     }
 
@@ -88,6 +96,11 @@ public class Controls {
         var node = new Button(text);
         node.setOnAction(handler);
         return FX(node);
+    }
+
+    public static @NotNull FX<Button> Button(@NotNull String text,
+                                             @NotNull grevend.declarativefx.util.EventHandler<ActionEvent> handler) {
+        return Button(text).on(ActionEvent.ACTION, handler);
     }
 
 }

@@ -37,7 +37,6 @@ public interface BaseComponent<N extends Node> extends Lifecycle<N>, Stringifiab
 
     void setParent(@NotNull Component<? extends Node> parent);
 
-
     default @NotNull Root<?> getRoot() {
         if (this.getParent() == null) {
             throw new IllegalStateException(

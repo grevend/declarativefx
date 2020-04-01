@@ -50,8 +50,9 @@ public class Utils {
             .collect(Collectors.toMap(m -> m.getName().replaceAll("Property", "").toLowerCase(), Method::getName));
     }
 
+    @SuppressWarnings("unchecked")
     public static synchronized @Nullable <N extends Node> ObservableValue<?> getObservableValue(@NotNull N node,
-                                                                                                @NotNull Map<String, ObservableValue<?>> properties,
+                                                                                                @NotNull Map<String, ObservableValue<Object>> properties,
                                                                                                 @NotNull String property) {
         var nodeClass = node.getClass();
         if (properties.containsKey(property.toLowerCase())) {
@@ -63,7 +64,7 @@ public class Utils {
             if (propertyNames.get(nodeClass).containsKey(property.toLowerCase())) {
                 try {
                     properties.put(property.toLowerCase(),
-                        (ObservableValue<?>) nodeClass
+                        (ObservableValue<Object>) nodeClass
                             .getMethod(propertyNames.get(nodeClass).get(property.toLowerCase())).invoke(node));
                     return properties.get(property.toLowerCase());
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

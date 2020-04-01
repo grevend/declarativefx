@@ -22,44 +22,59 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx;
+package grevend.declarativefx.util;
 
-import grevend.declarativefx.util.BindableValue;
-import javafx.application.Application;
-import javafx.stage.Stage;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import static grevend.declarativefx.components.Compat.Root;
-import static grevend.declarativefx.components.Controls.Button;
-import static grevend.declarativefx.components.Layout.*;
+import java.util.Objects;
 
-public class Example extends Application {
+public class Triplet<A, B, C> {
 
-    public static void main(String[] args) {
-        launch();
+    private final A a;
+    private final B b;
+    private final C c;
+
+    public Triplet(@Nullable A a, @NotNull B b, @Nullable C c) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+    }
+
+    public A getA() {
+        return a;
+    }
+
+    public B getB() {
+        return b;
+    }
+
+    public C getC() {
+        return c;
     }
 
     @Override
-    public void start(Stage stage) {
-        stage.setWidth(175);
-        stage.setHeight(100);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Triplet<?, ?, ?> triplet = (Triplet<?, ?, ?>) o;
+        return Objects.equals(getA(), triplet.getA()) &&
+            Objects.equals(getB(), triplet.getB()) &&
+            Objects.equals(getC(), triplet.getC());
+    }
 
-        BindableValue counter = new BindableValue(0);
+    @Override
+    public int hashCode() {
+        return Objects.hash(getA(), getB(), getC());
+    }
 
-        var root = Root(
-            HBox(
-                VBox(
-                    VBox(
-                        Text("Value: 0").compute(counter, () -> "Value: " + counter.get()),
-                        Button("Increment", (event, component) -> {
-                            counter.update(before -> (int) before + 1);
-                        })
-                    )
-                )
-            )
-        );
-        root.construct();
-        System.out.println(root.stringifyHierarchy());
-        root.launch(stage);
+    @Override
+    public String toString() {
+        return "Triplet{" +
+            "a=" + a +
+            ", b=" + b +
+            ", c=" + c +
+            '}';
     }
 
 }

@@ -22,44 +22,50 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx;
+package grevend.declarativefx.util;
 
-import grevend.declarativefx.util.BindableValue;
-import javafx.application.Application;
-import javafx.stage.Stage;
+import org.jetbrains.annotations.Nullable;
 
-import static grevend.declarativefx.components.Compat.Root;
-import static grevend.declarativefx.components.Controls.Button;
-import static grevend.declarativefx.components.Layout.*;
+import java.util.Objects;
 
-public class Example extends Application {
+public class Pair<A, B> {
 
-    public static void main(String[] args) {
-        launch();
+    private final A a;
+    private final B b;
+
+    public Pair(@Nullable A a, @Nullable B b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    public @Nullable A getA() {
+        return a;
+    }
+
+    public @Nullable B getB() {
+        return b;
     }
 
     @Override
-    public void start(Stage stage) {
-        stage.setWidth(175);
-        stage.setHeight(100);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pair<?, ?> pair = (Pair<?, ?>) o;
+        return Objects.equals(getA(), pair.getA()) &&
+            Objects.equals(getB(), pair.getB());
+    }
 
-        BindableValue counter = new BindableValue(0);
+    @Override
+    public int hashCode() {
+        return Objects.hash(getA(), getB());
+    }
 
-        var root = Root(
-            HBox(
-                VBox(
-                    VBox(
-                        Text("Value: 0").compute(counter, () -> "Value: " + counter.get()),
-                        Button("Increment", (event, component) -> {
-                            counter.update(before -> (int) before + 1);
-                        })
-                    )
-                )
-            )
-        );
-        root.construct();
-        System.out.println(root.stringifyHierarchy());
-        root.launch(stage);
+    @Override
+    public String toString() {
+        return "Pair{" +
+            "a=" + a +
+            ", b=" + b +
+            '}';
     }
 
 }
