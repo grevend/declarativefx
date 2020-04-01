@@ -51,11 +51,11 @@ public class Example extends Application {
                 VBox(
                     VBox(
                         Text("Value: 0").compute(counter, () -> "Value: " + counter.get()).setId("id"),
-                        Button("Increment", (event, component) -> {
+                        Button("Increment", (event) -> {
                             counter.update(before -> (int) before + 1);
                         })
                     ),
-                    Button("text", "example.png", new double[]{20, 20})
+                    Button("text", "https://png.pngtree.com/png-vector/20190115/ourmid/pngtree-vector-location-icon-png-image_317888.jpg")
                 )
             )
         );
