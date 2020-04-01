@@ -46,70 +46,102 @@ public class Controls {
         return FX(new TextField()).set("prompttext", placeholder);
     }
 
+    @Deprecated
     public static @NotNull FX<TextField> TextField(@NotNull Consumer<String> consumer) {
         return FX(new TextField()).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
     }
 
+    @Deprecated
     public static @NotNull FX<TextField> TextField(@NotNull String placeholder, @NotNull Consumer<String> consumer) {
         return TextField(placeholder).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
     }
 
-    public static @NotNull <V> FX<TextField> TextField(@NotNull BindableValue<V> bindableValue) {
+    public static @NotNull <V> FX<TextField> TextField(@NotNull BindableValue bindableValue) {
         return FX(new TextField()).bind(bindableValue);
     }
 
-    public static @NotNull <V> FX<TextField> TextField(@NotNull BindableValue<V> bindableValue,
+    public static @NotNull <V> FX<TextField> TextField(@NotNull BindableValue bindableValue,
                                                        @NotNull String placeholder) {
         return TextField(bindableValue).set("prompttext", placeholder);
     }
 
+    /**
+     *
+     * @param placeholder temporary visual only data to be displayed before user types
+     * @return .. if you dont know what this returns then why are you even using it?
+     */
     public static @NotNull FX<TextArea> TextArea(@NotNull String placeholder) {
         return FX(new TextArea()).set("prompttext", placeholder);
     }
 
+    @Deprecated
     public static @NotNull FX<TextArea> TextArea(@NotNull Consumer<String> consumer) {
         return FX(new TextArea()).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
     }
 
+    @Deprecated
     public static @NotNull FX<TextArea> TextArea(@NotNull String placeholder, @NotNull Consumer<String> consumer) {
         return TextArea(placeholder).on("text", (observable, oldalue, newValue) -> consumer.accept((String) newValue));
     }
 
-    public static @NotNull <V> FX<TextArea> TextArea(@NotNull BindableValue<V> bindableValue) {
+    /**
+     *
+     * @param bindableValue
+     * @param <V>
+     * @return
+     */
+    public static @NotNull <V> FX<TextArea> TextArea(@NotNull BindableValue bindableValue) {
         return FX(new TextArea()).bind(bindableValue);
     }
 
-    public static @NotNull <V> FX<TextArea> TextArea(@NotNull BindableValue<V> bindableValue,
+    public static @NotNull <V> FX<TextArea> TextArea(@NotNull BindableValue bindableValue,
                                                      @NotNull String placeholder) {
         return TextArea(bindableValue).set("prompttext", placeholder);
     }
 
+    /**
+     *
+     * @param text  the text to be displayed in the button
+     * @return FX element of type button.. used in page builder
+     */
     public static @NotNull FX<Button> Button(@NotNull String text) {
         return FX(new Button(text));
     }
 
+    @Deprecated
     public static @NotNull FX<Button> Button(@NotNull String text, @NotNull EventHandler<ActionEvent> handler) {
         var node = new Button(text);
         node.setOnAction(handler);
         return FX(node);
     }
 
-    // TODO: finish this....
+    /**
+     *
+     * @param text Text to be used inside the button
+     * @param img image to be loaded in the button (filepath or URL)
+     * @param imgSize ([0]= width    [1]= height)
+     * @return FX<Button> (Node to be used in decFX tree)
+     */
     public static @NotNull FX<Button> Button(@NotNull String text,
                                              String img,
                                              double[] imgSize) {
         var btn = new javafx.scene.control.Button(text);
-        if(img.contains("http") || img.contains("https")){ // url
-           var image = new Image(img, imgSize[0], imgSize[1], true, true);
+        if(img.contains("http") || img.contains("https")){ // loading via url
+            Image image ;
+            // Ternary Operator
+            image = imgSize[0] == -1 ? new Image(img) : new Image(img, imgSize[0], imgSize[1], true, true);
+
             btn.setGraphic(new ImageView(image));
-        }else{
-            // file??
-//            Image temp = new Image("file:"+img, imgSize[0], imgSize[1], true, true);
+        }else{ // loading via file.
+            //TODO: loading via file currently cannot take a size.
             btn.setGraphic(Layout.Image(img).construct());
         }
-        //Image temp = new Image(getClass().getResourceAsStream(img), imgSize[0], imgSize[1], true, true);
+        return FX(btn);
+    }
 
-        return FX(new Button(text));
+    public static @NotNull FX<Button> Button(@NotNull String text,
+                                             String img) {
+        return Button(text, img, new double[]{-1, -1});
     }
 
 }
