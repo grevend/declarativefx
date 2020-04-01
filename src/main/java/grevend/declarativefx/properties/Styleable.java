@@ -22,30 +22,16 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.util;
+package grevend.declarativefx.properties;
 
+import grevend.declarativefx.Component;
+import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
 
-public interface StringifiableHierarchy {
+public interface Styleable<N extends Node, C extends Component<N>> {
 
-    @NotNull String stringify();
+    @NotNull C setStyle(@NotNull String style);
 
-    default @NotNull String stringifyHierarchy() {
-        return stringifyHierarchy(Verbosity.NORMAL);
-    }
-
-    default @NotNull String stringifyHierarchy(@NotNull Verbosity verbosity) {
-        var builder = new StringBuilder();
-        this.stringifyHierarchy(builder, "", "", verbosity);
-        return builder.toString();
-    }
-
-    void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix,
-                            @NotNull Verbosity verbosity);
-
-    enum Verbosity {
-        SIMPLIFIED, NORMAL, DETAILED;
-    }
-
+    @NotNull C addClass(@NotNull String clazz);
 
 }

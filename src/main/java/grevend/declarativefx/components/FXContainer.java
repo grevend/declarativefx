@@ -47,7 +47,7 @@ import java.util.function.Supplier;
 
 public class FXContainer<P extends Pane> extends ContainerComponent<P>
     implements Fluent<P, FXContainer<P>>, Bindable<P, FXContainer<P>>, Listenable<P, ContainerComponent<P>>,
-    Identifiable<P, ContainerComponent<P>>, Findable<P, ContainerComponent<P>> {
+    Identifiable<P, ContainerComponent<P>>, Findable<P, ContainerComponent<P>>, Styleable<P, ContainerComponent<P>> {
 
     private final Map<String, BindableValue> bindableProperties;
     private final Map<String, ObservableValue<Object>> observableProperties;
@@ -74,6 +74,7 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
 
     @Override
     public @Nullable P construct() {
+        this.pane.getChildren().clear();
         for (Component<? extends Node> component : this.getComponents()) {
             var node = component.construct();
             if (node != null) {
@@ -83,8 +84,35 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
         return this.pane;
     }
 
+    public FXContainer<P> add(Component<? extends Node> component) {
+        this.getComponents().add(component);
+        this.construct();
+        return this;
+    }
+
+    public FXContainer<P> remove(Component<? extends Node> component) {
+        this.getComponents().remove(component);
+        this.construct();
+        return this;
+    }
+
+    @Override
     public @NotNull FXContainer<P> setStyle(@NotNull String style) {
-        this.pane.setStyle(style);
+        if (this.pane != null) {
+            this.pane.setStyle(style);
+        } else {
+            throw new LifecycleException("Hierarchy has not been constructed yet.");
+        }
+        return this;
+    }
+
+    @Override
+    public @NotNull FXContainer<P> addClass(@NotNull String clazz) {
+        if (this.pane != null) {
+            pane.getStyleClass().add(clazz);
+        } else {
+            throw new LifecycleException("Hierarchy has not been constructed yet.");
+        }
         return this;
     }
 
@@ -179,6 +207,12 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
         return this;
     }
 
+    @Override
+    public @NotNull FXContainer<P> self(@NotNull Consumer<FXContainer<P>> consumer) {
+        consumer.accept(this);
+        return this;
+    }
+
     @Nullable
     @Override
     public String getDefaultProperty() {
@@ -260,6 +294,12 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
                 }
             }
         }
+        this.getComponents().forEach(Component::afterConstruction);
+    }
+
+    @Override
+    public void deconstruct() {
+        this.getComponents().forEach(Component::deconstruct);
     }
 
     @Override
@@ -318,6 +358,11 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
     @Override
     public @NotNull String toString() {
         return this.pane.getClass().getTypeName() + (this.getId() != null ? ("#" + this.getId()) : "");
+    }
+
+    @Override
+    public @NotNull String stringify() {
+        return this.toString();
     }
 
 }

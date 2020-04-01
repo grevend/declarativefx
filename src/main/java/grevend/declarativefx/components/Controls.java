@@ -25,9 +25,10 @@
 package grevend.declarativefx.components;
 
 import grevend.declarativefx.util.BindableValue;
+import grevend.declarativefx.util.EventHandler;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 //import javafx.scene.image.Image;
@@ -109,7 +110,8 @@ public class Controls {
     }
 
     @Deprecated
-    public static @NotNull FX<Button> Button(@NotNull String text, @NotNull EventHandler<ActionEvent> handler) {
+    public static @NotNull FX<Button> Button(@NotNull String text,
+                                             @NotNull javafx.event.EventHandler<ActionEvent> handler) {
         var node = new Button(text);
         node.setOnAction(handler);
         return FX(node);
@@ -142,6 +144,15 @@ public class Controls {
     public static @NotNull FX<Button> Button(@NotNull String text,
                                              String img) {
         return Button(text, img, new double[]{-1, -1});
+    }
+  
+    @Deprecated
+    public static @NotNull FX<Button> Button(@NotNull String text, @NotNull EventHandler<ActionEvent> handler) {
+        return Button(text).on(ActionEvent.ACTION, handler);
+    }
+
+    public static @NotNull FX<Label> Label(@NotNull String text) {
+        return FX(new Label(text));
     }
 
 }

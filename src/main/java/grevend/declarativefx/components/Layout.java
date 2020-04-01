@@ -36,6 +36,7 @@ import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.function.Function;
 
 import static grevend.declarativefx.components.Compat.FX;
@@ -80,8 +81,16 @@ public class Layout {
         return FXContainer(new HBox(), components);
     }
 
+    public static @NotNull FXContainer<HBox> HBox(@NotNull Collection<Component<? extends Node>> components) {
+        return FXContainer(new HBox(), components);
+    }
+
     @SafeVarargs
     public static @NotNull FXContainer<VBox> VBox(@NotNull Component<? extends Node>... components) {
+        return FXContainer(new VBox(), components);
+    }
+
+    public static @NotNull FXContainer<VBox> VBox(@NotNull Collection<Component<? extends Node>> components) {
         return FXContainer(new VBox(), components);
     }
 
