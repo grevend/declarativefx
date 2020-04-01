@@ -28,6 +28,7 @@ import grevend.declarativefx.Component;
 import grevend.declarativefx.util.EventHandler;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.scene.Node;
@@ -40,7 +41,15 @@ public interface Listenable<N extends Node, C extends Component<N>> {
 
     @NotNull <E extends Event> C on(@NotNull EventType<E> type, @NotNull EventHandler<E> handler);
 
+    default @NotNull C on(@NotNull EventHandler<ActionEvent> handler) {
+        return this.on(ActionEvent.ACTION, handler);
+    }
+
     @NotNull <E extends Event> C on(@NotNull EventType<E> type, @NotNull javafx.event.EventHandler<E> handler);
+
+    default @NotNull C on(@NotNull javafx.event.EventHandler<ActionEvent> handler) {
+        return this.on(ActionEvent.ACTION, handler);
+    }
 
     @SuppressWarnings("unchecked")
     default @NotNull <T> C on(@NotNull String property, @NotNull Consumer<Object> consumer) {

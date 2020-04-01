@@ -25,8 +25,8 @@
 package grevend.declarativefx.components;
 
 import grevend.declarativefx.util.BindableValue;
+import grevend.declarativefx.util.EventHandler;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -98,15 +98,15 @@ public class Controls {
     }
 
     @Deprecated
-    public static @NotNull FX<Button> Button(@NotNull String text, @NotNull EventHandler<ActionEvent> handler) {
+    public static @NotNull FX<Button> Button(@NotNull String text,
+                                             @NotNull javafx.event.EventHandler<ActionEvent> handler) {
         var node = new Button(text);
         node.setOnAction(handler);
         return FX(node);
     }
 
     @Deprecated
-    public static @NotNull FX<Button> Button(@NotNull String text,
-                                             @NotNull grevend.declarativefx.util.EventHandler<ActionEvent> handler) {
+    public static @NotNull FX<Button> Button(@NotNull String text, @NotNull EventHandler<ActionEvent> handler) {
         return Button(text).on(ActionEvent.ACTION, handler);
     }
 

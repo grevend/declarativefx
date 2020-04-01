@@ -159,6 +159,13 @@ public class FX<N extends Node> extends Component<N>
         return this;
     }
 
+
+    @Override
+    public @NotNull FX<N> self(@NotNull Consumer<FX<N>> consumer) {
+        consumer.accept(this);
+        return this;
+    }
+
     @Override
     public @Nullable String getDefaultProperty() {
         return this.defaultProperty;
@@ -299,6 +306,11 @@ public class FX<N extends Node> extends Component<N>
             return this.node.getClass().getTypeName() + (this.getId() != null ? ("#" + this.getId()) : "");
         }
         return "FX[N]" + (this.getId() != null ? ("#" + this.getId()) : "");
+    }
+
+    @Override
+    public @NotNull String stringify() {
+        return this.toString();
     }
 
 }

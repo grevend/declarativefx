@@ -122,6 +122,11 @@ public class Binding<N extends Node, V, U> extends Component<N>
     }
 
     @Override
+    public @NotNull String stringify() {
+        return this.toString();
+    }
+
+    @Override
     public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix,
                                    @NotNull Verbosity verbosity) {
         super.stringifyHierarchy(builder, prefix, childPrefix, verbosity);

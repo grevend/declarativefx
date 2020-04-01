@@ -115,6 +115,11 @@ public class Root<P extends Parent> extends Component<P> implements Identifiable
     }
 
     @Override
+    public @NotNull String stringify() {
+        return this.toString();
+    }
+
+    @Override
     public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix,
                                    @NotNull Verbosity verbosity) {
         super.stringifyHierarchy(builder, prefix, childPrefix, verbosity);

@@ -192,6 +192,12 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
         return this;
     }
 
+    @Override
+    public @NotNull FXContainer<P> self(@NotNull Consumer<FXContainer<P>> consumer) {
+        consumer.accept(this);
+        return this;
+    }
+
     @Nullable
     @Override
     public String getDefaultProperty() {
@@ -337,6 +343,11 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
     @Override
     public @NotNull String toString() {
         return this.pane.getClass().getTypeName() + (this.getId() != null ? ("#" + this.getId()) : "");
+    }
+
+    @Override
+    public @NotNull String stringify() {
+        return this.toString();
     }
 
 }
