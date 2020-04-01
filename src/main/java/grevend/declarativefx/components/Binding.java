@@ -42,57 +42,55 @@ public class Binding<N extends Node, V, U> extends Component<N>
     implements Identifiable<N, Binding<N, V, U>>, Findable<N, Binding<N, V, U>> {
 
     private final String[] identifiers;
-    private final BindableValue<Object>[] values;
+    private final BindableValue[] values;
 
     private String id;
     private Component<N> child;
 
-    private Function<BindableValue<V>, ? extends Component<N>> functionOne;
-    private BiFunction<BindableValue<V>, BindableValue<U>, ? extends Component<N>> functionTwo;
-    private VarArgsFunction<BindableValue<Object>, ? extends Component<N>> functionVarArgs;
+    private Function<BindableValue, ? extends Component<N>> functionOne;
+    private BiFunction<BindableValue, BindableValue, ? extends Component<N>> functionTwo;
+    private VarArgsFunction<BindableValue, ? extends Component<N>> functionVarArgs;
 
-    @SuppressWarnings("unchecked")
     private Binding(@NotNull String[] identifiers) {
         this.identifiers = identifiers;
         this.values = new BindableValue[this.identifiers.length];
         for (var i = 0; i < this.identifiers.length; i++) {
-            this.values[i] = new BindableValue<>();
+            this.values[i] = new BindableValue();
         }
     }
 
-    public Binding(@NotNull String id, @NotNull Function<BindableValue<V>, ? extends Component<N>> function) {
+    public Binding(@NotNull String id, @NotNull Function<BindableValue, ? extends Component<N>> function) {
         this(new String[]{id});
         this.functionOne = function;
         this.initChild();
     }
 
     public Binding(@NotNull String first, @NotNull String second,
-                   @NotNull BiFunction<BindableValue<V>, BindableValue<U>, ? extends Component<N>> function) {
+                   @NotNull BiFunction<BindableValue, BindableValue, ? extends Component<N>> function) {
         this(new String[]{first, second});
         this.functionTwo = function;
         this.initChild();
     }
 
     public Binding(@NotNull String[] identifiers,
-                   @NotNull VarArgsFunction<BindableValue<Object>, ? extends Component<N>> function) {
+                   @NotNull VarArgsFunction<BindableValue, ? extends Component<N>> function) {
         this(identifiers);
         this.functionVarArgs = function;
         this.initChild();
     }
 
     public Binding(@NotNull Iterable<String> identifiers,
-                   @NotNull VarArgsFunction<BindableValue<Object>, ? extends Component<N>> function) {
+                   @NotNull VarArgsFunction<BindableValue, ? extends Component<N>> function) {
         this(StreamSupport.stream(identifiers.spliterator(), false).toArray(String[]::new));
         this.functionVarArgs = function;
         this.initChild();
     }
 
-    @SuppressWarnings("unchecked")
     private void initChild() {
         if (identifiers.length == 1) {
-            this.child = this.functionOne.apply((BindableValue<V>) this.values[0]);
+            this.child = this.functionOne.apply((BindableValue) this.values[0]);
         } else if (identifiers.length == 2) {
-            this.child = this.functionTwo.apply((BindableValue<V>) this.values[0], (BindableValue<U>) this.values[1]);
+            this.child = this.functionTwo.apply((BindableValue) this.values[0], (BindableValue) this.values[1]);
         } else if (identifiers.length > 2) {
             this.child = this.functionVarArgs.apply(this.values);
         }
@@ -117,6 +115,18 @@ public class Binding<N extends Node, V, U> extends Component<N>
     }
 
     @Override
+    public void deconstruct() {
+        if (this.child != null) {
+            this.child.deconstruct();
+        }
+    }
+
+    @Override
+    public @NotNull String stringify() {
+        return this.toString();
+    }
+
+    @Override
     public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix,
                                    @NotNull Verbosity verbosity) {
         super.stringifyHierarchy(builder, prefix, childPrefix, verbosity);
@@ -133,7 +143,7 @@ public class Binding<N extends Node, V, U> extends Component<N>
     }
 
     @Override
-    public Binding<N, V, U> setId(@NotNull String id) {
+    public @NotNull Binding<N, V, U> setId(@NotNull String id) {
         this.id = id;
         return this;
     }

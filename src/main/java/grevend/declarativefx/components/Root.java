@@ -41,7 +41,7 @@ import java.util.Map;
 
 public class Root<P extends Parent> extends Component<P> implements Identifiable<P, Root<P>>, Findable<P, Root<P>> {
 
-    private final Map<String, BindableValue<?>> providers;
+    private final Map<String, BindableValue> providers;
     private final Component<P> component;
     private Stage stage;
     private String id;
@@ -68,7 +68,7 @@ public class Root<P extends Parent> extends Component<P> implements Identifiable
         throw new IllegalStateException();
     }
 
-    public @NotNull Map<String, BindableValue<?>> getProviders() {
+    public @NotNull Map<String, BindableValue> getProviders() {
         return providers;
     }
 
@@ -108,6 +108,18 @@ public class Root<P extends Parent> extends Component<P> implements Identifiable
     }
 
     @Override
+    public void deconstruct() {
+        if (this.child == null) {
+            this.component.deconstruct();
+        }
+    }
+
+    @Override
+    public @NotNull String stringify() {
+        return this.toString();
+    }
+
+    @Override
     public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix,
                                    @NotNull Verbosity verbosity) {
         super.stringifyHierarchy(builder, prefix, childPrefix, verbosity);
@@ -137,7 +149,7 @@ public class Root<P extends Parent> extends Component<P> implements Identifiable
     }
 
     @Override
-    public Root<P> setId(@NotNull String id) {
+    public @NotNull Root<P> setId(@NotNull String id) {
         this.id = id;
         return this;
     }
@@ -155,6 +167,15 @@ public class Root<P extends Parent> extends Component<P> implements Identifiable
 
     public @Nullable Scene getScene() {
         return scene;
+    }
+
+    public Root<P> addStylesheet(@NotNull String stylesheet) {
+        if (this.getScene() != null) {
+            this.getScene().getStylesheets().add(getClass().getResource(stylesheet).toExternalForm());
+        } else {
+            throw new LifecycleException("Scene has not been constructed yet.");
+        }
+        return this;
     }
 
 }

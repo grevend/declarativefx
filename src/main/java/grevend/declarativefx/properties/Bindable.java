@@ -27,9 +27,15 @@ package grevend.declarativefx.properties;
 import grevend.declarativefx.Component;
 import grevend.declarativefx.util.BindException;
 import grevend.declarativefx.util.BindableValue;
+import grevend.declarativefx.util.Triplet;
 import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface Bindable<N extends Node, C extends Component<N>> {
 
@@ -37,16 +43,76 @@ public interface Bindable<N extends Node, C extends Component<N>> {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    default <V> C bind(@NotNull BindableValue<V> bindableValue) {
+    @NotNull C setDefaultProperty(@NotNull String property);
+
+    default @NotNull C bind(@NotNull BindableValue bindableValue) {
         if (this.getDefaultProperty() != null) {
-            this.bind(this.getDefaultProperty(), bindableValue);
+            return this.bind(this.getDefaultProperty(), bindableValue);
+        } else {
+            throw new BindException(this.toString() + " does not provide a default property.");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    default @NotNull C bind(@NotNull String property, @NotNull BindableValue bindableValue) {
+        this.getLateBindings().add(new Triplet<>(property, bindableValue, null));
+        return (C) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    default @NotNull C bind(@NotNull String property, @NotNull String id) {
+        this.getLateBindings().add(new Triplet<>(property, id, null));
+        return (C) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    default @NotNull C bind(@NotNull String id) {
+        if (this.getDefaultProperty() != null) {
+            this.bind(this.getDefaultProperty(), id);
         } else {
             throw new BindException(this.toString() + " does not provide a default property.");
         }
         return (C) this;
     }
 
-    <V> C bind(@NotNull String property, @NotNull BindableValue<V> bindableValue);
+    default @NotNull C compute(@NotNull BindableValue dependency,
+                               @NotNull Function<BindableValue, Object> function) {
+        if (this.getDefaultProperty() != null) {
+            return this.compute(this.getDefaultProperty(), dependency, function);
+        } else {
+            throw new BindException(this.toString() + " does not provide a default property.");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    default @NotNull C compute(@NotNull String property, @NotNull BindableValue dependency,
+                               @NotNull Function<BindableValue, Object> function) {
+        this.getLateBindings().add(new Triplet<>(property, dependency, function));
+        return (C) this;
+    }
+
+    default @NotNull C compute(@NotNull BindableValue dependency,
+                               @NotNull Supplier<Object> supplier) {
+        if (this.getDefaultProperty() != null) {
+            return this.compute(this.getDefaultProperty(), dependency, supplier);
+        } else {
+            throw new BindException(this.toString() + " does not provide a default property.");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    default @NotNull C compute(@NotNull String property, @NotNull BindableValue dependency,
+                               @NotNull Supplier<Object> supplier) {
+        this.getLateBindings().add(new Triplet<>(property, dependency, supplier));
+        return (C) this;
+    }
+
+    @NotNull Map<String, BindableValue> getBindableValues();
+
+    @NotNull Collection<Triplet<String, Object, Object>> getLateBindings();
+
+    @Nullable BindableValue getBinding(@NotNull String id);
+
+    @Nullable BindableValue getPropertyBinding(@NotNull String property);
 
 }

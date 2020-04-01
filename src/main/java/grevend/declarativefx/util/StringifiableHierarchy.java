@@ -28,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 
 public interface StringifiableHierarchy {
 
+    @NotNull String stringify();
+
     default @NotNull String stringifyHierarchy() {
         return stringifyHierarchy(Verbosity.NORMAL);
     }

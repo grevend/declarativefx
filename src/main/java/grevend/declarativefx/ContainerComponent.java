@@ -24,24 +24,31 @@
 
 package grevend.declarativefx;
 
+import grevend.declarativefx.components.FX;
 import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public abstract class ContainerComponent<N extends Node> extends Component<N> {
 
-    private final Component<? extends Node>[] components;
+    private final Collection<Component<? extends Node>> components;
 
-    public ContainerComponent(@NotNull Component<? extends Node>[] components) {
+    public ContainerComponent(@NotNull Collection<Component<? extends Node>> components) {
         this.components = components;
         for (Component<? extends Node> component : components) {
             component.setParent(this);
         }
     }
 
-    public @NotNull Component<? extends Node>[] getComponents() {
+    public @NotNull Collection<Component<? extends Node>> getComponents() {
         return components;
+    }
+
+    public @NotNull Collection<Node> getNodes() {
+        return this.getComponents().stream().filter(component -> component instanceof FX)
+            .map(component -> ((FX<?>) component).getNode()).collect(Collectors.toList());
     }
 
     @Override
@@ -62,7 +69,7 @@ public abstract class ContainerComponent<N extends Node> extends Component<N> {
     public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix,
                                    @NotNull Verbosity verbosity) {
         super.stringifyHierarchy(builder, prefix, childPrefix, verbosity);
-        for (var componentIter = Arrays.stream(this.getComponents()).iterator(); componentIter.hasNext(); ) {
+        for (var componentIter = this.getComponents().iterator(); componentIter.hasNext(); ) {
             var nextComponent = componentIter.next();
             var hasNextComponent = componentIter.hasNext();
             nextComponent.stringifyHierarchy(builder, childPrefix + (hasNextComponent ? "├── " : "└── "),

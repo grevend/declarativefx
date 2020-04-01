@@ -25,22 +25,48 @@
 package grevend.declarativefx.properties;
 
 import grevend.declarativefx.Component;
+import grevend.declarativefx.util.EventHandler;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
 public interface Listenable<N extends Node, C extends Component<N>> {
 
-    <E extends Event> C on(@NotNull EventType<E> type, @NotNull grevend.declarativefx.util.EventHandler<E> handler);
+    @NotNull <E extends Event> C on(@NotNull EventType<E> type, @NotNull EventHandler<E> handler);
 
-    <E extends Event> C on(@NotNull EventType<E> type, @NotNull EventHandler<E> handler);
+    default @NotNull C on(@NotNull EventHandler<ActionEvent> handler) {
+        return this.on(ActionEvent.ACTION, handler);
+    }
 
-    <T> C on(@NotNull String property, @NotNull ChangeListener<T> listener);
+    @NotNull <E extends Event> C on(@NotNull EventType<E> type, @NotNull javafx.event.EventHandler<E> handler);
 
-    C on(@NotNull String property, @NotNull InvalidationListener listener);
+    default @NotNull C on(@NotNull javafx.event.EventHandler<ActionEvent> handler) {
+        return this.on(ActionEvent.ACTION, handler);
+    }
+
+    @SuppressWarnings("unchecked")
+    default @NotNull <T> C on(@NotNull String property, @NotNull Consumer<Object> consumer) {
+        this.on(property, (observable, oldValue, newValue) -> consumer.accept(newValue));
+        return (C) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    default @NotNull <T> C on(@NotNull String property,
+                              @NotNull BiConsumer<Component<? extends Node>, Object> consumer) {
+        this.on(property,
+            (observable, oldValue, newValue) -> consumer.accept((Component<? extends Node>) this, newValue));
+        return (C) this;
+    }
+
+    @NotNull <T> C on(@NotNull String property, @NotNull ChangeListener<T> listener);
+
+    @NotNull C on(@NotNull String property, @NotNull InvalidationListener listener);
 
 }
