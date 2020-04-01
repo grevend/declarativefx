@@ -49,7 +49,7 @@ import java.util.stream.StreamSupport;
 
 public class FXContainer<P extends Pane> extends ContainerComponent<P>
     implements Fluent<P, FXContainer<P>>, Bindable<P, FXContainer<P>>, Listenable<P, ContainerComponent<P>>,
-    Identifiable<P, ContainerComponent<P>>, Findable<P, ContainerComponent<P>> {
+    Identifiable<P, ContainerComponent<P>>, Findable<P, ContainerComponent<P>>, Styleable<P, ContainerComponent<P>> {
 
     private final Map<String, ObservableValue<?>> properties;
     private P pane;
@@ -78,8 +78,23 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
         return this.pane;
     }
 
+    @Override
     public @NotNull FXContainer<P> setStyle(@NotNull String style) {
-        this.pane.setStyle(style);
+        if (this.pane != null) {
+            this.pane.setStyle(style);
+        } else {
+            throw new LifecycleException("Hierarchy has not been constructed yet.");
+        }
+        return this;
+    }
+
+    @Override
+    public @NotNull FXContainer<P> addClass(@NotNull String clazz) {
+        if (this.pane != null) {
+            pane.getStyleClass().add(clazz);
+        } else {
+            throw new LifecycleException("Hierarchy has not been constructed yet.");
+        }
         return this;
     }
 
