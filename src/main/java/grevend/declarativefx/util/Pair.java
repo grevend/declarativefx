@@ -22,33 +22,50 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx;
+package grevend.declarativefx.util;
 
-import grevend.declarativefx.components.Root;
-import grevend.declarativefx.properties.Lifecycle;
-import grevend.declarativefx.util.StringifiableHierarchy;
-import javafx.scene.Node;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface BaseComponent<N extends Node> extends Lifecycle<N>, StringifiableHierarchy {
+import java.util.Objects;
 
-    @Nullable Component<? extends Node> getParent();
+public class Pair<A, B> {
 
-    void setParent(@NotNull Component<? extends Node> parent);
+    private final A a;
+    private final B b;
 
-    default @NotNull Root<?> getRoot() {
-        if (this.getParent() == null) {
-            throw new IllegalStateException(
-                "Component '" + this.toString() + "' should be Root or is missing a parent component.");
-        }
-        return this.getParent().getRoot();
+    public Pair(@Nullable A a, @Nullable B b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    public @Nullable A getA() {
+        return a;
+    }
+
+    public @Nullable B getB() {
+        return b;
     }
 
     @Override
-    default void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix,
-                                    @NotNull Verbosity verbosity) {
-        builder.append(prefix).append(this.toString()).append(System.lineSeparator());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pair<?, ?> pair = (Pair<?, ?>) o;
+        return Objects.equals(getA(), pair.getA()) &&
+            Objects.equals(getB(), pair.getB());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getA(), getB());
+    }
+
+    @Override
+    public String toString() {
+        return "Pair{" +
+            "a=" + a +
+            ", b=" + b +
+            '}';
     }
 
 }

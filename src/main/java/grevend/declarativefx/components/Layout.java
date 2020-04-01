@@ -36,8 +36,6 @@ import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.function.Function;
 
 import static grevend.declarativefx.components.Compat.FX;
@@ -45,13 +43,24 @@ import static grevend.declarativefx.components.Compat.FXContainer;
 
 public class Layout {
 
-    public static @NotNull FX<javafx.scene.text.Text> Text(@NotNull String text) {
-        return new FX<>(new javafx.scene.text.Text(text));
+    public static @NotNull FX<javafx.scene.text.Text> Text() {
+        return Text("");
     }
 
-    public static @NotNull <V> FX<javafx.scene.text.Text> Text(@NotNull BindableValue<V> bindableValue) {
+    public static @NotNull FX<javafx.scene.text.Text> Text(@NotNull String text) {
+        return new FX<>(new javafx.scene.text.Text(text), "text").bind(new BindableValue(text));
+    }
+
+    public static @NotNull FX<javafx.scene.text.Text> Text(@NotNull BindableValue bindableValue) {
         return Text(bindableValue,
             (value) -> value == null ? "" : (value instanceof String ? (String) value : value.toString()));
+    }
+
+    public static @NotNull FX<javafx.scene.text.Text> Text(@NotNull BindableValue bindableValue,
+                                                           @NotNull Function<Object, String> function) {
+        var node = new javafx.scene.text.Text();
+        bindableValue.subscribe(value -> node.setText(function.apply(value)));
+        return FX(node, "text").bind(bindableValue);
     }
 
     public static @NotNull FX<ImageView> Image(@NotNull Image image) {
@@ -59,19 +68,7 @@ public class Layout {
     }
 
     public static @NotNull FX<ImageView> Image(@NotNull String image) {
-        try {
-            return new FX<>(new ImageView(new Image(new FileInputStream(image))));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return FX(null);
-    }
-
-    public static @NotNull <V> FX<javafx.scene.text.Text> Text(@NotNull BindableValue<V> bindableValue,
-                                                               @NotNull Function<V, String> function) {
-        var node = new javafx.scene.text.Text();
-        bindableValue.subscribe(value -> node.setText(function.apply(value)));
-        return FX(node);
+        return FX(new ImageView(new Image(image)));
     }
 
     @SafeVarargs

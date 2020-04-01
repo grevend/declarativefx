@@ -33,6 +33,7 @@ import javafx.scene.layout.Pane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -42,23 +43,30 @@ public class Compat {
         return new Root<>(component);
     }
 
-    public static @NotNull <N extends Node, V> Component<N> Binding(@NotNull String id,
-                                                                    @NotNull Function<BindableValue<V>, ? extends Component<N>> function) {
+    @Deprecated
+    public static @NotNull <N extends Node> Component<N> Binding(@NotNull String id,
+                                                                 @NotNull Function<BindableValue, ? extends Component<N>> function) {
         return new Binding<>(id, function);
     }
 
-    public static @NotNull <N extends Node, V, U> Component<N> Binding(@NotNull String first, @NotNull String second,
-                                                                       @NotNull BiFunction<BindableValue<V>, BindableValue<U>, ? extends Component<N>> function) {
+    @Deprecated
+    public static @NotNull <N extends Node> Component<N> Binding(@NotNull String first, @NotNull String second,
+                                                                 @NotNull BiFunction<BindableValue, BindableValue, ? extends Component<N>> function) {
         return new Binding<>(first, second, function);
     }
 
+    @Deprecated
     public static @NotNull <N extends Node> Component<N> Binding(@NotNull String[] identifiers,
-                                                                 @NotNull VarArgsFunction<BindableValue<Object>, ? extends Component<N>> function) {
+                                                                 @NotNull VarArgsFunction<BindableValue, ? extends Component<N>> function) {
         return new Binding<>(identifiers, function);
     }
 
     public static @NotNull <N extends Node> FX<N> FX(@Nullable N node) {
         return new FX<>(node);
+    }
+
+    public static @NotNull <N extends Node> FX<N> FX(@Nullable N node, @NotNull String property) {
+        return new FX<>(node, property);
     }
 
     @SafeVarargs
@@ -68,7 +76,7 @@ public class Compat {
     }
 
     public static @NotNull <P extends Pane> FXContainer<P> FXContainer(@NotNull P pane,
-                                                                       @NotNull Iterable<Component<? extends Node>> components) {
+                                                                       @NotNull Collection<Component<? extends Node>> components) {
         return new FXContainer<>(pane, components);
     }
 

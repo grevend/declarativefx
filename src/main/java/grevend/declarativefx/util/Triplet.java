@@ -22,33 +22,59 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx;
+package grevend.declarativefx.util;
 
-import grevend.declarativefx.components.Root;
-import grevend.declarativefx.properties.Lifecycle;
-import grevend.declarativefx.util.StringifiableHierarchy;
-import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface BaseComponent<N extends Node> extends Lifecycle<N>, StringifiableHierarchy {
+import java.util.Objects;
 
-    @Nullable Component<? extends Node> getParent();
+public class Triplet<A, B, C> {
 
-    void setParent(@NotNull Component<? extends Node> parent);
+    private final A a;
+    private final B b;
+    private final C c;
 
-    default @NotNull Root<?> getRoot() {
-        if (this.getParent() == null) {
-            throw new IllegalStateException(
-                "Component '" + this.toString() + "' should be Root or is missing a parent component.");
-        }
-        return this.getParent().getRoot();
+    public Triplet(@Nullable A a, @NotNull B b, @Nullable C c) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+    }
+
+    public A getA() {
+        return a;
+    }
+
+    public B getB() {
+        return b;
+    }
+
+    public C getC() {
+        return c;
     }
 
     @Override
-    default void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix,
-                                    @NotNull Verbosity verbosity) {
-        builder.append(prefix).append(this.toString()).append(System.lineSeparator());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Triplet<?, ?, ?> triplet = (Triplet<?, ?, ?>) o;
+        return Objects.equals(getA(), triplet.getA()) &&
+            Objects.equals(getB(), triplet.getB()) &&
+            Objects.equals(getC(), triplet.getC());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getA(), getB(), getC());
+    }
+
+    @Override
+    public String toString() {
+        return "Triplet{" +
+            "a=" + a +
+            ", b=" + b +
+            ", c=" + c +
+            '}';
     }
 
 }
