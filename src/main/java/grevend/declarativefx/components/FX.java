@@ -44,7 +44,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class FX<N extends Node> extends Component<N>
-    implements Fluent<N, FX<N>>, Bindable<N, FX<N>>, Listenable<N, FX<N>>, Identifiable<N, FX<N>>, Findable<N, FX<N>> {
+    implements Fluent<N, FX<N>>, Bindable<N, FX<N>>, Listenable<N, FX<N>>, Identifiable<N, FX<N>>, Findable<N, FX<N>>,
+    Styleable<N, FX<N>> {
 
     private final N node;
     private final Map<String, BindableValue> bindableProperties;
@@ -102,9 +103,20 @@ public class FX<N extends Node> extends Component<N>
         }
     }
 
+    @Override
     public @NotNull FX<N> setStyle(@NotNull String style) {
         if (this.node != null) {
             node.setStyle(style);
+        } else {
+            throw new LifecycleException("Hierarchy has not been constructed yet.");
+        }
+        return this;
+    }
+
+    @Override
+    public @NotNull FX<N> addClass(@NotNull String clazz) {
+        if (this.node != null) {
+            node.getStyleClass().add(clazz);
         } else {
             throw new LifecycleException("Hierarchy has not been constructed yet.");
         }
