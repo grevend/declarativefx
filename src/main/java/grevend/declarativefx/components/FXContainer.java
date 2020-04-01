@@ -84,15 +84,17 @@ public class FXContainer<P extends Pane> extends ContainerComponent<P>
         return this.pane;
     }
 
-    public FXContainer<P> add(Component<? extends Node> component) {
+    public FXContainer<P> add(@NotNull Component<? extends Node> component) {
+        component.beforeConstruction();
         this.getComponents().add(component);
-        this.construct();
+        component.construct();
+        component.afterConstruction();
         return this;
     }
 
-    public FXContainer<P> remove(Component<? extends Node> component) {
+    public FXContainer<P> remove(@NotNull Component<? extends Node> component) {
         this.getComponents().remove(component);
-        this.construct();
+        component.deconstruct();
         return this;
     }
 
