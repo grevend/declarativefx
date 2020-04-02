@@ -9,8 +9,5 @@
         <module name="DeclarativeFX" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="DeclarativeFX" target="11" />
-    </bytecodeTargetLevel>
   </component>
 </project>

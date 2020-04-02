@@ -169,9 +169,9 @@ public class Root<P extends Parent> extends Component<P> implements Identifiable
         return scene;
     }
 
-    public Root<P> addStylesheet(@NotNull String stylesheet) {
+    public Root<P> addStylesheet(@NotNull String stylesheet, @NotNull Class<?> clazz) {
         if (this.getScene() != null) {
-            this.getScene().getStylesheets().add(getClass().getResource(stylesheet).toExternalForm());
+            this.getScene().getStylesheets().add(clazz.getResource(stylesheet).toExternalForm());
         } else {
             throw new LifecycleException("Scene has not been constructed yet.");
         }
