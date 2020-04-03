@@ -28,10 +28,18 @@ import grevend.declarativefx.Component;
 import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
 
-public interface Styleable<N extends Node, C extends Component<N>> {
+import java.util.Collection;
 
-    @NotNull C setStyle(@NotNull String style);
+public interface Styleable<N extends Node> {
 
-    @NotNull C addClass(@NotNull String clazz);
+    @NotNull String getStyle();
+
+    @NotNull Component<N> setStyle(@NotNull String style);
+
+    @NotNull Component<N> addClass(@NotNull String clazz);
+
+    @NotNull Component<N> removeClass(@NotNull String clazz);
+
+    @NotNull Collection<String> getClasses();
 
 }

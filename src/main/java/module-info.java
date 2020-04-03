@@ -5,6 +5,7 @@ module DeclarativeFX {
 
     exports grevend.declarativefx;
     exports grevend.declarativefx.components;
-    exports grevend.declarativefx.properties;
     exports grevend.declarativefx.util;
+
+    exports grevend.declarativefx.example to javafx.graphics;
 }
