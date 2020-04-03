@@ -25,8 +25,6 @@
 package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
-import grevend.declarativefx.properties.Findable;
-import grevend.declarativefx.properties.Identifiable;
 import grevend.declarativefx.util.BindableValue;
 import grevend.declarativefx.util.LifecycleException;
 import javafx.scene.Node;
@@ -36,26 +34,19 @@ import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Root<P extends Parent> extends Component<P> implements Identifiable<P, Root<P>>, Findable<P, Root<P>> {
+public class Root<P extends Parent> extends Component<P> {
 
     private final Map<String, BindableValue> providers;
-    private final Component<P> component;
     private Stage stage;
-    private String id;
-    private P child;
     private Scene scene;
 
     public Root(@NotNull Component<P> component) {
+        super(component);
         this.providers = new HashMap<>();
-        this.component = component;
-        this.component.setParent(this);
-    }
-
-    public @Nullable P getNode() {
-        return this.child;
     }
 
     @Override
@@ -77,44 +68,7 @@ public class Root<P extends Parent> extends Component<P> implements Identifiable
         return this;
     }
 
-    public @Nullable Stage getStage() {
-        return this.stage;
-    }
-
-    public @NotNull Root<P> setStyle(String style) {
-        if (this.child != null) {
-            this.child.setStyle(style);
-        }
-        return this;
-    }
-
-    @Override
-    public void beforeConstruction() {
-        this.component.beforeConstruction();
-    }
-
-    @Override
-    public @Nullable P construct() {
-        if (this.child == null) {
-            return (this.child = this.component.construct());
-        } else {
-            return this.child;
-        }
-    }
-
-    @Override
-    public void afterConstruction() {
-        this.component.afterConstruction();
-    }
-
-    @Override
-    public void deconstruct() {
-        if (this.child == null) {
-            this.component.deconstruct();
-        }
-    }
-
-    @Override
+    /*@Override
     public @NotNull String stringify() {
         return this.toString();
     }
@@ -128,7 +82,7 @@ public class Root<P extends Parent> extends Component<P> implements Identifiable
         } else {
             throw new LifecycleException("Hierarchy has not been constructed yet.");
         }
-    }
+    }*/
 
     public void launch(@NotNull Stage stage) {
         this.stage = stage;
@@ -143,26 +97,8 @@ public class Root<P extends Parent> extends Component<P> implements Identifiable
         }
     }
 
-    @Override
-    public @Nullable String getId() {
-        return this.id;
-    }
-
-    @Override
-    public @NotNull Root<P> setId(@NotNull String id) {
-        this.id = id;
-        return this;
-    }
-
-    @Override
-    public @Nullable Component<? extends Node> find(@NotNull String id, boolean root) {
-        if (this.getId() != null && this.getId().equals(id)) {
-            return this;
-        } else if (this.component instanceof Findable) {
-            return ((Findable<?, ?>) this.component).find(id, false);
-        } else {
-            return null;
-        }
+    public @Nullable Stage getStage() {
+        return this.stage;
     }
 
     public @Nullable Scene getScene() {
@@ -176,6 +112,23 @@ public class Root<P extends Parent> extends Component<P> implements Identifiable
             throw new LifecycleException("Scene has not been constructed yet.");
         }
         return this;
+    }
+
+    public Root<P> removeStylesheet(@NotNull String stylesheet, @NotNull Class<?> clazz) {
+        if (this.getScene() != null) {
+            this.getScene().getStylesheets().remove(clazz.getResource(stylesheet).toExternalForm());
+        } else {
+            throw new LifecycleException("Scene has not been constructed yet.");
+        }
+        return this;
+    }
+
+    public Collection<String> getStylesheets() {
+        if (this.getScene() != null) {
+            return this.getScene().getStylesheets();
+        } else {
+            throw new LifecycleException("Scene has not been constructed yet.");
+        }
     }
 
 }

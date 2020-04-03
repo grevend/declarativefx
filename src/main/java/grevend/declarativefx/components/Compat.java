@@ -25,17 +25,12 @@
 package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
-import grevend.declarativefx.util.BindableValue;
-import grevend.declarativefx.util.VarArgsFunction;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.layout.Pane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class Compat {
 
@@ -43,41 +38,19 @@ public class Compat {
         return new Root<>(component);
     }
 
-    @Deprecated
-    public static @NotNull <N extends Node> Component<N> Binding(@NotNull String id,
-                                                                 @NotNull Function<BindableValue, ? extends Component<N>> function) {
-        return new Binding<>(id, function);
-    }
-
-    @Deprecated
-    public static @NotNull <N extends Node> Component<N> Binding(@NotNull String first, @NotNull String second,
-                                                                 @NotNull BiFunction<BindableValue, BindableValue, ? extends Component<N>> function) {
-        return new Binding<>(first, second, function);
-    }
-
-    @Deprecated
-    public static @NotNull <N extends Node> Component<N> Binding(@NotNull String[] identifiers,
-                                                                 @NotNull VarArgsFunction<BindableValue, ? extends Component<N>> function) {
-        return new Binding<>(identifiers, function);
-    }
-
-    public static @NotNull <N extends Node> FX<N> FX(@Nullable N node) {
-        return new FX<>(node);
-    }
-
-    public static @NotNull <N extends Node> FX<N> FX(@Nullable N node, @NotNull String property) {
-        return new FX<>(node, property);
+    public static @NotNull <N extends Node> Component<N> FX(@Nullable N node) {
+        return new Component<>(node);
     }
 
     @SafeVarargs
-    public static @NotNull <P extends Pane> FXContainer<P> FXContainer(@NotNull P pane,
-                                                                       @NotNull Component<? extends Node>... components) {
-        return new FXContainer<>(pane, components);
+    public static @NotNull <N extends Node> Component<N> FX(@NotNull N node,
+                                                            @NotNull Component<? extends Node>... components) {
+        return new Component<>(node, components);
     }
 
-    public static @NotNull <P extends Pane> FXContainer<P> FXContainer(@NotNull P pane,
-                                                                       @NotNull Collection<Component<? extends Node>> components) {
-        return new FXContainer<>(pane, components);
+    public static @NotNull <N extends Node> Component<N> FX(@NotNull N node,
+                                                            @NotNull Collection<Component<? extends Node>> components) {
+        return new Component<>(node, components);
     }
 
 }

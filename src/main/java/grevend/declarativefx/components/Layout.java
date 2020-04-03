@@ -38,6 +38,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,62 +50,61 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static grevend.declarativefx.components.Compat.FX;
-import static grevend.declarativefx.components.Compat.FXContainer;
 
 public class Layout {
 
-    public static @NotNull FX<javafx.scene.text.Text> Text() {
+    public static @NotNull Component<Text> Text() {
         return Text("");
     }
 
-    public static @NotNull FX<javafx.scene.text.Text> Text(@NotNull String text) {
-        return new FX<>(new javafx.scene.text.Text(text), "text").bind(new BindableValue(text));
+    public static @NotNull Component<Text> Text(@NotNull String text) {
+        return FX(new Text(text)).setDefaultProperty("text").bind(new BindableValue(text));
     }
 
-    public static @NotNull FX<javafx.scene.text.Text> Text(@NotNull BindableValue bindableValue) {
+    public static @NotNull Component<Text> Text(@NotNull BindableValue bindableValue) {
         return Text(bindableValue,
             (value) -> value == null ? "" : (value instanceof String ? (String) value : value.toString()));
     }
 
-    public static @NotNull FX<javafx.scene.text.Text> Text(@NotNull BindableValue bindableValue,
-                                                           @NotNull Function<Object, String> function) {
-        var node = new javafx.scene.text.Text();
+    public static @NotNull Component<Text> Text(@NotNull BindableValue bindableValue,
+                                                @NotNull Function<Object, String> function) {
+        var node = new Text();
         bindableValue.subscribe(value -> node.setText(function.apply(value)));
-        return FX(node, "text").bind(bindableValue);
+        return FX(node).setDefaultProperty("text").bind(bindableValue);
     }
 
-    public static @NotNull FX<ImageView> Image(@NotNull Image image) {
+    public static @NotNull Component<ImageView> Image(@NotNull Image image) {
         return FX(new ImageView(image));
     }
 
-    public static @NotNull FX<ImageView> Image(@NotNull String image) {
+    public static @NotNull Component<ImageView> Image(@NotNull String image) {
         return FX(new ImageView(new Image(image)));
     }
 
-    public static @NotNull FX<ImageView> Image(@NotNull String image, @NotNull double[] imgSize) {
+    public static @NotNull Component<ImageView> Image(@NotNull String image, @NotNull double[] imgSize) {
         return FX(new ImageView(new Image(image, imgSize[0], imgSize[1], true, true)));
     }
 
     @SafeVarargs
-    public static @NotNull FXContainer<HBox> HBox(@NotNull Component<? extends Node>... components) {
-        return FXContainer(new HBox(), components);
+    public static @NotNull Component<HBox> HBox(@NotNull Component<? extends Node>... components) {
+        return FX(new HBox(), components);
     }
 
-    public static @NotNull FXContainer<HBox> HBox(@NotNull Collection<Component<? extends Node>> components) {
-        return FXContainer(new HBox(), components);
-    }
-
-    @SafeVarargs
-    public static @NotNull FXContainer<VBox> VBox(@NotNull Component<? extends Node>... components) {
-        return FXContainer(new VBox(), components);
-    }
-
-    public static @NotNull FXContainer<VBox> VBox(@NotNull Collection<Component<? extends Node>> components) {
-        return FXContainer(new VBox(), components);
+    public static @NotNull Component<HBox> HBox(@NotNull Collection<Component<? extends Node>> components) {
+        return FX(new HBox(), components);
     }
 
     @SafeVarargs
-    public static @NotNull <N extends Node> FX<ListView<N>> ListView(@NotNull Component<N>... components) {
+    public static @NotNull Component<VBox> VBox(@NotNull Component<? extends Node>... components) {
+        return FX(new VBox(), components);
+    }
+
+    public static @NotNull Component<VBox> VBox(@NotNull Collection<Component<? extends Node>> components) {
+        return FX(new VBox(), components);
+    }
+
+    @SafeVarargs
+    public static @NotNull <N extends Node> Component<ListView<N>> ListView(@NotNull Component<N>... components) {
         var listView = new ListView<N>();
         for (Component<N> component : components) {
             listView.getItems().add(component.construct());
@@ -112,41 +112,41 @@ public class Layout {
         return FX(listView);
     }
 
-    public static @NotNull <N extends Node> FX<ListView<N>> ListView(@NotNull Collection<Component<N>> components) {
+    public static @NotNull <N extends Node> Component<ListView<N>> ListView(
+        @NotNull Collection<Component<N>> components) {
         var listView = new ListView<N>();
         listView.getItems().addAll(components.stream().map(Lifecycle::construct).collect(Collectors.toList()));
         return FX(listView);
     }
 
-    public static @NotNull FX<ScrollPane> ScrollPane(@NotNull Component<? extends Node> component) {
-        return new FX<>(new ScrollPane(component.construct()));
+    public static @NotNull Component<ScrollPane> ScrollPane(@NotNull Component<? extends Node> component) {
+        return FX(new ScrollPane(component.construct()));
     }
 
-    public static @NotNull FX<BorderPane> BorderPane(@NotNull Component<? extends Node> centerComponent) {
-        return new FX<>(new BorderPane(centerComponent.construct()));
+    public static @NotNull Component<BorderPane> BorderPane(@NotNull Component<? extends Node> centerComponent) {
+        return FX(new BorderPane(centerComponent.construct()));
     }
 
-    public static @NotNull FX<BorderPane> BorderPane(@NotNull Component<? extends Node> centerComponent,
-                                                     @NotNull Component<? extends Node> rightComponent,
-                                                     @NotNull Component<? extends Node> leftComponent) {
-        return new FX<>(new BorderPane(centerComponent.construct(), null, rightComponent.construct(), null,
+    public static @NotNull Component<BorderPane> BorderPane(@NotNull Component<? extends Node> centerComponent,
+                                                            @NotNull Component<? extends Node> rightComponent,
+                                                            @NotNull Component<? extends Node> leftComponent) {
+        return FX(new BorderPane(centerComponent.construct(), null, rightComponent.construct(), null,
             leftComponent.construct()));
     }
 
-    public static @NotNull FX<BorderPane> BorderPane(@Nullable Component<? extends Node> centerComponent,
-                                                     @Nullable Component<? extends Node> topComponent,
-                                                     @Nullable Component<? extends Node> rightComponent,
-                                                     @Nullable Component<? extends Node> bottomComponent,
-                                                     @Nullable Component<? extends Node> leftComponent) {
-        return new FX<>(
-            new BorderPane(centerComponent != null ? centerComponent.construct() : null,
-                topComponent != null ? topComponent.construct() : null,
-                rightComponent != null ? rightComponent.construct() : null,
-                bottomComponent != null ? bottomComponent.construct() : null,
-                leftComponent != null ? leftComponent.construct() : null));
+    public static @NotNull Component<BorderPane> BorderPane(@Nullable Component<? extends Node> centerComponent,
+                                                            @Nullable Component<? extends Node> topComponent,
+                                                            @Nullable Component<? extends Node> rightComponent,
+                                                            @Nullable Component<? extends Node> bottomComponent,
+                                                            @Nullable Component<? extends Node> leftComponent) {
+        return FX(new BorderPane(centerComponent != null ? centerComponent.construct() : null,
+            topComponent != null ? topComponent.construct() : null,
+            rightComponent != null ? rightComponent.construct() : null,
+            bottomComponent != null ? bottomComponent.construct() : null,
+            leftComponent != null ? leftComponent.construct() : null));
     }
 
-    public static @NotNull FX<GridPane> GridPane(@NotNull Consumer<GridBuilder> builder) {
+    public static @NotNull Component<GridPane> GridPane(@NotNull Consumer<GridBuilder> builder) {
         var gridPane = new GridPane();
         var gridBuilder = new GridBuilder();
         builder.accept(gridBuilder);
@@ -156,8 +156,8 @@ public class Layout {
         return FX(gridPane);
     }
 
-    public static @NotNull <C extends Node> FX<GridPane> GridPane(@NotNull Collection<Component<C>> components,
-                                                                  @NotNull BiConsumer<Collection<Component<C>>, GridBuilder> builder) {
+    public static @NotNull <C extends Node> Component<GridPane> GridPane(@NotNull Collection<Component<C>> components,
+                                                                         @NotNull BiConsumer<Collection<Component<C>>, GridBuilder> builder) {
         var gridPane = new GridPane();
         var gridBuilder = new GridBuilder();
         builder.accept(components, gridBuilder);
@@ -208,12 +208,12 @@ public class Layout {
         return treeItem;
     }
 
-    public static @NotNull FX<TreeView<String>> TreeView(@NotNull TreeItem<String> root) {
+    public static @NotNull Component<TreeView<String>> TreeView(@NotNull TreeItem<String> root) {
         return FX(new TreeView<>(root));
     }
 
-    public static @NotNull FX<TableView<String[]>> TableView(@NotNull Collection<String[]> row,
-                                                             @NotNull String... columns) {
+    public static @NotNull Component<TableView<String[]>> TableView(@NotNull Collection<String[]> row,
+                                                                    @NotNull String... columns) {
         TableView<String[]> tableView = new TableView<>();
         var index = 0;
         for (String column : columns) {
@@ -224,11 +224,12 @@ public class Layout {
             index++;
         }
         tableView.setItems(FXCollections.observableArrayList(row));
-        return new FX<>(tableView);
+        return FX(tableView);
     }
 
-    public static @NotNull FX<TableView<String[]>> TableView(@NotNull Collection<String[]> row,
-                                                             @NotNull String[] columns, @NotNull double[] minWidth) {
+    public static @NotNull Component<TableView<String[]>> TableView(@NotNull Collection<String[]> row,
+                                                                    @NotNull String[] columns,
+                                                                    @NotNull double[] minWidth) {
         if (columns.length != minWidth.length) {
             throw new IllegalArgumentException("Amount of columns does not match given amount of widths.");
         }
@@ -243,7 +244,7 @@ public class Layout {
             index++;
         }
         tableView.setItems(FXCollections.observableArrayList(row));
-        return new FX<>(tableView);
+        return FX(tableView);
     }
 
 }
