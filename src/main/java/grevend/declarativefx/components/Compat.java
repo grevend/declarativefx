@@ -44,7 +44,7 @@ public class Compat {
 
     @SafeVarargs
     public static @NotNull <N extends Node> Component<N> FX(@NotNull N node,
-                                                            @NotNull Component<? extends Node>... components) {
+                                                            @Nullable Component<? extends Node>... components) {
         return new Component<>(node, components);
     }
 

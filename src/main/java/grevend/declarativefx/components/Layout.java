@@ -120,18 +120,18 @@ public class Layout {
     }
 
     public static @NotNull Component<ScrollPane> ScrollPane(@NotNull Component<? extends Node> component) {
-        return FX(new ScrollPane(component.construct()));
+        return FX(new ScrollPane(component.construct()), component);
     }
 
     public static @NotNull Component<BorderPane> BorderPane(@NotNull Component<? extends Node> centerComponent) {
-        return FX(new BorderPane(centerComponent.construct()));
+        return FX(new BorderPane(centerComponent.construct()), centerComponent);
     }
 
     public static @NotNull Component<BorderPane> BorderPane(@NotNull Component<? extends Node> centerComponent,
                                                             @NotNull Component<? extends Node> rightComponent,
                                                             @NotNull Component<? extends Node> leftComponent) {
         return FX(new BorderPane(centerComponent.construct(), null, rightComponent.construct(), null,
-            leftComponent.construct()));
+            leftComponent.construct()), centerComponent, rightComponent, leftComponent);
     }
 
     public static @NotNull Component<BorderPane> BorderPane(@Nullable Component<? extends Node> centerComponent,
@@ -140,10 +140,11 @@ public class Layout {
                                                             @Nullable Component<? extends Node> bottomComponent,
                                                             @Nullable Component<? extends Node> leftComponent) {
         return FX(new BorderPane(centerComponent != null ? centerComponent.construct() : null,
-            topComponent != null ? topComponent.construct() : null,
-            rightComponent != null ? rightComponent.construct() : null,
-            bottomComponent != null ? bottomComponent.construct() : null,
-            leftComponent != null ? leftComponent.construct() : null));
+                topComponent != null ? topComponent.construct() : null,
+                rightComponent != null ? rightComponent.construct() : null,
+                bottomComponent != null ? bottomComponent.construct() : null,
+                leftComponent != null ? leftComponent.construct() : null), centerComponent, topComponent, rightComponent,
+            bottomComponent, leftComponent);
     }
 
     public static @NotNull Component<GridPane> GridPane(@NotNull Consumer<GridBuilder> builder) {

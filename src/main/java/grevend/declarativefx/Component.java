@@ -34,6 +34,7 @@ import javafx.beans.value.WritableObjectValue;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.scene.Node;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,6 +43,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class Component<N extends Node>
     implements Lifecycle<N>, Fluent<N>, Bindable<N>, Listenable<N>, Identifiable<N>, Findable, Styleable<N>,
@@ -68,8 +70,8 @@ public class Component<N extends Node>
     }
 
     @SafeVarargs
-    public Component(@Nullable N node, @NotNull Component<? extends Node>... children) {
-        this(node, List.of(children));
+    public Component(@Nullable N node, @Nullable Component<? extends Node>... children) {
+        this(node, Arrays.stream(children).filter(Objects::nonNull).collect(Collectors.toList()));
     }
 
     public Component(@Nullable N node, @NotNull Collection<Component<? extends Node>> children) {
@@ -113,7 +115,7 @@ public class Component<N extends Node>
     @Override
     @SuppressWarnings("unchecked")
     public @Nullable N construct() {
-        if (this.node instanceof Pane) {
+        if (this.node instanceof Pane && !(this.node instanceof BorderPane)) {
             var pane = ((Pane) this.node);
             pane.getChildren().clear();
             for (Component<? extends Node> component : this.children) {
