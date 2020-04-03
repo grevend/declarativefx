@@ -26,13 +26,14 @@ package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
 import grevend.declarativefx.util.BindableValue;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import static grevend.declarativefx.components.Compat.FX;
 
@@ -64,6 +65,31 @@ public class Controls {
         return TextArea(bindableValue).set("prompttext", placeholder);
     }
 
+    /**
+     * javafx ChoiceBox  that can be used with declaritiveFX
+     *
+     * @param items ObservableList of strings
+     * @return
+     */
+    public static @NotNull Component<ChoiceBox> ChoiceBox(ObservableList<String> items) {
+        return FX(new ChoiceBox(FXCollections.observableArrayList(items)));
+    }
+
+    /**
+     * javafx ChoiceBox  that can be used with declaritiveFX
+     *
+     * @param items standard List of strings
+     * @return
+     */
+    public static @NotNull Component<ChoiceBox> ChoiceBox(List<String> items) {
+        return FX(new ChoiceBox(FXCollections.observableArrayList(items)));
+    }
+
+
+    /**
+     * @param text the text to be displayed in the button
+     * @return FX element of type button.. used in page builder
+     */
     public static @NotNull Component<Button> Button(@NotNull String text) {
         return FX(new Button(text));
     }

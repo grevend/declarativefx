@@ -30,6 +30,7 @@ import grevend.declarativefx.util.BindableValue;
 import grevend.declarativefx.util.GridBuilder;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -83,6 +84,14 @@ public class Layout {
 
     public static @NotNull Component<ImageView> Image(@NotNull String image, @NotNull double[] imgSize) {
         return FX(new ImageView(new Image(image, imgSize[0], imgSize[1], true, true)));
+    }
+
+    public static @NotNull Component<Separator> Separator(Orientation orientation) {
+        return FX(new Separator(orientation));
+    }
+
+    public static @NotNull Component<Separator> Separator() {
+        return FX(new Separator());
     }
 
     @SafeVarargs
