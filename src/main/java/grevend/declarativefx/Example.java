@@ -26,10 +26,12 @@ package grevend.declarativefx;
 
 import grevend.declarativefx.util.BindableValue;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.stage.Stage;
 
 import static grevend.declarativefx.components.Compat.Root;
 import static grevend.declarativefx.components.Controls.Button;
+import static grevend.declarativefx.components.Controls.ChoiceBox;
 import static grevend.declarativefx.components.Layout.*;
 
 public class Example extends Application {
@@ -55,7 +57,10 @@ public class Example extends Application {
                         })
                     ),
                     Button("text", "https://png.pngtree.com/png-vector/20190115/ourmid/pngtree-vector-location-icon-png-image_317888.jpg")
-                )
+                ),
+                ChoiceBox(FXCollections.observableArrayList(
+                  "test", "test2"
+                ))
             )
         );
         root.construct();
