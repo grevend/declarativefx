@@ -36,6 +36,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 import static grevend.declarativefx.components.Compat.FX;
@@ -99,11 +100,21 @@ public class Controls {
 
     /**
      * javafx ChoiceBox  that can be used with declaritiveFX
-     * @param items list of strings
+     * @param items ObservableList of strings
      * @param <V>
      * @return
      */
     public static @NotNull <V> FX<ChoiceBox> ChoiceBox(ObservableList<String> items) {
+        return FX(new ChoiceBox(FXCollections.observableArrayList(items)));
+    }
+
+    /**
+     * javafx ChoiceBox  that can be used with declaritiveFX
+     * @param items standard List of strings
+     * @param <V>
+     * @return
+     */
+    public static @NotNull <V> FX<ChoiceBox> ChoiceBox(List<String> items) {
         return FX(new ChoiceBox(FXCollections.observableArrayList(items)));
     }
 
