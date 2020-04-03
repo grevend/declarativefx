@@ -86,10 +86,10 @@ public class Layout {
         return FX(new ImageView(new Image(image, imgSize[0], imgSize[1], true, true)));
     }
 
-    public static @NotNull FX<Separator> Seperator(Orientation orientation) {
+    public static @NotNull FX<Separator> Separator(Orientation orientation) {
         return FX(new Separator(orientation));
     }
-    public static @NotNull FX<Separator> Seperator() {
+    public static @NotNull FX<Separator> Separator() {
         return FX(new Separator());
     }
 
