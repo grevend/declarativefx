@@ -27,6 +27,7 @@ package grevend.declarativefx;
 import grevend.declarativefx.util.BindableValue;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
+import javafx.geometry.Orientation;
 import javafx.stage.Stage;
 
 import static grevend.declarativefx.components.Compat.Root;
@@ -58,6 +59,7 @@ public class Example extends Application {
                     ),
                     Button("text", "https://png.pngtree.com/png-vector/20190115/ourmid/pngtree-vector-location-icon-png-image_317888.jpg")
                 ),
+                Separator(Orientation.VERTICAL),
                 ChoiceBox(FXCollections.observableArrayList(
                   "test", "test2"
                 ))
