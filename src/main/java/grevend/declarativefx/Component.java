@@ -44,7 +44,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Component<N extends Node>
-    implements Lifecycle<N>, Fluent<N>, Bindable<N>, Listenable<N>, Identifiable<N>, Findable, Styleable<N> {
+    implements Lifecycle<N>, Fluent<N>, Bindable<N>, Listenable<N>, Identifiable<N>, Findable, Styleable<N>,
+    StringifiableHierarchy {
 
     private final Collection<Component<? extends Node>> children;
     private final Map<String, BindableValue> bindableProperties;
@@ -402,10 +403,28 @@ public class Component<N extends Node>
     @Override
     public @NotNull String toString() {
         if (this.node != null) {
-            return "Component[" + this.node.getClass().getTypeName() +
-                (this.getId() != null ? ("#" + this.getId()) : "") + "]";
+            return this.node.getClass().getTypeName() + (this.getId() != null ? ("#" + this.getId()) : "");
         }
         return this.getClass().getTypeName();
+    }
+
+    @Override
+    public @NotNull String stringify() {
+        return this.toString();
+    }
+
+    @Override
+    public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix,
+                                   @NotNull Verbosity verbosity) {
+        builder.append(prefix).append(this.toString()).append(System.lineSeparator());
+        for (var componentIter = this.getChildren().iterator(); componentIter.hasNext(); ) {
+            var nextComponent = componentIter.next();
+            if (nextComponent != this) {
+                var hasNextComponent = componentIter.hasNext();
+                nextComponent.stringifyHierarchy(builder, childPrefix + (hasNextComponent ? "├── " : "└── "),
+                    childPrefix + (hasNextComponent ? "│   " : "    "), verbosity);
+            }
+        }
     }
 
 }

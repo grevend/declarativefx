@@ -68,7 +68,12 @@ public class Root<P extends Parent> extends Component<P> {
         return this;
     }
 
-    /*@Override
+    @Override
+    public @NotNull String toString() {
+        return this.getClass().getTypeName();
+    }
+
+    @Override
     public @NotNull String stringify() {
         return this.toString();
     }
@@ -76,13 +81,14 @@ public class Root<P extends Parent> extends Component<P> {
     @Override
     public void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix,
                                    @NotNull Verbosity verbosity) {
-        super.stringifyHierarchy(builder, prefix, childPrefix, verbosity);
-        if (this.component != null) {
-            this.component.stringifyHierarchy(builder, childPrefix + "└── ", childPrefix + "    ", verbosity);
+        builder.append(prefix).append(this.toString()).append(System.lineSeparator());
+        if (this.getChildren().size() == 1) {
+            this.getChildren().iterator().next()
+                .stringifyHierarchy(builder, childPrefix + "└── ", childPrefix + "    ", verbosity);
         } else {
             throw new LifecycleException("Hierarchy has not been constructed yet.");
         }
-    }*/
+    }
 
     public void launch(@NotNull Stage stage) {
         this.stage = stage;

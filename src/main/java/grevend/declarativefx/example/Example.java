@@ -59,9 +59,8 @@ public class Example extends Application {
                 )
             )
         );
-        System.out.println(counter.getConsumers());
         root.construct();
-        //System.out.println(root.stringifyHierarchy());
+        System.out.println(root.stringifyHierarchy());
         root.launch(stage);
     }
 
