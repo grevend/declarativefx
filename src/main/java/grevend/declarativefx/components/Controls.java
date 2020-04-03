@@ -26,21 +26,14 @@ package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
 import grevend.declarativefx.util.BindableValue;
-
-import grevend.declarativefx.util.EventHandler;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.jetbrains.annotations.NotNull;
 
-
 import java.util.List;
-import java.util.function.Consumer;
 
 import static grevend.declarativefx.components.Compat.FX;
 
@@ -74,21 +67,21 @@ public class Controls {
 
     /**
      * javafx ChoiceBox  that can be used with declaritiveFX
+     *
      * @param items ObservableList of strings
-     * @param <V>
      * @return
      */
-    public static @NotNull <V> FX<ChoiceBox> ChoiceBox(ObservableList<String> items) {
+    public static @NotNull Component<ChoiceBox> ChoiceBox(ObservableList<String> items) {
         return FX(new ChoiceBox(FXCollections.observableArrayList(items)));
     }
 
     /**
      * javafx ChoiceBox  that can be used with declaritiveFX
+     *
      * @param items standard List of strings
-     * @param <V>
      * @return
      */
-    public static @NotNull <V> FX<ChoiceBox> ChoiceBox(List<String> items) {
+    public static @NotNull Component<ChoiceBox> ChoiceBox(List<String> items) {
         return FX(new ChoiceBox(FXCollections.observableArrayList(items)));
     }
 
