@@ -31,13 +31,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public interface Fluent<N extends Node, C extends Component<N>> {
+public interface Fluent<N extends Node> {
 
-    @NotNull C fluent(@NotNull Consumer<N> consumer);
+    @NotNull Component<N> fluent(@NotNull Consumer<N> consumer);
 
-    @NotNull C self(@NotNull Consumer<C> consumer);
+    @NotNull Component<N> self(@NotNull Consumer<Component<N>> consumer);
 
-    @NotNull C set(@NotNull String property, @Nullable Object value);
+    @NotNull Component<N> set(@NotNull String property, @Nullable Object value);
 
     @Nullable Object get(@NotNull String property);
 

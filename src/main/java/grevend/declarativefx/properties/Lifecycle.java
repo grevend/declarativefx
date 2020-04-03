@@ -29,16 +29,12 @@ import org.jetbrains.annotations.Nullable;
 
 public interface Lifecycle<N extends Node> {
 
-    default void beforeConstruction() {
-    }
+    void beforeConstruction();
 
     @Nullable N construct();
 
-    default void afterConstruction() {
-    }
+    void afterConstruction();
 
-    default void deconstruct() {
-    }
-
+    void deconstruct();
 
 }

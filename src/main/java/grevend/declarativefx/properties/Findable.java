@@ -35,7 +35,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public interface Findable<N extends Node, C extends Component<N>> {
+public interface Findable {
 
     @Nullable Component<? extends Node> find(@NotNull String id, boolean root);
 

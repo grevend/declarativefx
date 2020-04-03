@@ -29,10 +29,10 @@ import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface Identifiable<N extends Node, C extends Component<N>> {
+public interface Identifiable<N extends Node> {
 
     @Nullable String getId();
 
-    @NotNull C setId(@NotNull String id);
+    @NotNull Component<N> setId(@NotNull String id);
 
 }

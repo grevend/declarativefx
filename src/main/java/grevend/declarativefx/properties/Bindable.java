@@ -37,15 +37,13 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public interface Bindable<N extends Node, C extends Component<N>> {
+public interface Bindable<N extends Node> {
 
-    default @Nullable String getDefaultProperty() {
-        return null;
-    }
+    @Nullable String getDefaultProperty();
 
-    @NotNull C setDefaultProperty(@NotNull String property);
+    @NotNull Component<N> setDefaultProperty(@NotNull String property);
 
-    default @NotNull C bind(@NotNull BindableValue bindableValue) {
+    default @NotNull Component<N> bind(@NotNull BindableValue bindableValue) {
         if (this.getDefaultProperty() != null) {
             return this.bind(this.getDefaultProperty(), bindableValue);
         } else {
@@ -53,30 +51,27 @@ public interface Bindable<N extends Node, C extends Component<N>> {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    default @NotNull C bind(@NotNull String property, @NotNull BindableValue bindableValue) {
+    default @NotNull Component<N> bind(@NotNull String property, @NotNull BindableValue bindableValue) {
         this.getLateBindings().add(new Triplet<>(property, bindableValue, null));
-        return (C) this;
+        return (Component<N>) this;
     }
 
-    @SuppressWarnings("unchecked")
-    default @NotNull C bind(@NotNull String property, @NotNull String id) {
+    default @NotNull Component<N> bind(@NotNull String property, @NotNull String id) {
         this.getLateBindings().add(new Triplet<>(property, id, null));
-        return (C) this;
+        return (Component<N>) this;
     }
 
-    @SuppressWarnings("unchecked")
-    default @NotNull C bind(@NotNull String id) {
+    default @NotNull Component<N> bind(@NotNull String id) {
         if (this.getDefaultProperty() != null) {
             this.bind(this.getDefaultProperty(), id);
         } else {
             throw new BindException(this.toString() + " does not provide a default property.");
         }
-        return (C) this;
+        return (Component<N>) this;
     }
 
-    default @NotNull C compute(@NotNull BindableValue dependency,
-                               @NotNull Function<BindableValue, Object> function) {
+    default @NotNull Component<N> compute(@NotNull BindableValue dependency,
+                                          @NotNull Function<BindableValue, Object> function) {
         if (this.getDefaultProperty() != null) {
             return this.compute(this.getDefaultProperty(), dependency, function);
         } else {
@@ -84,15 +79,14 @@ public interface Bindable<N extends Node, C extends Component<N>> {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    default @NotNull C compute(@NotNull String property, @NotNull BindableValue dependency,
-                               @NotNull Function<BindableValue, Object> function) {
+    default @NotNull Component<N> compute(@NotNull String property, @NotNull BindableValue dependency,
+                                          @NotNull Function<BindableValue, Object> function) {
         this.getLateBindings().add(new Triplet<>(property, dependency, function));
-        return (C) this;
+        return (Component<N>) this;
     }
 
-    default @NotNull C compute(@NotNull BindableValue dependency,
-                               @NotNull Supplier<Object> supplier) {
+    default @NotNull Component<N> compute(@NotNull BindableValue dependency,
+                                          @NotNull Supplier<Object> supplier) {
         if (this.getDefaultProperty() != null) {
             return this.compute(this.getDefaultProperty(), dependency, supplier);
         } else {
@@ -100,11 +94,10 @@ public interface Bindable<N extends Node, C extends Component<N>> {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    default @NotNull C compute(@NotNull String property, @NotNull BindableValue dependency,
-                               @NotNull Supplier<Object> supplier) {
+    default @NotNull Component<N> compute(@NotNull String property, @NotNull BindableValue dependency,
+                                          @NotNull Supplier<Object> supplier) {
         this.getLateBindings().add(new Triplet<>(property, dependency, supplier));
-        return (C) this;
+        return (Component<N>) this;
     }
 
     @NotNull Map<String, BindableValue> getBindableValues();
