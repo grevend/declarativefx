@@ -219,14 +219,30 @@ public class Component<N extends Node>
     }
 
     @Override
-    public @Nullable Component<? extends Node> find(@NotNull String id, boolean root) {
+    public @Nullable Component<? extends Node> findById(@NotNull String id, boolean root) {
+        //System.out.println("### " + this + " ;; " + this.getId() + " ;; " + id + " ;; " + root);
         if (this.getId() != null && this.getId().equals(id)) {
             return this;
         } else if (root) {
             return this.getRoot().find(id, false);
         } else {
-            return null;
+            var component =
+                this.children.stream().map(child -> child.findById(id, false)).filter(Objects::nonNull).findFirst();
+            return (Component<? extends Node>) component.orElse(null);
         }
+    }
+
+    @Override
+    public @NotNull Collection<Component<? extends Node>> findByClass(
+        @NotNull Collection<Component<? extends Node>> components, @NotNull String clazz, boolean root) {
+        if (this.getClasses().contains(clazz)) {
+            components.add(this);
+        } else if (root) {
+            return this.getRoot().findByClass(components, clazz, false);
+        } else {
+            this.children.forEach(child -> child.findByClass(components, clazz, false));
+        }
+        return components;
     }
 
     @Override
@@ -350,6 +366,29 @@ public class Component<N extends Node>
             }
         } else {
             throw new LifecycleException();
+        }
+        return this;
+    }
+
+    public Component<N> add(@NotNull Component<? extends Node> component) {
+        if (this.node instanceof Pane) {
+            this.children.add(component);
+            component.beforeConstruction();
+            ((Pane) this.node).getChildren().add(component.construct());
+            component.afterConstruction();
+        } else {
+            throw new UnsupportedOperationException();
+        }
+        return this;
+    }
+
+    public Component<N> remove(@NotNull Component<? extends Node> component) {
+        if (this.node instanceof Pane) {
+            this.children.remove(component);
+            ((Pane) this.node).getChildren().remove(component.getNode());
+            component.deconstruct();
+        } else {
+            throw new UnsupportedOperationException();
         }
         return this;
     }

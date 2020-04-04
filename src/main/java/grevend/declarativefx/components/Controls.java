@@ -28,6 +28,7 @@ import grevend.declarativefx.Component;
 import grevend.declarativefx.util.BindableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -50,6 +51,14 @@ public class Controls {
     public static @NotNull Component<TextField> TextField(@NotNull BindableValue bindableValue,
                                                           @NotNull String placeholder) {
         return TextField(bindableValue).set("prompttext", placeholder);
+    }
+
+    public static @NotNull Component<PasswordField> PasswordField() {
+        return FX(new PasswordField());
+    }
+
+    public static @NotNull Component<PasswordField> PasswordField(@NotNull String placeholder) {
+        return PasswordField().set("prompttext", placeholder);
     }
 
     public static @NotNull Component<TextArea> TextArea(@NotNull String placeholder) {
@@ -112,6 +121,19 @@ public class Controls {
 
     public static @NotNull Component<Label> Label(@NotNull String text) {
         return FX(new Label(text));
+    }
+
+    public static @NotNull Component<Hyperlink> Hyperlink() {
+        return Hyperlink("");
+    }
+
+    public static @NotNull Component<Hyperlink> Hyperlink(@NotNull String text) {
+        return FX(new Hyperlink(text));
+    }
+
+    public static @NotNull Component<Hyperlink> Hyperlink(@NotNull String text,
+                                                          @NotNull Component<? extends Node> component) {
+        return FX(new Hyperlink(text, component.construct()));
     }
 
 }
