@@ -23,6 +23,28 @@ var root = Root(
 root.launch(stage);
 ```
 
+## Components
+
+* Root
+* FX
+* TextField
+* TextArea
+* ChoiceBox
+* Button
+* Label
+* Text
+* Image
+* Separator
+* HBox
+* VBox
+* ListView
+* ScrollPane
+* BorderPane
+* GridPane
+* TreeItem
+* TreeView
+* TableView (String)
+
 ## License
 
 MIT License
