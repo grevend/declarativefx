@@ -35,6 +35,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
@@ -95,6 +96,9 @@ public class Controls {
      */
     public static @NotNull Component<ChoiceBox> ChoiceBox(List<String> items) {
         return FX(new ChoiceBox(FXCollections.observableArrayList(items)));
+    }
+    public static @NotNull Component<ChoiceBox> ChoiceBox(String... items) {
+        return FX(ChoiceBox(Arrays.asList(items)).construct());
     }
 
 
