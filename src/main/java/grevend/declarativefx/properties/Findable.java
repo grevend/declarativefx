@@ -29,6 +29,7 @@ import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -37,17 +38,35 @@ import java.util.stream.StreamSupport;
 
 public interface Findable {
 
-    @Nullable Component<? extends Node> find(@NotNull String id, boolean root);
+    @Nullable Component<? extends Node> findById(@NotNull String id, boolean root);
+
+    @NotNull Collection<Component<? extends Node>> findByClass(
+        @NotNull Collection<Component<? extends Node>> components, @NotNull String clazz, boolean root);
+
+    default @NotNull Collection<Component<? extends Node>> findByClass(@NotNull String clazz, boolean root) {
+        return this.findByClass(new ArrayList<>(), clazz, root);
+    }
+
+    default @Nullable Component<? extends Node> find(@NotNull String identifier, boolean root) {
+        if (identifier.startsWith("#")) {
+            return this.findById(identifier.replace("#", ""), root);
+        } else if (identifier.startsWith(".")) {
+            var components = this.findByClass(identifier.replace(".", ""), root);
+            return components.isEmpty() ? null : components.iterator().next();
+        } else {
+            return null;
+        }
+    }
 
     default @Nullable Component<? extends Node> find(@NotNull String id) {
         return this.find(id, true);
     }
 
-    default @Nullable Collection<Component<? extends Node>> find(@NotNull String... identifiers) {
+    default @Nullable Collection<Component<? extends Node>> findAll(@NotNull String... identifiers) {
         return Arrays.stream(identifiers).map(this::find).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    default @Nullable Collection<Component<? extends Node>> find(@NotNull Iterable<String> identifiers) {
+    default @Nullable Collection<Component<? extends Node>> findAll(@NotNull Iterable<String> identifiers) {
         return StreamSupport.stream(identifiers.spliterator(), false).map(this::find).filter(Objects::nonNull)
             .collect(Collectors.toList());
     }

@@ -69,6 +69,49 @@ public class Root<P extends Parent> extends Component<P> {
     }
 
     @Override
+    public @NotNull Component<P> setId(@NotNull String id) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public @Nullable String getId() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public @NotNull Component<P> addClass(@NotNull String clazz) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public @NotNull Component<P> removeClass(@NotNull String clazz) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public @NotNull Collection<String> getClasses() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public @NotNull Component<P> setStyle(@NotNull String style) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public @NotNull String getStyle() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public @Nullable Component<? extends Node> findById(@NotNull String id, boolean root) {
+        if (this.getChildren().size() == 1) {
+            return this.getChildren().iterator().next().findById(id, false);
+        }
+        return null;
+    }
+
+    @Override
     public @NotNull String toString() {
         return this.getClass().getTypeName();
     }
