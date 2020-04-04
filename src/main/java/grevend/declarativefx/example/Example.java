@@ -26,6 +26,8 @@ package grevend.declarativefx.example;
 
 import grevend.declarativefx.util.BindableValue;
 import javafx.application.Application;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.stage.Stage;
 
 import static grevend.declarativefx.components.Compat.Root;
@@ -45,6 +47,7 @@ public class Example extends Application {
         stage.setHeight(100);
 
         BindableValue counter = new BindableValue(0);
+        DoubleProperty pbValue = new SimpleDoubleProperty(0);
 
         var root = Root(
             HBox(
@@ -53,14 +56,16 @@ public class Example extends Application {
                         Text("Value: 0").compute(counter, () -> "Value: " + counter.get()),
                         Button("Increment").on((event, component) -> {
                             counter.update(before -> (int) before + 1);
+                            pbValue.set(pbValue.get() + 0.1);
                         })
                     ),
                     Button("text",
                         "https://png.pngtree.com/png-vector/20190115/ourmid/pngtree-vector-location-icon-png-image_317888.jpg")
                 ),
                 ChoiceBox(
-                    "1","2","3"
-                )
+                    "1", "2", "3"
+                ),
+                ProgressBar(pbValue)
             )
         );
         root.construct();
