@@ -32,9 +32,12 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static grevend.declarativefx.components.Compat.FX;
 
@@ -134,6 +137,12 @@ public class Controls {
     public static @NotNull Component<Hyperlink> Hyperlink(@NotNull String text,
                                                           @NotNull Component<? extends Node> component) {
         return FX(new Hyperlink(text, component.construct()));
+    }
+
+    public static @NotNull Component<VBox> MenuBar(@NotNull Consumer<Collection<Menu>> builder) {
+        var menuBar = new MenuBar();
+        builder.accept(menuBar.getMenus());
+        return FX(new VBox(menuBar));
     }
 
 }
