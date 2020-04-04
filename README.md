@@ -44,6 +44,8 @@ root.launch(stage);
 * TreeItem
 * TreeView
 * TableView (String)
+* PasswordField
+* Hyperlink
 
 ## License
 
