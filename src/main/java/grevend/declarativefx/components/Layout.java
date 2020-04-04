@@ -28,6 +28,7 @@ import grevend.declarativefx.Component;
 import grevend.declarativefx.properties.Lifecycle;
 import grevend.declarativefx.util.BindableValue;
 import grevend.declarativefx.util.GridBuilder;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Orientation;
@@ -92,6 +93,18 @@ public class Layout {
 
     public static @NotNull Component<Separator> Separator() {
         return FX(new Separator());
+    }
+
+    public static @NotNull Component<ProgressBar> ProgressBar(@NotNull double progress){
+        return FX(new ProgressBar(progress));
+    }
+    public static @NotNull Component<ProgressBar> ProgressBar(){
+        return FX(new ProgressBar(0));
+    }
+    public static @NotNull Component<ProgressBar> ProgressBar(DoubleProperty progress){
+        ProgressBar pb = new ProgressBar(0);
+        pb.progressProperty().bind(progress);
+        return FX(pb);
     }
 
     @SafeVarargs
