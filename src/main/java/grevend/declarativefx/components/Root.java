@@ -89,11 +89,6 @@ public class Root<P extends Parent> extends Component<P> {
     }
 
     @Override
-    public @NotNull Collection<String> getClasses() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public @NotNull Component<P> setStyle(@NotNull String style) {
         throw new UnsupportedOperationException();
     }
@@ -109,6 +104,15 @@ public class Root<P extends Parent> extends Component<P> {
             return this.getChildren().iterator().next().findById(id, false);
         }
         return null;
+    }
+
+    @Override
+    public @NotNull Collection<Component<? extends Node>> findByClass(
+        @NotNull Collection<Component<? extends Node>> components, @NotNull String clazz, boolean root) {
+        if (this.getChildren().size() == 1) {
+            this.getChildren().iterator().next().findByClass(components, clazz, false);
+        }
+        return components;
     }
 
     @Override
@@ -129,7 +133,7 @@ public class Root<P extends Parent> extends Component<P> {
             this.getChildren().iterator().next()
                 .stringifyHierarchy(builder, childPrefix + "└── ", childPrefix + "    ", verbosity);
         } else {
-            throw new LifecycleException("Hierarchy has not been constructed yet.");
+            throw new LifecycleException();
         }
     }
 

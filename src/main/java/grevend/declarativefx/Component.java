@@ -220,28 +220,31 @@ public class Component<N extends Node>
 
     @Override
     public @Nullable Component<? extends Node> findById(@NotNull String id, boolean root) {
-        //System.out.println("### " + this + " ;; " + this.getId() + " ;; " + id + " ;; " + root);
         if (this.getId() != null && this.getId().equals(id)) {
             return this;
         } else if (root) {
-            return this.getRoot().find(id, false);
+            return this.getRoot().findById(id, false);
         } else {
-            var component =
-                this.children.stream().map(child -> child.findById(id, false)).filter(Objects::nonNull).findFirst();
-            return (Component<? extends Node>) component.orElse(null);
+            for (Component<? extends Node> component : this.children) {
+                var child = component.findById(id, false);
+                if (child != null) {
+                    return child;
+                }
+            }
+            return null;
         }
     }
 
     @Override
     public @NotNull Collection<Component<? extends Node>> findByClass(
         @NotNull Collection<Component<? extends Node>> components, @NotNull String clazz, boolean root) {
-        if (this.getClasses().contains(clazz)) {
-            components.add(this);
-        } else if (root) {
+        if (root) {
             return this.getRoot().findByClass(components, clazz, false);
-        } else {
-            this.children.forEach(child -> child.findByClass(components, clazz, false));
+        } else if (this.getClasses().contains(clazz)) {
+            components.add(this);
         }
+
+        this.children.forEach(child -> child.findByClass(components, clazz, false));
         return components;
     }
 
