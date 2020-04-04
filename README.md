@@ -46,6 +46,8 @@ root.launch(stage);
 * TableView (String)
 * PasswordField
 * Hyperlink
+* MenuBar
+* MenuItem
 
 ## License
 
