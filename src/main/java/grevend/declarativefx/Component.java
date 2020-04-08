@@ -40,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -47,9 +48,9 @@ import java.util.stream.Collectors;
 
 public class Component<N extends Node>
     implements Lifecycle<N>, Fluent<N>, Bindable<N>, Listenable<N>, Identifiable<N>, Findable, Styleable<N>,
-    StringifiableHierarchy {
+    StringifiableHierarchy, BiConsumer<CollectionChange, Collection<? extends Component<? extends Node>>> {
 
-    private final Collection<Component<? extends Node>> children;
+    private final BindableCollection<Component<? extends Node>> children;
     private final Map<String, BindableValue> bindableProperties;
     private final Map<String, ObservableValue<Object>> observableProperties;
     private final Collection<Triplet<String, Object, Object>> lateBindings;
@@ -57,32 +58,32 @@ public class Component<N extends Node>
     private Component<? extends Node> parent;
     private String defaultProperty;
 
-    public Component(@Nullable N node) {
-        this(node, List.of());
-    }
-
-    @Deprecated
-    public Component(@NotNull Component<? extends Node> child) {
-        this(null, List.of(child));
-    }
-
-    @Deprecated
-    public Component(@NotNull Collection<Component<? extends Node>> children) {
-        this(null, children);
-    }
-
-    @SafeVarargs
-    public Component(@Nullable N node, @Nullable Component<? extends Node>... children) {
-        this(node, Arrays.stream(children).filter(Objects::nonNull).collect(Collectors.toList()));
-    }
-
     public Component(@Nullable N node, @NotNull Collection<Component<? extends Node>> children) {
         this.node = node;
-        this.children = children;
+        this.children =
+            children instanceof BindableCollection ? (BindableCollection<Component<? extends Node>>) children :
+                BindableCollection.of(children);
         this.bindableProperties = new HashMap<>();
         this.observableProperties = new HashMap<>();
         this.lateBindings = new ArrayList<>();
         this.children.forEach(child -> child.setParent(this));
+        this.children.subscribe(this);
+    }
+
+    @SafeVarargs
+    public Component(@Nullable N node, @NotNull Component<? extends Node>... children) {
+        this(node, BindableCollection.of(children));
+    }
+
+    public Component(@Nullable N node) {
+        this(node, List.of());
+    }
+
+    public Component(@NotNull Component<N> child) {
+        this(null, List.of(child));
+        child.beforeConstruction();
+        this.setNode(child.construct());
+        child.afterConstruction();
     }
 
     public @Nullable N getNode() {
@@ -101,7 +102,7 @@ public class Component<N extends Node>
         this.parent = parent;
     }
 
-    public @NotNull Collection<Component<? extends Node>> getChildren() {
+    public @NotNull BindableCollection<Component<? extends Node>> getChildren() {
         return this.children;
     }
 
@@ -380,25 +381,22 @@ public class Component<N extends Node>
     }
 
     public Component<N> add(@NotNull Component<? extends Node> component) {
-        if (this.node instanceof Pane) {
-            this.children.add(component);
-            component.beforeConstruction();
-            ((Pane) this.node).getChildren().add(component.construct());
-            component.afterConstruction();
-        } else {
-            throw new UnsupportedOperationException();
-        }
+        this.children.add(component);
+        return this;
+    }
+
+    public Component<N> addAll(@NotNull Collection<? extends Component<? extends Node>> components) {
+        this.children.addAll(components);
         return this;
     }
 
     public Component<N> remove(@NotNull Component<? extends Node> component) {
-        if (this.node instanceof Pane) {
-            this.children.remove(component);
-            ((Pane) this.node).getChildren().remove(component.getNode());
-            component.deconstruct();
-        } else {
-            throw new UnsupportedOperationException();
-        }
+        this.children.remove(component);
+        return this;
+    }
+
+    public Component<N> removeAll(@NotNull Collection<? extends Component<? extends Node>> component) {
+        this.children.removeAll(component);
         return this;
     }
 
@@ -478,6 +476,24 @@ public class Component<N extends Node>
                 nextComponent.stringifyHierarchy(builder, childPrefix + (hasNextComponent ? "├── " : "└── "),
                     childPrefix + (hasNextComponent ? "│   " : "    "), verbosity);
             }
+        }
+    }
+
+    @Override
+    public void accept(CollectionChange collectionChange, Collection<? extends Component<? extends Node>> components) {
+        if (this.node instanceof Pane) {
+            if (collectionChange == CollectionChange.ADD) {
+                components.forEach(Component::beforeConstruction);
+                ((Pane) this.node).getChildren()
+                    .addAll(components.stream().map(Component::construct).collect(Collectors.toList()));
+                components.forEach(Component::afterConstruction);
+            } else {
+                ((Pane) this.node).getChildren()
+                    .removeAll(components.stream().map(Component::getNode).collect(Collectors.toList()));
+                components.forEach(Component::deconstruct);
+            }
+        } else {
+            throw new UnsupportedOperationException();
         }
     }
 

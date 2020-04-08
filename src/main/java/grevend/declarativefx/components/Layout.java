@@ -99,7 +99,7 @@ public class Layout {
         return FX(new HBox(), components);
     }
 
-    public static @NotNull Component<HBox> HBox(@NotNull Collection<Component<? extends Node>> components) {
+    public static @NotNull Component<HBox> HBox(@NotNull Collection<? extends Component<? extends Node>> components) {
         return FX(new HBox(), components);
     }
 
@@ -108,10 +108,11 @@ public class Layout {
         return FX(new VBox(), components);
     }
 
-    public static @NotNull Component<VBox> VBox(@NotNull Collection<Component<? extends Node>> components) {
+    public static @NotNull Component<VBox> VBox(@NotNull Collection<? extends Component<? extends Node>> components) {
         return FX(new VBox(), components);
     }
 
+    @Deprecated
     @SafeVarargs
     public static @NotNull <N extends Node> Component<ListView<N>> ListView(@NotNull Component<N>... components) {
         var listView = new ListView<N>();
@@ -121,6 +122,7 @@ public class Layout {
         return FX(listView);
     }
 
+    @Deprecated
     public static @NotNull <N extends Node> Component<ListView<N>> ListView(
         @NotNull Collection<Component<N>> components) {
         var listView = new ListView<N>();

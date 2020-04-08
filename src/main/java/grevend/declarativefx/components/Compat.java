@@ -44,13 +44,14 @@ public class Compat {
 
     @SafeVarargs
     public static @NotNull <N extends Node> Component<N> FX(@NotNull N node,
-                                                            @Nullable Component<? extends Node>... components) {
+                                                            @NotNull Component<? extends Node>... components) {
         return new Component<>(node, components);
     }
 
+    @SuppressWarnings("unchecked")
     public static @NotNull <N extends Node> Component<N> FX(@NotNull N node,
-                                                            @NotNull Collection<Component<? extends Node>> components) {
-        return new Component<>(node, components);
+                                                            @NotNull Collection<? extends Component<? extends Node>> components) {
+        return new Component<>(node, (Collection<Component<? extends Node>>) components);
     }
 
 }
