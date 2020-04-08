@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class BindableCollection<E> implements Collection<E> {
@@ -48,9 +49,15 @@ public class BindableCollection<E> implements Collection<E> {
         return new BindableCollection<>(collection);
     }
 
+    public static @NotNull <E> BindableCollection<E> of(@NotNull Collection<E> collection,
+                                                        @NotNull Predicate<E> filter) {
+        return new BindableCollection<>(collection.stream().filter(filter).collect(Collectors.toList()));
+    }
+
     @SafeVarargs
-    public static @NotNull <E> BindableCollection<E> of(@NotNull E... collection) {
-        return new BindableCollection<>(Arrays.stream(collection).collect(Collectors.toList()));
+    public static @NotNull <E> BindableCollection<E> of(@Nullable E... collection) {
+        return new BindableCollection<>(
+            collection == null ? List.of() : Arrays.stream(collection).collect(Collectors.toList()));
     }
 
     public void subscribe(@NotNull BiConsumer<CollectionChange, Collection<? extends E>> consumer) {

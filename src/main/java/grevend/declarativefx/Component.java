@@ -61,8 +61,9 @@ public class Component<N extends Node>
     public Component(@Nullable N node, @NotNull Collection<Component<? extends Node>> children) {
         this.node = node;
         this.children =
-            children instanceof BindableCollection ? (BindableCollection<Component<? extends Node>>) children :
-                BindableCollection.of(children);
+            children instanceof BindableCollection ?
+                BindableCollection.of(children.stream().filter(Objects::nonNull).collect(Collectors.toList())) :
+                BindableCollection.of(children, Objects::nonNull);
         this.bindableProperties = new HashMap<>();
         this.observableProperties = new HashMap<>();
         this.lateBindings = new ArrayList<>();
@@ -71,7 +72,7 @@ public class Component<N extends Node>
     }
 
     @SafeVarargs
-    public Component(@Nullable N node, @NotNull Component<? extends Node>... children) {
+    public Component(@Nullable N node, @Nullable Component<? extends Node>... children) {
         this(node, BindableCollection.of(children));
     }
 

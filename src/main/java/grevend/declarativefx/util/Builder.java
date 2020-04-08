@@ -27,6 +27,7 @@ package grevend.declarativefx.util;
 import grevend.declarativefx.Component;
 import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 import java.util.function.Function;
 
@@ -35,7 +36,7 @@ public class Builder<C extends Component<? extends Node>> {
     private int length;
     private Function<Integer, C> build;
 
-    public Builder(int length, @NotNull Function<Integer, C> build) {
+    public Builder(@Range(from = 0, to = Integer.MAX_VALUE) int length, @NotNull Function<Integer, C> build) {
         this.length = length;
         this.build = build;
     }
