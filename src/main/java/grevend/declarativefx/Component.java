@@ -497,4 +497,18 @@ public class Component<N extends Node>
         }
     }
 
+    public @NotNull Component<N> builder(int length, @NotNull Function<Integer, Component<? extends Node>> build) {
+        return this.builder(new Builder<>(length, build));
+    }
+
+    public @NotNull Component<N> builder(@NotNull Builder<Component<? extends Node>> builder) {
+        var components = new ArrayList<Component<? extends Node>>();
+        var build = builder.getBuild();
+        for (int i = 0; i < builder.getLength(); i++) {
+            components.add(build.apply(i));
+        }
+        this.addAll(components);
+        return this;
+    }
+
 }
