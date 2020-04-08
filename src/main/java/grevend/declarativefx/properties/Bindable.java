@@ -26,6 +26,7 @@ package grevend.declarativefx.properties;
 
 import grevend.declarativefx.Component;
 import grevend.declarativefx.util.BindException;
+import grevend.declarativefx.util.BindableCollection;
 import grevend.declarativefx.util.BindableValue;
 import grevend.declarativefx.util.Triplet;
 import javafx.scene.Node;
@@ -63,11 +64,31 @@ public interface Bindable<N extends Node> {
 
     default @NotNull Component<N> bind(@NotNull String id) {
         if (this.getDefaultProperty() != null) {
-            this.bind(this.getDefaultProperty(), id);
+            return this.bind(this.getDefaultProperty(), id);
         } else {
             throw new BindException(this.toString() + " does not provide a default property.");
         }
+    }
+
+    default @NotNull <E, R> Component<N> compute(@NotNull String property,
+                                                 @NotNull BindableCollection<E> bindableCollection,
+                                                 @NotNull Function<BindableCollection<E>, R> function) {
+        var bindable = new BindableValue(function.apply(bindableCollection));
+        bindableCollection.subscribe((change, changes) -> {
+            System.out.println("...");
+            bindable.set(function.apply(bindableCollection));
+        });
+        this.bind(property, bindable);
         return (Component<N>) this;
+    }
+
+    default @NotNull <E, R> Component<N> compute(@NotNull BindableCollection<E> bindableCollection,
+                                                 @NotNull Function<BindableCollection<E>, R> function) {
+        if (this.getDefaultProperty() != null) {
+            return this.compute(this.getDefaultProperty(), bindableCollection, function);
+        } else {
+            throw new BindException(this.toString() + " does not provide a default property.");
+        }
     }
 
     default @NotNull Component<N> compute(@NotNull BindableValue dependency,
