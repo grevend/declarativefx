@@ -61,10 +61,12 @@ public class Component<N extends Node>
         this(node, List.of());
     }
 
+    @Deprecated
     public Component(@NotNull Component<? extends Node> child) {
         this(null, List.of(child));
     }
 
+    @Deprecated
     public Component(@NotNull Collection<Component<? extends Node>> children) {
         this(null, children);
     }
@@ -446,10 +448,14 @@ public class Component<N extends Node>
 
     @Override
     public @NotNull String toString() {
+        var builder = new StringBuilder();
         if (this.node != null) {
-            return this.node.getClass().getTypeName() + (this.getId() != null ? ("#" + this.getId()) : "");
+            builder.append(this.node.getClass().getTypeName()).append(this.getId() != null ? ("#" + this.getId()) : "")
+                .append(this.getClasses().size() > 0 ? ("|" + String.join(",", this.getClasses())) : "");
+        } else {
+            builder.append(this.getClass().getTypeName());
         }
-        return this.getClass().getTypeName();
+        return builder.toString();
     }
 
     @Override
