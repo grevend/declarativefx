@@ -125,6 +125,9 @@ public class Root<P extends Parent> extends Component<P> {
     @Override
     public void beforeConstruction() {
         this.phase = LifecyclePhase.BEFORE_CONSTRUCTION;
+        if (this.measurements.containsKey(this.phase)) {
+            throw new LifecycleException("Phase " + this.phase.toString().toLowerCase() + " has already been invoked.");
+        }
         var start = Instant.now();
         super.beforeConstruction();
         var end = Instant.now();
@@ -134,6 +137,9 @@ public class Root<P extends Parent> extends Component<P> {
     @Override
     public @Nullable P construct() {
         this.phase = LifecyclePhase.CONSTRUCTION;
+        if (this.measurements.containsKey(this.phase)) {
+            throw new LifecycleException("Phase " + this.phase.toString().toLowerCase() + " has already been invoked.");
+        }
         var start = Instant.now();
         var node = super.construct();
         var end = Instant.now();
@@ -144,6 +150,9 @@ public class Root<P extends Parent> extends Component<P> {
     @Override
     public void afterConstruction() {
         this.phase = LifecyclePhase.AFTER_CONSTRUCTION;
+        if (this.measurements.containsKey(this.phase)) {
+            throw new LifecycleException("Phase " + this.phase.toString().toLowerCase() + " has already been invoked.");
+        }
         var start = Instant.now();
         super.afterConstruction();
         var end = Instant.now();
@@ -153,6 +162,9 @@ public class Root<P extends Parent> extends Component<P> {
     @Override
     public void deconstruct() {
         this.phase = LifecyclePhase.DECONSTRUCTION;
+        if (this.measurements.containsKey(this.phase)) {
+            throw new LifecycleException("Phase " + this.phase.toString().toLowerCase() + " has already been invoked.");
+        }
         var start = Instant.now();
         super.deconstruct();
         var end = Instant.now();

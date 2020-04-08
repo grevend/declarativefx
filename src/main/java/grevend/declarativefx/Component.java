@@ -89,6 +89,10 @@ public class Component<N extends Node>
         return this.node;
     }
 
+    public void setNode(@Nullable N node) {
+        this.node = node;
+    }
+
     public @Nullable Component<? extends Node> getParent() {
         return this.parent;
     }
