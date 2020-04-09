@@ -114,6 +114,18 @@ public class Layout {
         return FX(pb);
     }
 
+    public static @NotNull Component<ProgressIndicator> ProgressIndicator(DoubleProperty progress){
+        ProgressIndicator pi = new ProgressIndicator(0);
+        pi.progressProperty().bind(progress);
+        return FX(pi);
+    }
+
+    public static @NotNull Component<ProgressIndicator> ProgressIndicator(@NotNull BindableValue bindableValue){
+        ProgressIndicator pi = new ProgressIndicator(0);
+        bindableValue.subscribe((value)-> pi.progressProperty().set((Double) value));
+        return FX(pi);
+    }
+
     @SafeVarargs
     public static @NotNull Component<HBox> HBox(@NotNull Component<? extends Node>... components) {
         return FX(new HBox(), components);
