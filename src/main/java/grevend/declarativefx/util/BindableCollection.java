@@ -35,6 +35,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * @param <E>
+ * @since 0.3.6
+ */
 public class BindableCollection<E> implements Collection<E> {
 
     private final Collection<E> collection;
@@ -43,6 +47,10 @@ public class BindableCollection<E> implements Collection<E> {
     private BindableCollection(@NotNull Collection<E> collection) {
         this.collection = collection;
         this.consumers = new ArrayList<>();
+    }
+
+    public static @NotNull <E> BindableCollection<E> empty() {
+        return new BindableCollection<>(new ArrayList<>());
     }
 
     public static @NotNull <E> BindableCollection<E> of(@NotNull Collection<E> collection) {

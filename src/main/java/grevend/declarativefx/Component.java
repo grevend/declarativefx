@@ -144,7 +144,7 @@ public class Component<N extends Node>
             var observableValue = Utils.getObservableValue(this.node, this.observableProperties, property);
             if (observableValue != null) {
                 this.bindableProperties.put(property, bindableValue);
-                observableValue.addListener(observable -> bindableValue.set(observableValue.getValue()));
+                //observableValue.addListener(observable -> bindableValue.set(observableValue.getValue()));
                 if (observableValue instanceof WritableObjectValue) {
                     bindableValue.subscribe(((WritableObjectValue<Object>) observableValue)::setValue);
                 }
