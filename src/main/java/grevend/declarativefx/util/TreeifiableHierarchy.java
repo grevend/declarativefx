@@ -35,13 +35,15 @@ import static grevend.declarativefx.components.Layout.TreeView;
 public interface TreeifiableHierarchy {
 
     default @NotNull Component<TreeView<String>> treeifyHierarchy() {
-        return this.treeifyHierarchy(StringifiableHierarchy.Verbosity.NORMAL);
+        return this.treeifyHierarchy(Verbosity.NORMAL);
     }
 
-    default @NotNull Component<TreeView<String>> treeifyHierarchy(@NotNull StringifiableHierarchy.Verbosity verbosity) {
-        return TreeView(TreeItem(this.toString()));
+    default @NotNull Component<TreeView<String>> treeifyHierarchy(@NotNull Verbosity verbosity) {
+        var item = TreeItem(this.toString(), true);
+        this.treeifyHierarchy(item, verbosity);
+        return TreeView(item);
     }
 
-    void treeifyHierarchy(@NotNull TreeItem<String> parent, @NotNull StringifiableHierarchy.Verbosity verbosity);
+    void treeifyHierarchy(@NotNull TreeItem<String> parent, @NotNull Verbosity verbosity);
 
 }
