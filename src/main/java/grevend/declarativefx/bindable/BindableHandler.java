@@ -22,15 +22,43 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.util;
+package grevend.declarativefx.bindable;
 
-import javafx.event.Event;
-import javafx.scene.Node;
-import grevend.declarativefx.Component;
+import org.jetbrains.annotations.NotNull;
 
-@FunctionalInterface
-public interface EventHandler<E extends Event> {
+import java.util.function.Function;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
-    void onEvent(E event, Component<? extends Node> component);
+public class BindableHandler<T> extends Handler {
+
+    private final BindableCollection<T> records;
+    private final Function<LogRecord, T> mapper;
+
+    public BindableHandler(@NotNull BindableCollection<T> records, @NotNull Function<LogRecord, T> mapper) {
+        this.records = records;
+        this.mapper = mapper;
+    }
+
+    public static @NotNull BindableHandler<String> bindableStringifier() {
+        return new BindableHandler<>(BindableCollection.empty(), LogRecord::getMessage);
+    }
+
+    public @NotNull BindableCollection<T> getRecords() {
+        return records;
+    }
+
+    @Override
+    public void publish(LogRecord record) {
+        this.records.add(this.mapper.apply(record));
+    }
+
+    @Override
+    public void flush() {
+    }
+
+    @Override
+    public void close() throws SecurityException {
+    }
 
 }

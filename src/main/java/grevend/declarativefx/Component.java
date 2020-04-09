@@ -24,9 +24,16 @@
 
 package grevend.declarativefx;
 
+import grevend.declarativefx.bindable.BindException;
+import grevend.declarativefx.bindable.BindableCollection;
+import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.components.Root;
+import grevend.declarativefx.event.EventHandler;
+import grevend.declarativefx.lifecycle.LifecycleException;
 import grevend.declarativefx.properties.*;
-import grevend.declarativefx.util.*;
+import grevend.declarativefx.util.StringifiableHierarchy;
+import grevend.declarativefx.util.Triplet;
+import grevend.declarativefx.util.Utils;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -48,7 +55,7 @@ import java.util.stream.Collectors;
 
 public class Component<N extends Node>
     implements Lifecycle<N>, Fluent<N>, Bindable<N>, Listenable<N>, Identifiable<N>, Findable, Styleable<N>,
-    StringifiableHierarchy, BiConsumer<CollectionChange, Collection<? extends Component<? extends Node>>> {
+    StringifiableHierarchy, BiConsumer<BindableCollection.Change, Collection<? extends Component<? extends Node>>> {
 
     private final BindableCollection<Component<? extends Node>> children;
     private final Map<String, BindableValue> bindableProperties;
@@ -210,11 +217,13 @@ public class Component<N extends Node>
     }
 
     @Override
+    @Deprecated
     public @NotNull Map<String, BindableValue> getBindableValues() {
         return this.bindableProperties;
     }
 
     @Override
+    @Deprecated
     public @NotNull Collection<Triplet<String, Object, Object>> getLateBindings() {
         return this.lateBindings;
     }
@@ -486,9 +495,10 @@ public class Component<N extends Node>
     }
 
     @Override
-    public void accept(CollectionChange collectionChange, Collection<? extends Component<? extends Node>> components) {
+    public void accept(BindableCollection.Change collectionChange,
+                       Collection<? extends Component<? extends Node>> components) {
         if (this.node instanceof Pane) {
-            if (collectionChange == CollectionChange.ADD) {
+            if (collectionChange == BindableCollection.Change.ADD) {
                 components.forEach(component -> component.setParent(this));
                 components.forEach(Component::beforeConstruction);
                 ((Pane) this.node).getChildren()
@@ -516,7 +526,7 @@ public class Component<N extends Node>
                 this.addAll(components);
             });
             ((BindableCollection<E>) collection).getConsumers()
-                .forEach(consumer -> consumer.accept(CollectionChange.NONE, List.of()));
+                .forEach(consumer -> consumer.accept(BindableCollection.Change.NONE, List.of()));
             return this;
         } else {
             return this.builder(BindableCollection.of(collection), build);

@@ -26,8 +26,8 @@ package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
 import grevend.declarativefx.properties.Lifecycle;
-import grevend.declarativefx.util.BindableValue;
-import grevend.declarativefx.util.GridBuilder;
+import grevend.declarativefx.bindable.BindableValue;
+import grevend.declarativefx.components.builder.GridBuilder;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Orientation;

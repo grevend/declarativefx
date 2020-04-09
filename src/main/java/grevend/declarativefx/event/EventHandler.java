@@ -22,8 +22,15 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.util;
+package grevend.declarativefx.event;
 
-public enum CollectionChange {
-    NONE, ADD, REMOVE;
+import javafx.event.Event;
+import javafx.scene.Node;
+import grevend.declarativefx.Component;
+
+@FunctionalInterface
+public interface EventHandler<E extends Event> {
+
+    void onEvent(E event, Component<? extends Node> component);
+
 }
