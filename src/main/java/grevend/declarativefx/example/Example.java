@@ -33,6 +33,7 @@ import java.util.List;
 
 import static grevend.declarativefx.components.Compat.Root;
 import static grevend.declarativefx.components.Controls.Button;
+import static grevend.declarativefx.components.Controls.ChoiceBox;
 import static grevend.declarativefx.components.Layout.*;
 
 public class Example extends Application {
@@ -47,7 +48,6 @@ public class Example extends Application {
         stage.setHeight(100);
 
         BindableValue counter = new BindableValue(0);
-        var list = BindableCollection.of(List.of("1","2"),List.of("3","4"));
 
         var root = Root(
             HBox(
@@ -55,10 +55,8 @@ public class Example extends Application {
                     Text("Value: 0").compute("text", counter, () -> "Value: " + counter.get()),
                     Button("Increment").on((event, component) -> {
                         counter.update(before -> (int) before + 1);
-                        list.add(List.of(counter.get().toString(), "5"));
                     })
-                ),
-                VBox().builder(list, el -> Text(el.toString()))
+                )
             )
         );
 
