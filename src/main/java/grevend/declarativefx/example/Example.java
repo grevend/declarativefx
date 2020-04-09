@@ -30,7 +30,6 @@ import javafx.stage.Stage;
 
 import static grevend.declarativefx.components.Compat.Root;
 import static grevend.declarativefx.components.Controls.Button;
-import static grevend.declarativefx.components.Controls.ChoiceBox;
 import static grevend.declarativefx.components.Layout.*;
 
 public class Example extends Application {
