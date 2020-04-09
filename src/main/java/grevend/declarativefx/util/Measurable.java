@@ -22,10 +22,7 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.lifecycle;
+package grevend.declarativefx.util;
 
-import grevend.declarativefx.util.Measurable;
-
-public enum LifecyclePhase implements Measurable {
-    BEFORE_CONSTRUCTION, CONSTRUCTION, AFTER_CONSTRUCTION, DECONSTRUCTION;
+public interface Measurable {
 }

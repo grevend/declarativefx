@@ -30,7 +30,7 @@ import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.components.Root;
 import grevend.declarativefx.event.EventHandler;
 import grevend.declarativefx.lifecycle.LifecycleException;
-import grevend.declarativefx.properties.*;
+import grevend.declarativefx.components.properties.*;
 import grevend.declarativefx.util.StringifiableHierarchy;
 import grevend.declarativefx.util.Triplet;
 import grevend.declarativefx.util.Utils;

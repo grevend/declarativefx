@@ -28,6 +28,7 @@ import grevend.declarativefx.Component;
 import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.lifecycle.LifecycleException;
 import grevend.declarativefx.lifecycle.LifecyclePhase;
+import grevend.declarativefx.util.Measurable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -46,7 +47,7 @@ public class Root<P extends Parent> extends Component<P> {
 
     private final Map<String, BindableValue> providers;
     private LifecyclePhase phase;
-    private Map<LifecyclePhase, Duration> measurements;
+    private Map<Measurable, Duration> measurements;
     private Stage stage;
     private Scene scene;
 
@@ -229,7 +230,7 @@ public class Root<P extends Parent> extends Component<P> {
         return phase;
     }
 
-    public @NotNull Map<LifecyclePhase, Duration> getMeasurements() {
+    public @NotNull Map<Measurable, Duration> getMeasurements() {
         return measurements;
     }
 

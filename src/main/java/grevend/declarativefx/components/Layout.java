@@ -25,10 +25,10 @@
 package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
-import grevend.declarativefx.properties.Lifecycle;
-import javafx.beans.property.DoubleProperty;
 import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.components.builder.GridBuilder;
+import grevend.declarativefx.components.properties.Lifecycle;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Orientation;
@@ -98,19 +98,19 @@ public class Layout {
         return FX(new Separator());
     }
 
-    public static @NotNull Component<ProgressBar> ProgressBar(@NotNull double progress){
+    public static @NotNull Component<ProgressBar> ProgressBar(@NotNull double progress) {
         return FX(new ProgressBar(progress));
     }
 
-    public static @NotNull Component<ProgressBar> ProgressBar(DoubleProperty progress){
+    public static @NotNull Component<ProgressBar> ProgressBar(DoubleProperty progress) {
         ProgressBar pb = new ProgressBar(0);
         pb.progressProperty().bind(progress);
         return FX(pb);
     }
-    
-    public static @NotNull Component<ProgressBar> ProgressBar(@NotNull BindableValue bindableValue){
+
+    public static @NotNull Component<ProgressBar> ProgressBar(@NotNull BindableValue bindableValue) {
         ProgressBar pb = new ProgressBar(0);
-        bindableValue.subscribe((value)-> pb.progressProperty().set((Double) value));
+        bindableValue.subscribe((value) -> pb.progressProperty().set((Double) value));
         return FX(pb);
     }
 

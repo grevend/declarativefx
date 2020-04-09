@@ -22,19 +22,24 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.properties;
+package grevend.declarativefx.components.properties;
 
+import grevend.declarativefx.Component;
 import javafx.scene.Node;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-public interface Lifecycle<N extends Node> {
+import java.util.Collection;
 
-    void beforeConstruction();
+public interface Styleable<N extends Node> {
 
-    @Nullable N construct();
+    @NotNull String getStyle();
 
-    void afterConstruction();
+    @NotNull Component<N> setStyle(@NotNull String style);
 
-    void deconstruct();
+    @NotNull Component<N> addClass(@NotNull String clazz);
+
+    @NotNull Component<N> removeClass(@NotNull String clazz);
+
+    @NotNull Collection<String> getClasses();
 
 }
