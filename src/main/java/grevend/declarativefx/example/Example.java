@@ -52,13 +52,12 @@ public class Example extends Application {
         var root = Root(
             HBox(
                 VBox(
-                    Text("Value: 0").compute(counter, () -> "Value: " + counter.get()),
+                    Text("Value: 0").compute("text", counter, () -> "Value: " + counter.get()),
                     Button("Increment").on((event, component) -> {
                         counter.update(before -> (int) before + 1);
                         list.add(List.of(counter.get().toString(), "5"));
                     })
                 ),
-                VBox().builder(12, index -> Text("Test " + index)),
                 VBox().builder(list, el -> Text(el.toString()))
             )
         );

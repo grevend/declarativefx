@@ -499,28 +499,23 @@ public class Component<N extends Node>
         }
     }
 
-    public @NotNull Component<N> builder(int length, @NotNull Function<Integer, Component<? extends Node>> build) {
-        this.children.clear();
-        var components = new ArrayList<Component<? extends Node>>();
-        for (int i = 0; i < length; i++) {
-            components.add(build.apply(i));
-        }
-        this.addAll(components);
-        return this;
-    }
-
-    public @NotNull <E> Component<N> builder(BindableCollection<E> collection,
+    public @NotNull <E> Component<N> builder(@NotNull Collection<E> collection,
                                              @NotNull Function<E, Component<? extends Node>> build) {
-        collection.subscribe((change, changes) -> {
-            this.children.clear();
-            var components = new ArrayList<Component<? extends Node>>();
-            for (E element : collection) {
-                components.add(build.apply(element));
-            }
-            this.addAll(components);
-        });
-        collection.getConsumers().forEach(consumer -> consumer.accept(CollectionChange.NONE, List.of()));
-        return this;
+        if (collection instanceof BindableCollection) {
+            ((BindableCollection<E>) collection).subscribe((change, changes) -> {
+                this.children.clear();
+                var components = new ArrayList<Component<? extends Node>>();
+                for (E element : collection) {
+                    components.add(build.apply(element));
+                }
+                this.addAll(components);
+            });
+            ((BindableCollection<E>) collection).getConsumers()
+                .forEach(consumer -> consumer.accept(CollectionChange.NONE, List.of()));
+            return this;
+        } else {
+            return this.builder(BindableCollection.of(collection), build);
+        }
     }
 
 }
