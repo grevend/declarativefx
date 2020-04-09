@@ -43,6 +43,10 @@ import static grevend.declarativefx.components.Compat.FX;
 
 public class Controls {
 
+    public static @NotNull Component<TextField> TextField() {
+        return TextField("");
+    }
+
     public static @NotNull Component<TextField> TextField(@NotNull String placeholder) {
         return FX(new TextField()).set("prompttext", placeholder);
     }
@@ -62,6 +66,10 @@ public class Controls {
 
     public static @NotNull Component<PasswordField> PasswordField(@NotNull String placeholder) {
         return PasswordField().set("prompttext", placeholder);
+    }
+
+    public static @NotNull Component<TextArea> TextArea() {
+        return TextArea("");
     }
 
     public static @NotNull Component<TextArea> TextArea(@NotNull String placeholder) {
