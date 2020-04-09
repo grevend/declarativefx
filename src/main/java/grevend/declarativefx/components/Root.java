@@ -25,9 +25,9 @@
 package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
-import grevend.declarativefx.util.BindableValue;
-import grevend.declarativefx.util.LifecycleException;
-import grevend.declarativefx.util.LifecyclePhase;
+import grevend.declarativefx.bindable.BindableValue;
+import grevend.declarativefx.lifecycle.LifecycleException;
+import grevend.declarativefx.lifecycle.LifecyclePhase;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

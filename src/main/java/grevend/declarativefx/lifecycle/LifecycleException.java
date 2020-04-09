@@ -22,8 +22,19 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.util;
+package grevend.declarativefx.lifecycle;
 
-public enum LifecyclePhase {
-    BEFORE_CONSTRUCTION, CONSTRUCTION, AFTER_CONSTRUCTION, DECONSTRUCTION;
+import org.jetbrains.annotations.NotNull;
+
+public class LifecycleException extends RuntimeException {
+
+    public LifecycleException() {
+        super("Hierarchy has not been constructed yet.");
+    }
+
+    public LifecycleException(@NotNull String msg) {
+        super(msg);
+    }
+
 }
+

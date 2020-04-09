@@ -24,7 +24,7 @@
 
 package grevend.declarativefx.example;
 
-import grevend.declarativefx.util.BindableValue;
+import grevend.declarativefx.bindable.BindableValue;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

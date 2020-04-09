@@ -25,7 +25,7 @@
 package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
-import grevend.declarativefx.util.BindableValue;
+import grevend.declarativefx.bindable.BindableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.*;

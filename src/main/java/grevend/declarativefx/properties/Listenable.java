@@ -25,7 +25,7 @@
 package grevend.declarativefx.properties;
 
 import grevend.declarativefx.Component;
-import grevend.declarativefx.util.EventHandler;
+import grevend.declarativefx.event.EventHandler;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;

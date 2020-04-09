@@ -25,9 +25,9 @@
 package grevend.declarativefx.properties;
 
 import grevend.declarativefx.Component;
-import grevend.declarativefx.util.BindException;
-import grevend.declarativefx.util.BindableCollection;
-import grevend.declarativefx.util.BindableValue;
+import grevend.declarativefx.bindable.BindException;
+import grevend.declarativefx.bindable.BindableCollection;
+import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.util.Triplet;
 import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
