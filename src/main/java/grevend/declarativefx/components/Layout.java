@@ -102,12 +102,12 @@ public class Layout {
         return FX(new ProgressBar(progress));
     }
 
-
     public static @NotNull Component<ProgressBar> ProgressBar(DoubleProperty progress){
         ProgressBar pb = new ProgressBar(0);
         pb.progressProperty().bind(progress);
         return FX(pb);
     }
+    
     public static @NotNull Component<ProgressBar> ProgressBar(@NotNull BindableValue bindableValue){
         ProgressBar pb = new ProgressBar(0);
         bindableValue.subscribe((value)-> pb.progressProperty().set((Double) value));
