@@ -62,11 +62,13 @@ public class Layout {
         return FX(new Text(text)).setDefaultProperty("text").bind(new BindableValue(text));
     }
 
+    @Deprecated
     public static @NotNull Component<Text> Text(@NotNull BindableValue bindableValue) {
         return Text(bindableValue,
             (value) -> value == null ? "" : (value instanceof String ? (String) value : value.toString()));
     }
 
+    @Deprecated
     public static @NotNull Component<Text> Text(@NotNull BindableValue bindableValue,
                                                 @NotNull Function<Object, String> function) {
         var node = new Text();
@@ -94,6 +96,10 @@ public class Layout {
         return FX(new Separator());
     }
 
+    public static @NotNull Component<HBox> HBox() {
+        return FX(new HBox());
+    }
+
     @SafeVarargs
     public static @NotNull Component<HBox> HBox(@NotNull Component<? extends Node>... components) {
         return FX(new HBox(), components);
@@ -101,6 +107,10 @@ public class Layout {
 
     public static @NotNull Component<HBox> HBox(@NotNull Collection<? extends Component<? extends Node>> components) {
         return FX(new HBox(), components);
+    }
+
+    public static @NotNull Component<VBox> VBox() {
+        return FX(new VBox());
     }
 
     @SafeVarargs

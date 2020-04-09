@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -56,9 +57,15 @@ public class BindableCollection<E> implements Collection<E> {
         return new BindableCollection<>(collection);
     }
 
+    public static @NotNull <E> BindableCollection<E> of(@NotNull Collection<E> collection,
+                                                        @NotNull Predicate<E> filter) {
+        return new BindableCollection<>(collection.stream().filter(filter).collect(Collectors.toList()));
+    }
+
     @SafeVarargs
-    public static @NotNull <E> BindableCollection<E> of(@NotNull E... collection) {
-        return new BindableCollection<>(Arrays.stream(collection).collect(Collectors.toList()));
+    public static @NotNull <E> BindableCollection<E> of(@Nullable E... collection) {
+        return new BindableCollection<>(
+            collection == null ? List.of() : Arrays.stream(collection).collect(Collectors.toList()));
     }
 
     public void subscribe(@NotNull BiConsumer<CollectionChange, Collection<? extends E>> consumer) {
@@ -111,13 +118,15 @@ public class BindableCollection<E> implements Collection<E> {
 
     @Override
     public boolean add(@Nullable E e) {
+        var res = this.collection.add(e);
         this.consumers.forEach(consumer -> consumer.accept(CollectionChange.ADD, e == null ? null : List.of(e)));
-        return this.collection.add(e);
+        return res;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public boolean remove(@Nullable Object o) {
+        var res = this.collection.remove(o);
         if (this.collection.contains(o)) {
             if (o == null) {
                 this.consumers.forEach(consumer -> consumer.accept(CollectionChange.REMOVE, null));
@@ -126,7 +135,7 @@ public class BindableCollection<E> implements Collection<E> {
                 this.consumers.forEach(consumer -> consumer.accept(CollectionChange.REMOVE, elements));
             }
         }
-        return this.collection.remove(o);
+        return res;
     }
 
     @Override
@@ -136,8 +145,9 @@ public class BindableCollection<E> implements Collection<E> {
 
     @Override
     public boolean addAll(@NotNull Collection<? extends E> c) {
+        var res = this.collection.addAll(c);
         consumers.forEach(consumer -> consumer.accept(CollectionChange.ADD, c));
-        return this.collection.addAll(c);
+        return res;
     }
 
     @Override
@@ -152,14 +162,16 @@ public class BindableCollection<E> implements Collection<E> {
     public boolean retainAll(@NotNull Collection<?> c) {
         var elements = new ArrayList<>(this.collection);
         elements.removeAll(c);
+        var res = this.collection.retainAll(c);
         consumers.forEach(consumer -> consumer.accept(CollectionChange.REMOVE, elements));
-        return this.collection.retainAll(c);
+        return res;
     }
 
     @Override
     public void clear() {
-        consumers.forEach(consumer -> consumer.accept(CollectionChange.REMOVE, this.collection));
+        var elements = new ArrayList<>(this.collection);
         this.collection.clear();
+        consumers.forEach(consumer -> consumer.accept(CollectionChange.REMOVE, elements));
     }
 
     public @NotNull ObservableList<E> toObservableList() {

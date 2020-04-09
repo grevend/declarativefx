@@ -51,10 +51,12 @@ public class Controls {
         return FX(new TextField()).set("prompttext", placeholder);
     }
 
+    @Deprecated
     public static @NotNull Component<TextField> TextField(@NotNull BindableValue bindableValue) {
         return FX(new TextField()).bind(bindableValue);
     }
 
+    @Deprecated
     public static @NotNull Component<TextField> TextField(@NotNull BindableValue bindableValue,
                                                           @NotNull String placeholder) {
         return TextField(bindableValue).set("prompttext", placeholder);
@@ -76,10 +78,12 @@ public class Controls {
         return FX(new TextArea()).set("prompttext", placeholder);
     }
 
+    @Deprecated
     public static @NotNull Component<TextArea> TextArea(@NotNull BindableValue bindableValue) {
         return FX(new TextArea()).bind(bindableValue);
     }
 
+    @Deprecated
     public static @NotNull Component<TextArea> TextArea(@NotNull BindableValue bindableValue,
                                                         @NotNull String placeholder) {
         return TextArea(bindableValue).set("prompttext", placeholder);
@@ -91,6 +95,7 @@ public class Controls {
      * @param items ObservableList of strings
      * @return
      */
+    @Deprecated
     public static @NotNull Component<ChoiceBox> ChoiceBox(ObservableList<String> items) {
         return FX(new ChoiceBox(FXCollections.observableArrayList(items)));
     }
@@ -101,6 +106,7 @@ public class Controls {
      * @param items standard List of strings
      * @return
      */
+    @Deprecated
     public static @NotNull Component<ChoiceBox> ChoiceBox(List<String> items) {
         return FX(new ChoiceBox(FXCollections.observableArrayList(items)));
     }

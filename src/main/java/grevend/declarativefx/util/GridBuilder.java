@@ -27,6 +27,7 @@ package grevend.declarativefx.util;
 import grevend.declarativefx.Component;
 import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,7 +40,9 @@ public class GridBuilder {
         this.components = new ArrayList<>();
     }
 
-    public GridBuilder add(@NotNull Component<? extends Node> component, int column, int row) {
+    public GridBuilder add(@NotNull Component<? extends Node> component,
+                           @Range(from = 0, to = Integer.MAX_VALUE) int column,
+                           @Range(from = 0, to = Integer.MAX_VALUE) int row) {
         this.components.add(new Triplet<>(component, column, row));
         return this;
     }

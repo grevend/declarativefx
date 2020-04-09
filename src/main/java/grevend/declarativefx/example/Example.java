@@ -24,12 +24,16 @@
 
 package grevend.declarativefx.example;
 
+import grevend.declarativefx.util.BindableCollection;
 import grevend.declarativefx.util.BindableValue;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import java.util.List;
+
 import static grevend.declarativefx.components.Compat.Root;
 import static grevend.declarativefx.components.Controls.Button;
+import static grevend.declarativefx.components.Controls.ChoiceBox;
 import static grevend.declarativefx.components.Layout.*;
 
 public class Example extends Application {
@@ -48,7 +52,7 @@ public class Example extends Application {
         var root = Root(
             HBox(
                 VBox(
-                    Text("Value: 0").compute(counter, () -> "Value: " + counter.get()),
+                    Text("Value: 0").compute("text", counter, () -> "Value: " + counter.get()),
                     Button("Increment").on((event, component) -> {
                         counter.update(before -> (int) before + 1);
                     })

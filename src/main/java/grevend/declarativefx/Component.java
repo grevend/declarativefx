@@ -61,8 +61,9 @@ public class Component<N extends Node>
     public Component(@Nullable N node, @NotNull Collection<Component<? extends Node>> children) {
         this.node = node;
         this.children =
-            children instanceof BindableCollection ? (BindableCollection<Component<? extends Node>>) children :
-                BindableCollection.of(children);
+            children instanceof BindableCollection ?
+                BindableCollection.of(children.stream().filter(Objects::nonNull).collect(Collectors.toList())) :
+                BindableCollection.of(children, Objects::nonNull);
         this.bindableProperties = new HashMap<>();
         this.observableProperties = new HashMap<>();
         this.lateBindings = new ArrayList<>();
@@ -71,7 +72,7 @@ public class Component<N extends Node>
     }
 
     @SafeVarargs
-    public Component(@Nullable N node, @NotNull Component<? extends Node>... children) {
+    public Component(@Nullable N node, @Nullable Component<? extends Node>... children) {
         this(node, BindableCollection.of(children));
     }
 
@@ -483,6 +484,7 @@ public class Component<N extends Node>
     public void accept(CollectionChange collectionChange, Collection<? extends Component<? extends Node>> components) {
         if (this.node instanceof Pane) {
             if (collectionChange == CollectionChange.ADD) {
+                components.forEach(component -> component.setParent(this));
                 components.forEach(Component::beforeConstruction);
                 ((Pane) this.node).getChildren()
                     .addAll(components.stream().map(Component::construct).collect(Collectors.toList()));
@@ -494,6 +496,25 @@ public class Component<N extends Node>
             }
         } else {
             throw new UnsupportedOperationException();
+        }
+    }
+
+    public @NotNull <E> Component<N> builder(@NotNull Collection<E> collection,
+                                             @NotNull Function<E, Component<? extends Node>> build) {
+        if (collection instanceof BindableCollection) {
+            ((BindableCollection<E>) collection).subscribe((change, changes) -> {
+                this.children.clear();
+                var components = new ArrayList<Component<? extends Node>>();
+                for (E element : collection) {
+                    components.add(build.apply(element));
+                }
+                this.addAll(components);
+            });
+            ((BindableCollection<E>) collection).getConsumers()
+                .forEach(consumer -> consumer.accept(CollectionChange.NONE, List.of()));
+            return this;
+        } else {
+            return this.builder(BindableCollection.of(collection), build);
         }
     }
 

@@ -40,10 +40,13 @@ import java.util.function.Supplier;
 
 public interface Bindable<N extends Node> {
 
+    @Deprecated
     @Nullable String getDefaultProperty();
 
+    @Deprecated
     @NotNull Component<N> setDefaultProperty(@NotNull String property);
 
+    @Deprecated
     default @NotNull Component<N> bind(@NotNull BindableValue bindableValue) {
         if (this.getDefaultProperty() != null) {
             return this.bind(this.getDefaultProperty(), bindableValue);
@@ -57,11 +60,13 @@ public interface Bindable<N extends Node> {
         return (Component<N>) this;
     }
 
+    @Deprecated
     default @NotNull Component<N> bind(@NotNull String property, @NotNull String id) {
         this.getLateBindings().add(new Triplet<>(property, id, null));
         return (Component<N>) this;
     }
 
+    @Deprecated
     default @NotNull Component<N> bind(@NotNull String id) {
         if (this.getDefaultProperty() != null) {
             return this.bind(this.getDefaultProperty(), id);
@@ -82,6 +87,7 @@ public interface Bindable<N extends Node> {
         return (Component<N>) this;
     }
 
+    @Deprecated
     default @NotNull <E, R> Component<N> compute(@NotNull BindableCollection<E> bindableCollection,
                                                  @NotNull Function<BindableCollection<E>, R> function) {
         if (this.getDefaultProperty() != null) {
@@ -91,6 +97,7 @@ public interface Bindable<N extends Node> {
         }
     }
 
+    @Deprecated
     default @NotNull Component<N> compute(@NotNull BindableValue dependency,
                                           @NotNull Function<BindableValue, Object> function) {
         if (this.getDefaultProperty() != null) {
@@ -106,6 +113,7 @@ public interface Bindable<N extends Node> {
         return (Component<N>) this;
     }
 
+    @Deprecated
     default @NotNull Component<N> compute(@NotNull BindableValue dependency,
                                           @NotNull Supplier<Object> supplier) {
         if (this.getDefaultProperty() != null) {
@@ -125,6 +133,7 @@ public interface Bindable<N extends Node> {
 
     @NotNull Collection<Triplet<String, Object, Object>> getLateBindings();
 
+    @Deprecated
     @Nullable BindableValue getBinding(@NotNull String id);
 
     @Nullable BindableValue getPropertyBinding(@NotNull String property);

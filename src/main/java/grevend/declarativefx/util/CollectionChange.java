@@ -25,5 +25,5 @@
 package grevend.declarativefx.util;
 
 public enum CollectionChange {
-    ADD, REMOVE;
+    NONE, ADD, REMOVE;
 }
