@@ -58,6 +58,10 @@ public class BindableValue {
         return this.value == null ? this.defaultValue : this.value;
     }
 
+    public @Nullable Object getDefault() {
+        return defaultValue;
+    }
+
     public void set(@Nullable Object value) {
         this.value = value;
         this.consumers.forEach(consumer -> consumer.accept(value));

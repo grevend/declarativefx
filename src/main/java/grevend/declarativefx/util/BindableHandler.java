@@ -24,35 +24,45 @@
 
 package grevend.declarativefx.util;
 
-import grevend.declarativefx.Component;
-import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Range;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.function.Function;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
-public class GridBuilder {
+/**
+ * @param <T>
+ * @since 0.3.6
+ */
+public class BindableHandler<T> extends Handler {
 
-    private Collection<Triplet<Component<? extends Node>, Integer, Integer>> components;
+    private final BindableCollection<T> records;
+    private final Function<LogRecord, T> mapper;
 
-    public GridBuilder() {
-        this.components = new ArrayList<>();
+    public BindableHandler(@NotNull BindableCollection<T> records, @NotNull Function<LogRecord, T> mapper) {
+        this.records = records;
+        this.mapper = mapper;
     }
 
-    public GridBuilder add(@NotNull Component<? extends Node> component,
-                           @Range(from = 0, to = Integer.MAX_VALUE) int column,
-                           @Range(from = 0, to = Integer.MAX_VALUE) int row) {
-        this.components.add(new Triplet<>(component, column, row));
-        return this;
+    public static @NotNull BindableHandler<String> bindableStringifier() {
+        return new BindableHandler<>(BindableCollection.empty(), LogRecord::getMessage);
     }
 
-    public Collection<Triplet<Component<? extends Node>, Integer, Integer>> getComponents() {
-        return this.components;
+    public @NotNull BindableCollection<T> getRecords() {
+        return records;
     }
 
-    public void setComponents(Collection<Triplet<Component<? extends Node>, Integer, Integer>> components) {
-        this.components = components;
+    @Override
+    public void publish(LogRecord record) {
+        this.records.add(this.mapper.apply(record));
+    }
+
+    @Override
+    public void flush() {
+    }
+
+    @Override
+    public void close() throws SecurityException {
     }
 
 }

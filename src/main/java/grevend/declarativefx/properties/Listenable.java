@@ -45,13 +45,16 @@ public interface Listenable<N extends Node> {
         return this.on(ActionEvent.ACTION, handler);
     }
 
+    @Deprecated
     @NotNull <E extends Event> Component<N> on(@NotNull EventType<E> type,
                                                @NotNull javafx.event.EventHandler<E> handler);
 
+    @Deprecated
     default @NotNull Component<N> on(@NotNull javafx.event.EventHandler<ActionEvent> handler) {
         return this.on(ActionEvent.ACTION, handler);
     }
 
+    @Deprecated
     default @NotNull Component<N> on(@NotNull String property, @NotNull Consumer<Object> consumer) {
         this.on(property, (observable, oldValue, newValue) -> consumer.accept(newValue));
         return (Component<N>) this;

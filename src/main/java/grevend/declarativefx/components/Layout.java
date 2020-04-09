@@ -55,6 +55,7 @@ import static grevend.declarativefx.components.Compat.FX;
 
 public class Layout {
 
+    @Deprecated
     public static @NotNull Component<Text> Text() {
         return Text("");
     }
@@ -63,11 +64,13 @@ public class Layout {
         return FX(new Text(text)).setDefaultProperty("text").bind(new BindableValue(text));
     }
 
+    @Deprecated
     public static @NotNull Component<Text> Text(@NotNull BindableValue bindableValue) {
         return Text(bindableValue,
             (value) -> value == null ? "" : (value instanceof String ? (String) value : value.toString()));
     }
 
+    @Deprecated
     public static @NotNull Component<Text> Text(@NotNull BindableValue bindableValue,
                                                 @NotNull Function<Object, String> function) {
         var node = new Text();
@@ -112,7 +115,7 @@ public class Layout {
         return FX(new HBox(), components);
     }
 
-    public static @NotNull Component<HBox> HBox(@NotNull Collection<Component<? extends Node>> components) {
+    public static @NotNull Component<HBox> HBox(@NotNull Collection<? extends Component<? extends Node>> components) {
         return FX(new HBox(), components);
     }
 
@@ -121,10 +124,11 @@ public class Layout {
         return FX(new VBox(), components);
     }
 
-    public static @NotNull Component<VBox> VBox(@NotNull Collection<Component<? extends Node>> components) {
+    public static @NotNull Component<VBox> VBox(@NotNull Collection<? extends Component<? extends Node>> components) {
         return FX(new VBox(), components);
     }
 
+    @Deprecated
     @SafeVarargs
     public static @NotNull <N extends Node> Component<ListView<N>> ListView(@NotNull Component<N>... components) {
         var listView = new ListView<N>();
@@ -134,6 +138,7 @@ public class Layout {
         return FX(listView);
     }
 
+    @Deprecated
     public static @NotNull <N extends Node> Component<ListView<N>> ListView(
         @NotNull Collection<Component<N>> components) {
         var listView = new ListView<N>();
@@ -141,6 +146,7 @@ public class Layout {
         return FX(listView);
     }
 
+    @Deprecated
     public static @NotNull Component<ScrollPane> ScrollPane(@NotNull Component<? extends Node> component) {
         return FX(new ScrollPane(component.construct()), component);
     }
@@ -169,6 +175,7 @@ public class Layout {
             bottomComponent, leftComponent);
     }
 
+    @Deprecated
     public static @NotNull Component<GridPane> GridPane(@NotNull Consumer<GridBuilder> builder) {
         var gridPane = new GridPane();
         var gridBuilder = new GridBuilder();
@@ -179,6 +186,7 @@ public class Layout {
         return FX(gridPane);
     }
 
+    @Deprecated
     public static @NotNull <C extends Node> Component<GridPane> GridPane(@NotNull Collection<Component<C>> components,
                                                                          @NotNull BiConsumer<Collection<Component<C>>, GridBuilder> builder) {
         var gridPane = new GridPane();
@@ -235,6 +243,7 @@ public class Layout {
         return FX(new TreeView<>(root));
     }
 
+    @Deprecated
     public static @NotNull Component<TableView<String[]>> TableView(@NotNull Collection<String[]> row,
                                                                     @NotNull String... columns) {
         TableView<String[]> tableView = new TableView<>();
@@ -250,6 +259,7 @@ public class Layout {
         return FX(tableView);
     }
 
+    @Deprecated
     public static @NotNull Component<TableView<String[]>> TableView(@NotNull Collection<String[]> row,
                                                                     @NotNull String[] columns,
                                                                     @NotNull double[] minWidth) {

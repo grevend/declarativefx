@@ -24,11 +24,14 @@
 
 package grevend.declarativefx.example;
 
+import grevend.declarativefx.util.BindableCollection;
 import grevend.declarativefx.util.BindableValue;
 import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.stage.Stage;
+
+import java.util.List;
 
 import static grevend.declarativefx.components.Compat.Root;
 import static grevend.declarativefx.components.Controls.Button;
@@ -52,25 +55,20 @@ public class Example extends Application {
         var root = Root(
             HBox(
                 VBox(
-                    VBox(
-                        Text("Value: 0").compute(counter, () -> "Value: " + counter.get()),
-                        Button("Increment").on((event, component) -> {
-                            counter.update(before -> (int) before + 1);
-                            pbValue.set(pbValue.get() + 0.1);
-                        })
-                    ),
-                    Button("text",
-                        "https://png.pngtree.com/png-vector/20190115/ourmid/pngtree-vector-location-icon-png-image_317888.jpg")
+                    Text("Value: 0").compute("text", counter, () -> "Value: " + counter.get()),
+                    Button("Increment").on((event, component) -> {
+                        counter.update(before -> (int) before + 1);
+                        pbValue.set(pbValue.get() + 0.1);
+                    })
                 ),
-                ChoiceBox(
-                    "1", "2", "3"
-                ),
+                Button("text",
+                    "https://png.pngtree.com/png-vector/20190115/ourmid/pngtree-vector-location-icon-png-image_317888.jpg"),
                 ProgressBar(pbValue)
             )
         );
-        root.construct();
-        System.out.println(root.stringifyHierarchy());
+
         root.launch(stage);
+        System.out.println(root.stringifyHierarchy());
     }
 
 }

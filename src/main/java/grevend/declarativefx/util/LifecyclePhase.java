@@ -24,35 +24,6 @@
 
 package grevend.declarativefx.util;
 
-import grevend.declarativefx.Component;
-import javafx.scene.Node;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Range;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
-public class GridBuilder {
-
-    private Collection<Triplet<Component<? extends Node>, Integer, Integer>> components;
-
-    public GridBuilder() {
-        this.components = new ArrayList<>();
-    }
-
-    public GridBuilder add(@NotNull Component<? extends Node> component,
-                           @Range(from = 0, to = Integer.MAX_VALUE) int column,
-                           @Range(from = 0, to = Integer.MAX_VALUE) int row) {
-        this.components.add(new Triplet<>(component, column, row));
-        return this;
-    }
-
-    public Collection<Triplet<Component<? extends Node>, Integer, Integer>> getComponents() {
-        return this.components;
-    }
-
-    public void setComponents(Collection<Triplet<Component<? extends Node>, Integer, Integer>> components) {
-        this.components = components;
-    }
-
+public enum LifecyclePhase {
+    BEFORE_CONSTRUCTION, CONSTRUCTION, AFTER_CONSTRUCTION, DECONSTRUCTION;
 }

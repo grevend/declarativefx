@@ -56,6 +56,7 @@ public interface Findable {
         return this.findByClass(new ArrayList<>(), clazz, true);
     }
 
+    @Deprecated
     default @Nullable Component<? extends Node> find(@NotNull String identifier, boolean root) {
         if (identifier.startsWith("#")) {
             return this.findById(identifier.replace("#", ""), root);
@@ -67,10 +68,12 @@ public interface Findable {
         }
     }
 
+    @Deprecated
     default @Nullable Component<? extends Node> find(@NotNull String id) {
         return this.find(id, true);
     }
 
+    @Deprecated
     default @Nullable Collection<Component<? extends Node>> findAll(@NotNull String... identifiers) {
         return Arrays.stream(identifiers).flatMap(identifier -> {
             if (identifier.startsWith("#")) {
@@ -83,6 +86,7 @@ public interface Findable {
         }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
+    @Deprecated
     default @Nullable Collection<Component<? extends Node>> findAll(@NotNull Iterable<String> identifiers) {
         return StreamSupport.stream(identifiers.spliterator(), false).flatMap(identifier -> {
             if (identifier.startsWith("#")) {

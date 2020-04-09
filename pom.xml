@@ -8,7 +8,7 @@
     <artifactId>declarativefx</artifactId>
     <name>DeclarativeFX</name>
     <url>https://github.com/grevend/DeclarativeFX</url>
-    <version>0.3.0-SNAPSHOT</version>
+    <version>0.3.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <distributionManagement>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>16.0.3</version>
+            <version>19.0.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

@@ -1,6 +1,9 @@
 module DeclarativeFX {
+    requires java.logging;
+
     requires javafx.graphics;
     requires javafx.controls;
+
     requires org.jetbrains.annotations;
 
     exports grevend.declarativefx;

@@ -27,7 +27,6 @@ package grevend.declarativefx.components;
 import grevend.declarativefx.Component;
 import grevend.declarativefx.util.BindableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -37,26 +36,33 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Consumer;
 
 import static grevend.declarativefx.components.Compat.FX;
 
 public class Controls {
 
+    @Deprecated
+    public static @NotNull Component<TextField> TextField() {
+        return TextField("");
+    }
+
     public static @NotNull Component<TextField> TextField(@NotNull String placeholder) {
         return FX(new TextField()).set("prompttext", placeholder);
     }
 
+    @Deprecated
     public static @NotNull Component<TextField> TextField(@NotNull BindableValue bindableValue) {
         return FX(new TextField()).bind(bindableValue);
     }
 
+    @Deprecated
     public static @NotNull Component<TextField> TextField(@NotNull BindableValue bindableValue,
                                                           @NotNull String placeholder) {
         return TextField(bindableValue).set("prompttext", placeholder);
     }
 
+    @Deprecated
     public static @NotNull Component<PasswordField> PasswordField() {
         return FX(new PasswordField());
     }
@@ -65,47 +71,37 @@ public class Controls {
         return PasswordField().set("prompttext", placeholder);
     }
 
+    @Deprecated
+    public static @NotNull Component<TextArea> TextArea() {
+        return TextArea("");
+    }
+
     public static @NotNull Component<TextArea> TextArea(@NotNull String placeholder) {
         return FX(new TextArea()).set("prompttext", placeholder);
     }
 
+    @Deprecated
     public static @NotNull Component<TextArea> TextArea(@NotNull BindableValue bindableValue) {
         return FX(new TextArea()).bind(bindableValue);
     }
 
+    @Deprecated
     public static @NotNull Component<TextArea> TextArea(@NotNull BindableValue bindableValue,
                                                         @NotNull String placeholder) {
         return TextArea(bindableValue).set("prompttext", placeholder);
     }
 
-    /**
-     * javafx ChoiceBox  that can be used with declaritiveFX
-     *
-     * @param items ObservableList of strings
-     * @return
-     */
-    public static @NotNull Component<ChoiceBox> ChoiceBox(ObservableList<String> items) {
-        return FX(new ChoiceBox(FXCollections.observableArrayList(items)));
+    public static @NotNull <T> Component<ChoiceBox<T>> ChoiceBox(@NotNull Collection<T> items) {
+        return FX(new ChoiceBox<>(FXCollections.observableArrayList(items)));
     }
 
-    /**
-     * javafx ChoiceBox  that can be used with declaritiveFX
-     *
-     * @param items standard List of strings
-     * @return
-     */
-    public static @NotNull Component<ChoiceBox> ChoiceBox(List<String> items) {
-        return FX(new ChoiceBox(FXCollections.observableArrayList(items)));
+    public static @NotNull <T> Component<ChoiceBox<T>> ChoiceBox(@NotNull Collection<T> items, @NotNull T value) {
+        return FX(new ChoiceBox<>(FXCollections.observableArrayList(items))).set("value", value);
     }
     public static @NotNull Component<ChoiceBox> ChoiceBox(String... items) {
         return FX(ChoiceBox(Arrays.asList(items)).construct());
     }
 
-
-    /**
-     * @param text the text to be displayed in the button
-     * @return FX element of type button.. used in page builder
-     */
     public static @NotNull Component<Button> Button(@NotNull String text) {
         return FX(new Button(text));
     }
@@ -130,6 +126,7 @@ public class Controls {
         return FX(new Label(text));
     }
 
+    @Deprecated
     public static @NotNull Component<Hyperlink> Hyperlink() {
         return Hyperlink("");
     }
@@ -138,6 +135,7 @@ public class Controls {
         return FX(new Hyperlink(text));
     }
 
+    @Deprecated
     public static @NotNull Component<Hyperlink> Hyperlink(@NotNull String text,
                                                           @NotNull Component<? extends Node> component) {
         return FX(new Hyperlink(text, component.construct()));
