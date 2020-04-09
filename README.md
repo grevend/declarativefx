@@ -48,6 +48,8 @@ root.launch(stage);
 * Hyperlink
 * MenuBar
 * MenuItem
+* ProgressBar
+* ProgressIndicator
 
 ## License
 
