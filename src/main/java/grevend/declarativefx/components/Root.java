@@ -37,7 +37,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -129,10 +128,7 @@ public class Root<P extends Parent> extends Component<P> {
         if (this.measurements.containsKey(this.phase)) {
             throw new LifecycleException("Phase " + this.phase.toString().toLowerCase() + " has already been invoked.");
         }
-        var start = Instant.now();
-        super.beforeConstruction();
-        var end = Instant.now();
-        this.measurements.put(LifecyclePhase.BEFORE_CONSTRUCTION, Duration.between(start, end));
+        this.measure(this.phase, super::beforeConstruction);
     }
 
     @Override
@@ -141,11 +137,7 @@ public class Root<P extends Parent> extends Component<P> {
         if (this.measurements.containsKey(this.phase)) {
             throw new LifecycleException("Phase " + this.phase.toString().toLowerCase() + " has already been invoked.");
         }
-        var start = Instant.now();
-        var node = super.construct();
-        var end = Instant.now();
-        this.measurements.put(LifecyclePhase.CONSTRUCTION, Duration.between(start, end));
-        return node;
+        return this.measure(this.phase, super::construct);
     }
 
     @Override
@@ -154,10 +146,7 @@ public class Root<P extends Parent> extends Component<P> {
         if (this.measurements.containsKey(this.phase)) {
             throw new LifecycleException("Phase " + this.phase.toString().toLowerCase() + " has already been invoked.");
         }
-        var start = Instant.now();
-        super.afterConstruction();
-        var end = Instant.now();
-        this.measurements.put(LifecyclePhase.AFTER_CONSTRUCTION, Duration.between(start, end));
+        this.measure(this.phase, super::afterConstruction);
     }
 
     @Override
@@ -166,10 +155,7 @@ public class Root<P extends Parent> extends Component<P> {
         if (this.measurements.containsKey(this.phase)) {
             throw new LifecycleException("Phase " + this.phase.toString().toLowerCase() + " has already been invoked.");
         }
-        var start = Instant.now();
-        super.deconstruct();
-        var end = Instant.now();
-        this.measurements.put(LifecyclePhase.DECONSTRUCTION, Duration.between(start, end));
+        this.measure(this.phase, super::deconstruct);
     }
 
     @Override

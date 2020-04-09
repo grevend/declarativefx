@@ -90,10 +90,11 @@ public class Layout {
         return FX(new ImageView(new Image(image, imgSize[0], imgSize[1], true, true)));
     }
 
-    public static @NotNull Component<Separator> Separator(Orientation orientation) {
+    public static @NotNull Component<Separator> Separator(@NotNull Orientation orientation) {
         return FX(new Separator(orientation));
     }
 
+    @Deprecated
     public static @NotNull Component<Separator> Separator() {
         return FX(new Separator());
     }
@@ -102,7 +103,7 @@ public class Layout {
         return FX(new ProgressBar(progress));
     }
 
-    public static @NotNull Component<ProgressBar> ProgressBar(DoubleProperty progress) {
+    public static @NotNull Component<ProgressBar> ProgressBar(@NotNull DoubleProperty progress) {
         ProgressBar pb = new ProgressBar(0);
         pb.progressProperty().bind(progress);
         return FX(pb);
