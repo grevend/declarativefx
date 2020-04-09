@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.properties;
+package grevend.declarativefx.components.properties;
 
 import grevend.declarativefx.Component;
 import javafx.scene.Node;

@@ -12,6 +12,7 @@ module DeclarativeFX {
     exports grevend.declarativefx.components.builder;
     exports grevend.declarativefx.event;
     exports grevend.declarativefx.lifecycle;
+    exports grevend.declarativefx.util;
 
     exports grevend.declarativefx.example to javafx.graphics;
 }

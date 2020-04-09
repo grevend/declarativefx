@@ -28,9 +28,11 @@ import grevend.declarativefx.bindable.BindException;
 import grevend.declarativefx.bindable.BindableCollection;
 import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.components.Root;
+import grevend.declarativefx.components.properties.*;
 import grevend.declarativefx.event.EventHandler;
 import grevend.declarativefx.lifecycle.LifecycleException;
-import grevend.declarativefx.properties.*;
+import grevend.declarativefx.lifecycle.LifecyclePhase;
+import grevend.declarativefx.util.Measurable;
 import grevend.declarativefx.util.StringifiableHierarchy;
 import grevend.declarativefx.util.Triplet;
 import grevend.declarativefx.util.Utils;
@@ -46,6 +48,8 @@ import javafx.scene.layout.Pane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -500,17 +504,18 @@ public class Component<N extends Node>
         if (this.node instanceof Pane) {
             if (collectionChange == BindableCollection.Change.ADD) {
                 components.forEach(component -> component.setParent(this));
-                components.forEach(Component::beforeConstruction);
-                ((Pane) this.node).getChildren()
-                    .addAll(components.stream().map(Component::construct).collect(Collectors.toList()));
-                components.forEach(Component::afterConstruction);
+                this.measure(LifecyclePhase.BEFORE_CONSTRUCTION,
+                    () -> components.forEach(Component::beforeConstruction));
+                this.measure(LifecyclePhase.CONSTRUCTION, () -> ((Pane) this.node).getChildren()
+                    .addAll(components.stream().map(Component::construct).collect(Collectors.toList())));
+                this.measure(LifecyclePhase.AFTER_CONSTRUCTION, () -> components.forEach(Component::afterConstruction));
             } else {
                 ((Pane) this.node).getChildren()
                     .removeAll(components.stream().map(Component::getNode).collect(Collectors.toList()));
-                components.forEach(Component::deconstruct);
+                this.measure(LifecyclePhase.DECONSTRUCTION, () -> components.forEach(Component::deconstruct));
             }
         } else {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("The current JavaFX node cannot contain children.");
         }
     }
 
@@ -531,6 +536,28 @@ public class Component<N extends Node>
         } else {
             return this.builder(BindableCollection.of(collection), build);
         }
+    }
+
+    public void measure(@NotNull Measurable measurable, @NotNull Runnable runnable) {
+        this.measure(measurable, () -> {
+            runnable.run();
+            return null;
+        });
+    }
+
+    public <T> T measure(@NotNull Measurable measurable, @NotNull Supplier<T> supplier) {
+        var start = Instant.now();
+        var res = supplier.get();
+        var end = Instant.now();
+        this.getRoot();
+        var measurements = this.getRoot().getMeasurements();
+        var duration = Duration.between(start, end);
+        if (!measurements.containsKey(measurable)) {
+            measurements.put(measurable, duration);
+        } else {
+            measurements.put(measurable, measurements.get(measurable).plus(duration));
+        }
+        return res;
     }
 
 }
