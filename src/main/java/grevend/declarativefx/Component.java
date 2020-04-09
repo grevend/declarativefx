@@ -80,6 +80,7 @@ public class Component<N extends Node>
         this(node, List.of());
     }
 
+    @Deprecated
     public Component(@NotNull Component<N> child) {
         this(null, List.of(child));
         child.beforeConstruction();
@@ -196,11 +197,13 @@ public class Component<N extends Node>
     }
 
     @Override
+    @Deprecated
     public @Nullable String getDefaultProperty() {
         return this.defaultProperty;
     }
 
     @Override
+    @Deprecated
     public @NotNull Component<N> setDefaultProperty(@NotNull String property) {
         this.defaultProperty = property;
         return this;
@@ -217,6 +220,7 @@ public class Component<N extends Node>
     }
 
     @Override
+    @Deprecated
     public @Nullable BindableValue getBinding(@NotNull String id) {
         return this.getRoot().getProviders().get(id);
     }
@@ -340,6 +344,7 @@ public class Component<N extends Node>
     }
 
     @Override
+    @Deprecated
     public @NotNull <E extends Event> Component<N> on(@NotNull EventType<E> type,
                                                       javafx.event.@NotNull EventHandler<E> handler) {
         if (this.node != null) {

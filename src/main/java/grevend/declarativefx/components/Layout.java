@@ -54,6 +54,7 @@ import static grevend.declarativefx.components.Compat.FX;
 
 public class Layout {
 
+    @Deprecated
     public static @NotNull Component<Text> Text() {
         return Text("");
     }
@@ -96,10 +97,6 @@ public class Layout {
         return FX(new Separator());
     }
 
-    public static @NotNull Component<HBox> HBox() {
-        return FX(new HBox());
-    }
-
     @SafeVarargs
     public static @NotNull Component<HBox> HBox(@NotNull Component<? extends Node>... components) {
         return FX(new HBox(), components);
@@ -107,10 +104,6 @@ public class Layout {
 
     public static @NotNull Component<HBox> HBox(@NotNull Collection<? extends Component<? extends Node>> components) {
         return FX(new HBox(), components);
-    }
-
-    public static @NotNull Component<VBox> VBox() {
-        return FX(new VBox());
     }
 
     @SafeVarargs
@@ -140,6 +133,7 @@ public class Layout {
         return FX(listView);
     }
 
+    @Deprecated
     public static @NotNull Component<ScrollPane> ScrollPane(@NotNull Component<? extends Node> component) {
         return FX(new ScrollPane(component.construct()), component);
     }
@@ -168,6 +162,7 @@ public class Layout {
             bottomComponent, leftComponent);
     }
 
+    @Deprecated
     public static @NotNull Component<GridPane> GridPane(@NotNull Consumer<GridBuilder> builder) {
         var gridPane = new GridPane();
         var gridBuilder = new GridBuilder();
@@ -178,6 +173,7 @@ public class Layout {
         return FX(gridPane);
     }
 
+    @Deprecated
     public static @NotNull <C extends Node> Component<GridPane> GridPane(@NotNull Collection<Component<C>> components,
                                                                          @NotNull BiConsumer<Collection<Component<C>>, GridBuilder> builder) {
         var gridPane = new GridPane();
@@ -234,6 +230,7 @@ public class Layout {
         return FX(new TreeView<>(root));
     }
 
+    @Deprecated
     public static @NotNull Component<TableView<String[]>> TableView(@NotNull Collection<String[]> row,
                                                                     @NotNull String... columns) {
         TableView<String[]> tableView = new TableView<>();
@@ -249,6 +246,7 @@ public class Layout {
         return FX(tableView);
     }
 
+    @Deprecated
     public static @NotNull Component<TableView<String[]>> TableView(@NotNull Collection<String[]> row,
                                                                     @NotNull String[] columns,
                                                                     @NotNull double[] minWidth) {

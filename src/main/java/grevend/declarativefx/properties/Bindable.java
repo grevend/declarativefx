@@ -129,6 +129,7 @@ public interface Bindable<N extends Node> {
         return (Component<N>) this;
     }
 
+    @Deprecated
     @NotNull Map<String, BindableValue> getBindableValues();
 
     @NotNull Collection<Triplet<String, Object, Object>> getLateBindings();
