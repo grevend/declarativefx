@@ -63,7 +63,12 @@ public class Example extends Application {
                 ),
                 Button("text",
                     "https://png.pngtree.com/png-vector/20190115/ourmid/pngtree-vector-location-icon-png-image_317888.jpg"),
-                ProgressBar(pbValue)
+                ProgressBar(pbValue),
+                ChoiceBox(
+                    "one",
+                    "two",
+                    "parrrtaaayyy"
+                )
             )
         );
 

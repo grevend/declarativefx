@@ -98,8 +98,8 @@ public class Controls {
     public static @NotNull <T> Component<ChoiceBox<T>> ChoiceBox(@NotNull Collection<T> items, @NotNull T value) {
         return FX(new ChoiceBox<>(FXCollections.observableArrayList(items))).set("value", value);
     }
-    public static @NotNull Component<ChoiceBox> ChoiceBox(String... items) {
-        return FX(ChoiceBox(Arrays.asList(items)).construct());
+    public static @NotNull <String> Component<ChoiceBox<String>> ChoiceBox(String... items) {
+        return FX(new ChoiceBox<>(FXCollections.observableArrayList(Arrays.asList(items))));
     }
 
     public static @NotNull Component<Button> Button(@NotNull String text) {
