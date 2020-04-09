@@ -476,7 +476,7 @@ public class Component<N extends Node>
     }
 
     @Override
-    public @NotNull String stringify() {
+    public @NotNull String stringify(@NotNull Verbosity verbosity) {
         return this.toString();
     }
 

@@ -24,27 +24,24 @@
 
 package grevend.declarativefx.util;
 
+import grevend.declarativefx.Component;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import org.jetbrains.annotations.NotNull;
 
-public interface StringifiableHierarchy {
+import static grevend.declarativefx.components.Layout.TreeItem;
+import static grevend.declarativefx.components.Layout.TreeView;
 
-    @NotNull String stringify(@NotNull Verbosity verbosity);
+public interface TreeifiableHierarchy {
 
-    default @NotNull String stringifyHierarchy() {
-        return this.stringifyHierarchy(Verbosity.NORMAL);
+    default @NotNull Component<TreeView<String>> treeifyHierarchy() {
+        return this.treeifyHierarchy(StringifiableHierarchy.Verbosity.NORMAL);
     }
 
-    default @NotNull String stringifyHierarchy(@NotNull Verbosity verbosity) {
-        var builder = new StringBuilder();
-        this.stringifyHierarchy(builder, "", "", verbosity);
-        return builder.toString();
+    default @NotNull Component<TreeView<String>> treeifyHierarchy(@NotNull StringifiableHierarchy.Verbosity verbosity) {
+        return TreeView(TreeItem(this.toString()));
     }
 
-    void stringifyHierarchy(@NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix,
-                            @NotNull Verbosity verbosity);
-
-    enum Verbosity {
-        SIMPLIFIED, NORMAL, DETAILED;
-    }
+    void treeifyHierarchy(@NotNull TreeItem<String> parent, @NotNull StringifiableHierarchy.Verbosity verbosity);
 
 }

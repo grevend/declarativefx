@@ -185,7 +185,7 @@ public class Root<P extends Parent> extends Component<P> {
     }
 
     @Override
-    public @NotNull String stringify() {
+    public @NotNull String stringify(@NotNull Verbosity verbosity) {
         return this.toString();
     }
 
