@@ -209,8 +209,16 @@ public class Root<P extends Parent> extends Component<P> {
         return this.stage;
     }
 
+    public void setStage(@NotNull Stage stage) {
+        this.stage = stage;
+    }
+
     public @Nullable Scene getScene() {
         return scene;
+    }
+
+    public void setScene(@NotNull Scene scene) {
+        this.scene = scene;
     }
 
     public @NotNull LifecyclePhase getLifecyclePhase() {
