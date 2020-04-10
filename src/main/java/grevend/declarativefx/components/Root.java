@@ -24,15 +24,20 @@
 
 package grevend.declarativefx.components;
 
+//import com.sun.javafx.css.StyleManager;
 import grevend.declarativefx.Component;
 import grevend.declarativefx.lifecycle.LifecycleException;
 import grevend.declarativefx.lifecycle.LifecyclePhase;
 import grevend.declarativefx.util.Measurable;
 import grevend.declarativefx.util.Verbosity;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -243,6 +248,20 @@ public class Root<P extends Parent> extends Component<P> {
             return this.getScene().getStylesheets();
         } else {
             throw new LifecycleException("Scene has not been constructed yet.");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void reloadStylesheets() {
+        var observableList = FXCollections.observableArrayList(this.getStylesheets());
+        /*observableList.addListener((ListChangeListener<String>) c -> StyleManager.getInstance()
+            .stylesheetsChanged(getScene(), (ListChangeListener.Change<String>) c));*/
+        observableList.removeAll(observableList);
+    }
+
+    public void enableDeveloperKeyboardShortcuts(@NotNull Class<?> clazz) {
+        if (this.getScene() != null) {
+            this.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F5), this::reloadStylesheets);
         }
     }
 

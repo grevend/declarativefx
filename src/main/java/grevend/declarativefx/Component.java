@@ -49,18 +49,17 @@ import org.jetbrains.annotations.Nullable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Collectors;
 
+import static grevend.declarativefx.bindable.BindableCollection.Change;
+import static grevend.declarativefx.bindable.BindableCollection.of;
 import static grevend.declarativefx.components.Layout.TreeItem;
 
 public class Component<N extends Node>
     implements Lifecycle<N>, Fluent<N>, Bindable<N>, Listenable<N>, Identifiable<N>, Findable, Styleable<N>,
     StringifiableHierarchy, TreeifiableHierarchy,
-    BiConsumer<BindableCollection.Change, Collection<? extends Component<? extends Node>>> {
+    BiConsumer<Change, Collection<? extends Component<? extends Node>>> {
 
     private final BindableCollection<Component<? extends Node>> children;
     private final Map<String, BindableValue> bindableProperties;
@@ -74,8 +73,8 @@ public class Component<N extends Node>
         this.node = node;
         this.children =
             children instanceof BindableCollection ?
-                BindableCollection.of(children.stream().filter(Objects::nonNull).collect(Collectors.toList())) :
-                BindableCollection.of(children, Objects::nonNull);
+                of(children.stream().filter(Objects::nonNull).collect(Collectors.toList())) :
+                of(children, Objects::nonNull);
         this.bindableProperties = new HashMap<>();
         this.observableProperties = new HashMap<>();
         this.lateBindings = new ArrayList<>();
@@ -85,7 +84,7 @@ public class Component<N extends Node>
 
     @SafeVarargs
     public Component(@Nullable N node, @Nullable Component<? extends Node>... children) {
-        this(node, BindableCollection.of(children));
+        this(node, of(children));
     }
 
     public Component(@Nullable N node) {
@@ -411,7 +410,7 @@ public class Component<N extends Node>
     @Override
     public @NotNull Component<N> removeClass(@NotNull String clazz) {
         if (this.node != null) {
-            this.node.getStyleClass().add(clazz);
+            this.node.getStyleClass().remove(clazz);
         } else {
             throw new LifecycleException();
         }
@@ -466,10 +465,10 @@ public class Component<N extends Node>
     }
 
     @Override
-    public void accept(BindableCollection.Change collectionChange,
+    public void accept(Change collectionChange,
                        Collection<? extends Component<? extends Node>> components) {
         if (this.node instanceof Pane) {
-            if (collectionChange == BindableCollection.Change.ADD) {
+            if (collectionChange == Change.ADD) {
                 components.forEach(component -> component.setParent(this));
                 this.measure(LifecyclePhase.BEFORE_CONSTRUCTION,
                     () -> components.forEach(Component::beforeConstruction));
@@ -498,10 +497,31 @@ public class Component<N extends Node>
                 this.addAll(components);
             });
             ((BindableCollection<E>) collection).getConsumers()
-                .forEach(consumer -> consumer.accept(BindableCollection.Change.NONE, List.of()));
+                .forEach(consumer -> consumer.accept(Change.NONE, List.of()));
             return this;
         } else {
-            return this.builder(BindableCollection.of(collection), build);
+            return this.builder(of(collection), build);
+        }
+    }
+
+    public @NotNull <E> Component<N> builder(@NotNull Collection<E> collection,
+                                             @NotNull BiFunction<E, Integer, Component<? extends Node>> build) {
+        if (collection instanceof BindableCollection) {
+            ((BindableCollection<E>) collection).subscribe((change, changes) -> {
+                this.children.clear();
+                var components = new ArrayList<Component<? extends Node>>();
+                int i = 0;
+                for (E element : collection) {
+                    components.add(build.apply(element, i));
+                    i++;
+                }
+                this.addAll(components);
+            });
+            ((BindableCollection<E>) collection).getConsumers()
+                .forEach(consumer -> consumer.accept(Change.NONE, List.of()));
+            return this;
+        } else {
+            return this.builder(of(collection), build);
         }
     }
 
