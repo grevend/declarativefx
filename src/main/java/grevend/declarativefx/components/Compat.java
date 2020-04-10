@@ -27,6 +27,7 @@ package grevend.declarativefx.components;
 import grevend.declarativefx.Component;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,20 +35,24 @@ import java.util.Collection;
 
 public class Compat {
 
+    @Contract("_ -> new")
     public static @NotNull <P extends Parent> Root<P> Root(@NotNull Component<P> component) {
         return new Root<>(component);
     }
 
+    @Contract("_ -> new")
     public static @NotNull <N extends Node> Component<N> FX(@Nullable N node) {
         return new Component<>(node);
     }
 
     @SafeVarargs
+    @Contract("_, _ -> new")
     public static @NotNull <N extends Node> Component<N> FX(@NotNull N node,
                                                             @Nullable Component<? extends Node>... components) {
         return new Component<>(node, components);
     }
 
+    @Contract("_, _ -> new")
     @SuppressWarnings("unchecked")
     public static @NotNull <N extends Node> Component<N> FX(@NotNull N node,
                                                             @NotNull Collection<? extends Component<? extends Node>> components) {

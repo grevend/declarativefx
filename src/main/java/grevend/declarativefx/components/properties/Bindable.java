@@ -25,7 +25,6 @@
 package grevend.declarativefx.components.properties;
 
 import grevend.declarativefx.Component;
-import grevend.declarativefx.bindable.BindException;
 import grevend.declarativefx.bindable.BindableCollection;
 import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.util.Triplet;
@@ -40,71 +39,18 @@ import java.util.function.Supplier;
 
 public interface Bindable<N extends Node> {
 
-    @Deprecated
-    @Nullable String getDefaultProperty();
-
-    @Deprecated
-    @NotNull Component<N> setDefaultProperty(@NotNull String property);
-
-    @Deprecated
-    default @NotNull Component<N> bind(@NotNull BindableValue bindableValue) {
-        if (this.getDefaultProperty() != null) {
-            return this.bind(this.getDefaultProperty(), bindableValue);
-        } else {
-            throw new BindException(this.toString() + " does not provide a default property.");
-        }
-    }
-
     default @NotNull Component<N> bind(@NotNull String property, @NotNull BindableValue bindableValue) {
         this.getLateBindings().add(new Triplet<>(property, bindableValue, null));
         return (Component<N>) this;
-    }
-
-    @Deprecated
-    default @NotNull Component<N> bind(@NotNull String property, @NotNull String id) {
-        this.getLateBindings().add(new Triplet<>(property, id, null));
-        return (Component<N>) this;
-    }
-
-    @Deprecated
-    default @NotNull Component<N> bind(@NotNull String id) {
-        if (this.getDefaultProperty() != null) {
-            return this.bind(this.getDefaultProperty(), id);
-        } else {
-            throw new BindException(this.toString() + " does not provide a default property.");
-        }
     }
 
     default @NotNull <E, R> Component<N> compute(@NotNull String property,
                                                  @NotNull BindableCollection<E> bindableCollection,
                                                  @NotNull Function<BindableCollection<E>, R> function) {
         var bindable = new BindableValue(function.apply(bindableCollection));
-        bindableCollection.subscribe((change, changes) -> {
-            System.out.println("...");
-            bindable.set(function.apply(bindableCollection));
-        });
+        bindableCollection.subscribe((change, changes) -> bindable.set(function.apply(bindableCollection)));
         this.bind(property, bindable);
         return (Component<N>) this;
-    }
-
-    @Deprecated
-    default @NotNull <E, R> Component<N> compute(@NotNull BindableCollection<E> bindableCollection,
-                                                 @NotNull Function<BindableCollection<E>, R> function) {
-        if (this.getDefaultProperty() != null) {
-            return this.compute(this.getDefaultProperty(), bindableCollection, function);
-        } else {
-            throw new BindException(this.toString() + " does not provide a default property.");
-        }
-    }
-
-    @Deprecated
-    default @NotNull Component<N> compute(@NotNull BindableValue dependency,
-                                          @NotNull Function<BindableValue, Object> function) {
-        if (this.getDefaultProperty() != null) {
-            return this.compute(this.getDefaultProperty(), dependency, function);
-        } else {
-            throw new BindException(this.toString() + " does not provide a default property.");
-        }
     }
 
     default @NotNull Component<N> compute(@NotNull String property, @NotNull BindableValue dependency,
@@ -113,30 +59,16 @@ public interface Bindable<N extends Node> {
         return (Component<N>) this;
     }
 
-    @Deprecated
-    default @NotNull Component<N> compute(@NotNull BindableValue dependency,
-                                          @NotNull Supplier<Object> supplier) {
-        if (this.getDefaultProperty() != null) {
-            return this.compute(this.getDefaultProperty(), dependency, supplier);
-        } else {
-            throw new BindException(this.toString() + " does not provide a default property.");
-        }
-    }
-
     default @NotNull Component<N> compute(@NotNull String property, @NotNull BindableValue dependency,
                                           @NotNull Supplier<Object> supplier) {
         this.getLateBindings().add(new Triplet<>(property, dependency, supplier));
         return (Component<N>) this;
     }
 
-    @Deprecated
     @NotNull Map<String, BindableValue> getBindableValues();
 
     @NotNull Collection<Triplet<String, Object, Object>> getLateBindings();
 
-    @Deprecated
-    @Nullable BindableValue getBinding(@NotNull String id);
-
-    @Nullable BindableValue getPropertyBinding(@NotNull String property);
+    @Nullable BindableValue getProperty(@NotNull String property);
 
 }

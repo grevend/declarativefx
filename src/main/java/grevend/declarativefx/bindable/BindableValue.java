@@ -24,6 +24,7 @@
 
 package grevend.declarativefx.bindable;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,10 +37,12 @@ public class BindableValue {
     private final List<Consumer<Object>> consumers;
     private Object value, defaultValue;
 
+    @Contract(pure = true)
     public BindableValue() {
         this(null);
     }
 
+    @Contract(pure = true)
     public BindableValue(@Nullable Object value) {
         this.consumers = new ArrayList<>();
         this.value = value;

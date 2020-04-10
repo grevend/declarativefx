@@ -25,11 +25,10 @@
 package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
-import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.lifecycle.LifecycleException;
 import grevend.declarativefx.lifecycle.LifecyclePhase;
-import grevend.declarativefx.util.Verbosity;
 import grevend.declarativefx.util.Measurable;
+import grevend.declarativefx.util.Verbosity;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -46,15 +45,13 @@ import java.util.stream.Collectors;
 
 public class Root<P extends Parent> extends Component<P> {
 
-    private final Map<String, BindableValue> providers;
+    private final Map<Measurable, Duration> measurements;
     private LifecyclePhase phase;
-    private Map<Measurable, Duration> measurements;
     private Stage stage;
     private Scene scene;
 
     public Root(@NotNull Component<P> component) {
         super(component);
-        this.providers = new HashMap<>();
         this.measurements = new HashMap<>();
     }
 
@@ -66,10 +63,6 @@ public class Root<P extends Parent> extends Component<P> {
     @Override
     public void setParent(@NotNull Component<? extends Node> parent) {
         throw new IllegalStateException();
-    }
-
-    public @NotNull Map<String, BindableValue> getProviders() {
-        return providers;
     }
 
     @Override

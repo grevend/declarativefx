@@ -27,7 +27,6 @@ package grevend.declarativefx.components;
 import grevend.declarativefx.Component;
 import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.components.builder.GridBuilder;
-import grevend.declarativefx.components.properties.Lifecycle;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -41,6 +40,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,34 +48,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static grevend.declarativefx.components.Compat.FX;
 
 public class Layout {
 
-    @Deprecated
-    public static @NotNull Component<Text> Text() {
-        return Text("");
-    }
-
     public static @NotNull Component<Text> Text(@NotNull String text) {
-        return FX(new Text(text)).setDefaultProperty("text").bind(new BindableValue(text));
-    }
-
-    @Deprecated
-    public static @NotNull Component<Text> Text(@NotNull BindableValue bindableValue) {
-        return Text(bindableValue,
-            (value) -> value == null ? "" : (value instanceof String ? (String) value : value.toString()));
-    }
-
-    @Deprecated
-    public static @NotNull Component<Text> Text(@NotNull BindableValue bindableValue,
-                                                @NotNull Function<Object, String> function) {
-        var node = new Text();
-        bindableValue.subscribe(value -> node.setText(function.apply(value)));
-        return FX(node).setDefaultProperty("text").bind(bindableValue);
+        return FX(new Text(text));
     }
 
     public static @NotNull Component<ImageView> Image(@NotNull Image image) {
@@ -94,12 +73,7 @@ public class Layout {
         return FX(new Separator(orientation));
     }
 
-    @Deprecated
-    public static @NotNull Component<Separator> Separator() {
-        return FX(new Separator());
-    }
-
-    public static @NotNull Component<ProgressBar> ProgressBar(@NotNull double progress) {
+    public static @NotNull Component<ProgressBar> ProgressBar(double progress) {
         return FX(new ProgressBar(progress));
     }
 
@@ -115,15 +89,15 @@ public class Layout {
         return FX(pb);
     }
 
-    public static @NotNull Component<ProgressIndicator> ProgressIndicator(DoubleProperty progress){
+    public static @NotNull Component<ProgressIndicator> ProgressIndicator(DoubleProperty progress) {
         ProgressIndicator pi = new ProgressIndicator(0);
         pi.progressProperty().bind(progress);
         return FX(pi);
     }
 
-    public static @NotNull Component<ProgressIndicator> ProgressIndicator(@NotNull BindableValue bindableValue){
+    public static @NotNull Component<ProgressIndicator> ProgressIndicator(@NotNull BindableValue bindableValue) {
         ProgressIndicator pi = new ProgressIndicator(0);
-        bindableValue.subscribe((value)-> pi.progressProperty().set((Double) value));
+        bindableValue.subscribe((value) -> pi.progressProperty().set((Double) value));
         return FX(pi);
     }
 
@@ -145,25 +119,10 @@ public class Layout {
         return FX(new VBox(), components);
     }
 
-    @Deprecated
-    @SafeVarargs
-    public static @NotNull <N extends Node> Component<ListView<N>> ListView(@NotNull Component<N>... components) {
-        var listView = new ListView<N>();
-        for (Component<N> component : components) {
-            listView.getItems().add(component.construct());
-        }
-        return FX(listView);
+    public static @NotNull <N extends Node> Component<ListView<N>> ListView() {
+        return FX(new ListView<>());
     }
 
-    @Deprecated
-    public static @NotNull <N extends Node> Component<ListView<N>> ListView(
-        @NotNull Collection<Component<N>> components) {
-        var listView = new ListView<N>();
-        listView.getItems().addAll(components.stream().map(Lifecycle::construct).collect(Collectors.toList()));
-        return FX(listView);
-    }
-
-    @Deprecated
     public static @NotNull Component<ScrollPane> ScrollPane(@NotNull Component<? extends Node> component) {
         return FX(new ScrollPane(component.construct()), component);
     }
@@ -215,6 +174,7 @@ public class Layout {
         return FX(gridPane);
     }
 
+    @Contract("_ -> new")
     public static @NotNull TreeItem<String> TreeItem(@NotNull String item) {
         return new TreeItem<>(item);
     }

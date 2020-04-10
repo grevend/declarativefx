@@ -27,6 +27,7 @@ package grevend.declarativefx.bindable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.intellij.lang.annotations.Flow;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,25 +41,30 @@ public class BindableCollection<E> implements Collection<E> {
     private final Collection<E> collection;
     private final Collection<BiConsumer<Change, Collection<? extends E>>> consumers;
 
+    @Contract(pure = true)
     private BindableCollection(@NotNull Collection<E> collection) {
         this.collection = collection;
         this.consumers = new ArrayList<>();
     }
 
+    @Contract(" -> new")
     public static @NotNull <E> BindableCollection<E> empty() {
         return new BindableCollection<>(new ArrayList<>());
     }
 
+    @Contract(value = "_ -> new", pure = true)
     public static @NotNull <E> BindableCollection<E> of(@NotNull Collection<E> collection) {
         return new BindableCollection<>(collection);
     }
 
+    @Contract("_, _ -> new")
     public static @NotNull <E> BindableCollection<E> of(@NotNull Collection<E> collection,
                                                         @NotNull Predicate<E> filter) {
         return new BindableCollection<>(collection.stream().filter(filter).collect(Collectors.toList()));
     }
 
     @SafeVarargs
+    @Contract("_ -> new")
     public static @NotNull <E> BindableCollection<E> of(@Nullable E... collection) {
         return new BindableCollection<>(
             collection == null ? List.of() : Arrays.stream(collection).collect(Collectors.toList()));
@@ -86,11 +92,13 @@ public class BindableCollection<E> implements Collection<E> {
     }
 
     @Override
+    @Contract(pure = true)
     public boolean isEmpty() {
         return this.collection.isEmpty();
     }
 
     @Override
+    @Contract(pure = true)
     public boolean contains(@Nullable Object o) {
         return this.collection.contains(o);
     }

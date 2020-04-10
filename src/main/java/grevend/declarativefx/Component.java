@@ -92,7 +92,6 @@ public class Component<N extends Node>
         this(node, List.of());
     }
 
-    @Deprecated
     public Component(@NotNull Component<N> child) {
         this(null, List.of(child));
         child.beforeConstruction();
@@ -157,7 +156,6 @@ public class Component<N extends Node>
             var observableValue = Utils.getObservableValue(this.node, this.observableProperties, property);
             if (observableValue != null) {
                 this.bindableProperties.put(property, bindableValue);
-                //observableValue.addListener(observable -> bindableValue.set(observableValue.getValue()));
                 if (observableValue instanceof WritableObjectValue) {
                     bindableValue.subscribe(((WritableObjectValue<Object>) observableValue)::setValue);
                 }
@@ -176,25 +174,19 @@ public class Component<N extends Node>
             if (binding.getA() != null && binding.getB() != null) {
                 if (binding.getB() instanceof BindableValue && binding.getC() == null) {
                     this.lateBind(binding.getA(), (BindableValue) binding.getB());
-                } else if (binding.getB() instanceof String && binding.getC() == null) {
-                    var bindableValue = this.getBinding((String) binding.getB());
-                    if (bindableValue != null) {
-                        this.lateBind(binding.getA(), bindableValue);
-                    }
                 } else if (binding.getB() instanceof BindableValue && binding.getC() instanceof Function) {
-                    if (this.getPropertyBinding(binding.getA()) != null) {
-                        Objects.requireNonNull(this.getPropertyBinding(binding.getA()))
+                    if (this.getProperty(binding.getA()) != null) {
+                        Objects.requireNonNull(this.getProperty(binding.getA()))
                             .compute((BindableValue) binding.getB(), (Function<BindableValue, Object>) binding.getC());
                     } else {
                         throw new BindException(this.toString());
                     }
                 } else if (binding.getB() instanceof BindableValue && binding.getC() instanceof Supplier) {
-                    if (this.getPropertyBinding(binding.getA()) != null) {
-                        Objects.requireNonNull(this.getPropertyBinding(binding.getA()))
-                            .compute((BindableValue) binding.getB(), (Supplier<Object>) binding.getC());
-                    } else {
-                        throw new BindException(this.toString());
+                    if (this.getProperty(binding.getA()) == null) {
+                        this.lateBind(binding.getA(), new BindableValue(this.get(binding.getA())));
                     }
+                    Objects.requireNonNull(this.getProperty(binding.getA()))
+                        .compute((BindableValue) binding.getB(), (Supplier<Object>) binding.getC());
                 } else {
                     throw new BindException("Late binding failed for " + binding.getA() + " on " + this + ".");
                 }
@@ -209,38 +201,17 @@ public class Component<N extends Node>
     }
 
     @Override
-    @Deprecated
-    public @Nullable String getDefaultProperty() {
-        return this.defaultProperty;
-    }
-
-    @Override
-    @Deprecated
-    public @NotNull Component<N> setDefaultProperty(@NotNull String property) {
-        this.defaultProperty = property;
-        return this;
-    }
-
-    @Override
-    @Deprecated
     public @NotNull Map<String, BindableValue> getBindableValues() {
         return this.bindableProperties;
     }
 
     @Override
-    @Deprecated
     public @NotNull Collection<Triplet<String, Object, Object>> getLateBindings() {
         return this.lateBindings;
     }
 
     @Override
-    @Deprecated
-    public @Nullable BindableValue getBinding(@NotNull String id) {
-        return this.getRoot().getProviders().get(id);
-    }
-
-    @Override
-    public @Nullable BindableValue getPropertyBinding(@NotNull String property) {
+    public @Nullable BindableValue getProperty(@NotNull String property) {
         return this.bindableProperties.get(property);
     }
 
@@ -351,18 +322,6 @@ public class Component<N extends Node>
     public @NotNull <E extends Event> Component<N> on(@NotNull EventType<E> type, @NotNull EventHandler<E> handler) {
         if (this.node != null) {
             this.node.addEventHandler(type, event -> handler.onEvent(event, this));
-        } else {
-            throw new LifecycleException();
-        }
-        return this;
-    }
-
-    @Override
-    @Deprecated
-    public @NotNull <E extends Event> Component<N> on(@NotNull EventType<E> type,
-                                                      javafx.event.@NotNull EventHandler<E> handler) {
-        if (this.node != null) {
-            this.node.addEventHandler(type, handler);
         } else {
             throw new LifecycleException();
         }

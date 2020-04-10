@@ -25,9 +25,7 @@
 package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
-import grevend.declarativefx.bindable.BindableValue;
 import javafx.collections.FXCollections;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -42,53 +40,16 @@ import static grevend.declarativefx.components.Compat.FX;
 
 public class Controls {
 
-    @Deprecated
-    public static @NotNull Component<TextField> TextField() {
-        return TextField("");
-    }
-
     public static @NotNull Component<TextField> TextField(@NotNull String placeholder) {
         return FX(new TextField()).set("prompttext", placeholder);
     }
 
-    @Deprecated
-    public static @NotNull Component<TextField> TextField(@NotNull BindableValue bindableValue) {
-        return FX(new TextField()).bind(bindableValue);
-    }
-
-    @Deprecated
-    public static @NotNull Component<TextField> TextField(@NotNull BindableValue bindableValue,
-                                                          @NotNull String placeholder) {
-        return TextField(bindableValue).set("prompttext", placeholder);
-    }
-
-    @Deprecated
-    public static @NotNull Component<PasswordField> PasswordField() {
-        return FX(new PasswordField());
-    }
-
     public static @NotNull Component<PasswordField> PasswordField(@NotNull String placeholder) {
-        return PasswordField().set("prompttext", placeholder);
-    }
-
-    @Deprecated
-    public static @NotNull Component<TextArea> TextArea() {
-        return TextArea("");
+        return FX(new PasswordField()).set("prompttext", placeholder);
     }
 
     public static @NotNull Component<TextArea> TextArea(@NotNull String placeholder) {
         return FX(new TextArea()).set("prompttext", placeholder);
-    }
-
-    @Deprecated
-    public static @NotNull Component<TextArea> TextArea(@NotNull BindableValue bindableValue) {
-        return FX(new TextArea()).bind(bindableValue);
-    }
-
-    @Deprecated
-    public static @NotNull Component<TextArea> TextArea(@NotNull BindableValue bindableValue,
-                                                        @NotNull String placeholder) {
-        return TextArea(bindableValue).set("prompttext", placeholder);
     }
 
     public static @NotNull <T> Component<ChoiceBox<T>> ChoiceBox(@NotNull Collection<T> items) {
@@ -98,7 +59,9 @@ public class Controls {
     public static @NotNull <T> Component<ChoiceBox<T>> ChoiceBox(@NotNull Collection<T> items, @NotNull T value) {
         return FX(new ChoiceBox<>(FXCollections.observableArrayList(items))).set("value", value);
     }
-    public static @NotNull <String> Component<ChoiceBox<String>> ChoiceBox(String... items) {
+
+    @SafeVarargs
+    public static @NotNull <T> Component<ChoiceBox<T>> ChoiceBox(T... items) {
         return FX(new ChoiceBox<>(FXCollections.observableArrayList(Arrays.asList(items))));
     }
 
@@ -126,19 +89,8 @@ public class Controls {
         return FX(new Label(text));
     }
 
-    @Deprecated
-    public static @NotNull Component<Hyperlink> Hyperlink() {
-        return Hyperlink("");
-    }
-
     public static @NotNull Component<Hyperlink> Hyperlink(@NotNull String text) {
         return FX(new Hyperlink(text));
-    }
-
-    @Deprecated
-    public static @NotNull Component<Hyperlink> Hyperlink(@NotNull String text,
-                                                          @NotNull Component<? extends Node> component) {
-        return FX(new Hyperlink(text, component.construct()));
     }
 
     public static @NotNull Component<VBox> MenuBar(@NotNull Consumer<Collection<Menu>> builder) {

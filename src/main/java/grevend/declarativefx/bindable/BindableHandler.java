@@ -24,6 +24,7 @@
 
 package grevend.declarativefx.bindable;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -40,6 +41,7 @@ public class BindableHandler<T> extends Handler {
         this.mapper = mapper;
     }
 
+    @Contract(" -> new")
     public static @NotNull BindableHandler<String> bindableStringifier() {
         return new BindableHandler<>(BindableCollection.empty(), LogRecord::getMessage);
     }

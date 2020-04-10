@@ -30,12 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 public interface Findable {
 
@@ -54,49 +49,6 @@ public interface Findable {
 
     default @NotNull Collection<Component<? extends Node>> findByClass(@NotNull String clazz) {
         return this.findByClass(new ArrayList<>(), clazz, true);
-    }
-
-    @Deprecated
-    default @Nullable Component<? extends Node> find(@NotNull String identifier, boolean root) {
-        if (identifier.startsWith("#")) {
-            return this.findById(identifier.replace("#", ""), root);
-        } else if (identifier.startsWith(".")) {
-            var components = this.findByClass(identifier.replace(".", ""), root);
-            return components.isEmpty() ? null : components.iterator().next();
-        } else {
-            return null;
-        }
-    }
-
-    @Deprecated
-    default @Nullable Component<? extends Node> find(@NotNull String id) {
-        return this.find(id, true);
-    }
-
-    @Deprecated
-    default @Nullable Collection<Component<? extends Node>> findAll(@NotNull String... identifiers) {
-        return Arrays.stream(identifiers).flatMap(identifier -> {
-            if (identifier.startsWith("#")) {
-                return Stream.ofNullable(this.findById(identifier.replace("#", ""), true));
-            } else if (identifier.startsWith(".")) {
-                return this.findByClass(identifier.replace(".", ""), true).stream();
-            } else {
-                return Stream.empty();
-            }
-        }).filter(Objects::nonNull).collect(Collectors.toList());
-    }
-
-    @Deprecated
-    default @Nullable Collection<Component<? extends Node>> findAll(@NotNull Iterable<String> identifiers) {
-        return StreamSupport.stream(identifiers.spliterator(), false).flatMap(identifier -> {
-            if (identifier.startsWith("#")) {
-                return Stream.ofNullable(this.findById(identifier.replace("#", ""), true));
-            } else if (identifier.startsWith(".")) {
-                return this.findByClass(identifier.replace(".", ""), true).stream();
-            } else {
-                return Stream.empty();
-            }
-        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
 }
