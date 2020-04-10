@@ -65,3 +65,4 @@ tmp/*
 
 # VisualStudioCode #
 .history
+.idea/jarRepositories.xml
