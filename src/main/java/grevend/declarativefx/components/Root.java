@@ -28,10 +28,12 @@ import grevend.declarativefx.Component;
 import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.lifecycle.LifecycleException;
 import grevend.declarativefx.lifecycle.LifecyclePhase;
+import grevend.declarativefx.util.Verbosity;
 import grevend.declarativefx.util.Measurable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TreeItem;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -172,7 +174,7 @@ public class Root<P extends Parent> extends Component<P> {
     }
 
     @Override
-    public @NotNull String stringify() {
+    public @NotNull String stringify(@NotNull Verbosity verbosity) {
         return this.toString();
     }
 
@@ -186,6 +188,11 @@ public class Root<P extends Parent> extends Component<P> {
         } else {
             throw new LifecycleException();
         }
+    }
+
+    @Override
+    public void treeifyHierarchy(@NotNull TreeItem<String> parent, @NotNull Verbosity verbosity) {
+        this.getChildren().forEach(component -> component.treeifyHierarchy(parent, verbosity));
     }
 
     public void launch(@NotNull Stage stage) {

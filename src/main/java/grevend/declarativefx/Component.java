@@ -32,10 +32,7 @@ import grevend.declarativefx.components.properties.*;
 import grevend.declarativefx.event.EventHandler;
 import grevend.declarativefx.lifecycle.LifecycleException;
 import grevend.declarativefx.lifecycle.LifecyclePhase;
-import grevend.declarativefx.util.Measurable;
-import grevend.declarativefx.util.StringifiableHierarchy;
-import grevend.declarativefx.util.Triplet;
-import grevend.declarativefx.util.Utils;
+import grevend.declarativefx.util.*;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -43,6 +40,7 @@ import javafx.beans.value.WritableObjectValue;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.scene.Node;
+import javafx.scene.control.TreeItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import org.jetbrains.annotations.NotNull;
@@ -57,9 +55,12 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static grevend.declarativefx.components.Layout.TreeItem;
+
 public class Component<N extends Node>
     implements Lifecycle<N>, Fluent<N>, Bindable<N>, Listenable<N>, Identifiable<N>, Findable, Styleable<N>,
-    StringifiableHierarchy, BiConsumer<BindableCollection.Change, Collection<? extends Component<? extends Node>>> {
+    StringifiableHierarchy, TreeifiableHierarchy,
+    BiConsumer<BindableCollection.Change, Collection<? extends Component<? extends Node>>> {
 
     private final BindableCollection<Component<? extends Node>> children;
     private final Map<String, BindableValue> bindableProperties;
@@ -480,7 +481,7 @@ public class Component<N extends Node>
     }
 
     @Override
-    public @NotNull String stringify() {
+    public @NotNull String stringify(@NotNull Verbosity verbosity) {
         return this.toString();
     }
 
@@ -496,6 +497,13 @@ public class Component<N extends Node>
                     childPrefix + (hasNextComponent ? "│   " : "    "), verbosity);
             }
         }
+    }
+
+    @Override
+    public void treeifyHierarchy(@NotNull TreeItem<String> parent, @NotNull Verbosity verbosity) {
+        var item = TreeItem(this.toString(), true);
+        parent.getChildren().add(item);
+        this.children.forEach(component -> component.treeifyHierarchy(item, verbosity));
     }
 
     @Override
