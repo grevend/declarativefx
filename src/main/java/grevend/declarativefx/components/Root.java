@@ -24,14 +24,11 @@
 
 package grevend.declarativefx.components;
 
-//import com.sun.javafx.css.StyleManager;
 import grevend.declarativefx.Component;
 import grevend.declarativefx.lifecycle.LifecycleException;
 import grevend.declarativefx.lifecycle.LifecyclePhase;
 import grevend.declarativefx.util.Measurable;
 import grevend.declarativefx.util.Verbosity;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -42,22 +39,23 @@ import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.time.Duration;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Root<P extends Parent> extends Component<P> {
 
     private final Map<Measurable, Duration> measurements;
     private LifecyclePhase phase;
+    private Mode mode;
     private Stage stage;
     private Scene scene;
 
     public Root(@NotNull Component<P> component) {
         super(component);
         this.measurements = new HashMap<>();
+        this.mode = Mode.RELEASE;
     }
 
     @Override
@@ -193,7 +191,7 @@ public class Root<P extends Parent> extends Component<P> {
         this.getChildren().forEach(component -> component.treeifyHierarchy(parent, verbosity));
     }
 
-    public void launch(@NotNull Stage stage) {
+    public @NotNull Root<P> launch(@NotNull Stage stage) {
         this.stage = stage;
         this.beforeConstruction();
         var tree = this.construct();
@@ -204,6 +202,7 @@ public class Root<P extends Parent> extends Component<P> {
         } else {
             throw new IllegalStateException("Component hierarchy construction failed.");
         }
+        return this;
     }
 
     public @Nullable Stage getStage() {
@@ -227,6 +226,13 @@ public class Root<P extends Parent> extends Component<P> {
 
     public @NotNull Root<P> addStylesheet(@NotNull String stylesheet, @NotNull Class<?> clazz) {
         if (this.getScene() != null) {
+            if (this.mode == Mode.DEBUG) {
+                File file = new File("src/main/resources" + stylesheet);
+                if (file.exists()) {
+                    this.getScene().getStylesheets().add("file:/" + file.getAbsolutePath().replace("\\", "/"));
+                    return this;
+                }
+            }
             this.getScene().getStylesheets().add(clazz.getResource(stylesheet).toExternalForm());
         } else {
             throw new LifecycleException("Scene has not been constructed yet.");
@@ -236,6 +242,13 @@ public class Root<P extends Parent> extends Component<P> {
 
     public @NotNull Root<P> removeStylesheet(@NotNull String stylesheet, @NotNull Class<?> clazz) {
         if (this.getScene() != null) {
+            if (this.mode == Mode.DEBUG) {
+                File file = new File("src/main/resources" + stylesheet);
+                if (file.exists()) {
+                    this.getScene().getStylesheets().remove("file:/" + file.getAbsolutePath().replace("\\", "/"));
+                    return this;
+                }
+            }
             this.getScene().getStylesheets().remove(clazz.getResource(stylesheet).toExternalForm());
         } else {
             throw new LifecycleException("Scene has not been constructed yet.");
@@ -251,18 +264,36 @@ public class Root<P extends Parent> extends Component<P> {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public void reloadStylesheets() {
-        var observableList = FXCollections.observableArrayList(this.getStylesheets());
-        /*observableList.addListener((ListChangeListener<String>) c -> StyleManager.getInstance()
-            .stylesheetsChanged(getScene(), (ListChangeListener.Change<String>) c));*/
-        observableList.removeAll(observableList);
+    public @NotNull Root<P> reloadStylesheets() {
+        var stylesheets = new ArrayList<>(this.getStylesheets());
+        this.getStylesheets().clear();
+        Objects.requireNonNull(this.getScene()).getRoot().setStyle("-declarativefx-cache-reset: all;");
+        this.getStylesheets().addAll(stylesheets);
+        return this;
     }
 
-    public void enableDeveloperKeyboardShortcuts(@NotNull Class<?> clazz) {
-        if (this.getScene() != null) {
-            this.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F5), this::reloadStylesheets);
+    public @NotNull Mode getMode() {
+        return mode;
+    }
+
+    public @NotNull Root<P> setMode(@NotNull Mode mode) {
+        this.mode = mode;
+        return this;
+    }
+
+    public @NotNull Root<P> enableDeveloperKeyboardShortcuts() {
+        if (this.mode == Mode.DEBUG) {
+            if (this.getScene() != null) {
+                this.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F5), this::reloadStylesheets);
+            }
+            return this;
+        } else {
+            throw new IllegalStateException("Method enableDeveloperKeyboardShortcuts can only be used in DEBUG mode.");
         }
+    }
+
+    public enum Mode {
+        RELEASE, DEBUG;
     }
 
 }
