@@ -25,6 +25,7 @@
 package grevend.declarativefx.components;
 
 import grevend.declarativefx.Component;
+import grevend.declarativefx.Window;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import org.jetbrains.annotations.Contract;
@@ -38,6 +39,11 @@ public class Compat {
     @Contract("_ -> new")
     public static @NotNull <P extends Parent> Root<P> Root(@NotNull Component<P> component) {
         return new Root<>(component);
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull <P extends Parent> Window<P> Window(@NotNull Component<P> component) {
+        return new Window<>(component);
     }
 
     @Contract("_ -> new")
