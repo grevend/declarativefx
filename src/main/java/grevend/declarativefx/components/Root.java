@@ -229,7 +229,9 @@ public class Root<P extends Parent> extends Component<P> {
             if (this.mode == Mode.DEBUG) {
                 File file = new File("src/main/resources" + stylesheet);
                 if (file.exists()) {
-                    this.getScene().getStylesheets().add("file:/" + file.getAbsolutePath().replace("\\", "/"));
+                    this.getScene().getStylesheets().add(
+                        (System.getProperty("os.name").toLowerCase().contains("win") ? "file:/" : "file://") +
+                            file.getAbsolutePath().replace("\\", "/"));
                     return this;
                 }
             }
@@ -245,7 +247,9 @@ public class Root<P extends Parent> extends Component<P> {
             if (this.mode == Mode.DEBUG) {
                 File file = new File("src/main/resources" + stylesheet);
                 if (file.exists()) {
-                    this.getScene().getStylesheets().remove("file:/" + file.getAbsolutePath().replace("\\", "/"));
+                    this.getScene().getStylesheets().remove(
+                        (System.getProperty("os.name").toLowerCase().contains("win") ? "file:/" : "file://") +
+                            file.getAbsolutePath().replace("\\", "/"));
                     return this;
                 }
             }

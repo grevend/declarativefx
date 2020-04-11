@@ -535,15 +535,13 @@ public class Component<N extends Node>
     public <T> T measure(@NotNull Measurable measurable, @NotNull Supplier<T> supplier) {
         var start = Instant.now();
         var res = supplier.get();
-        if (this.parent != null) {
-            var end = Instant.now();
-            var measurements = this.getRoot().getMeasurements();
-            var duration = Duration.between(start, end);
-            if (!measurements.containsKey(measurable)) {
-                measurements.put(measurable, duration);
-            } else {
-                measurements.put(measurable, measurements.get(measurable).plus(duration));
-            }
+        var end = Instant.now();
+        var measurements = this.getRoot().getMeasurements();
+        var duration = Duration.between(start, end);
+        if (!measurements.containsKey(measurable)) {
+            measurements.put(measurable, duration);
+        } else {
+            measurements.put(measurable, measurements.get(measurable).plus(duration));
         }
         return res;
     }
