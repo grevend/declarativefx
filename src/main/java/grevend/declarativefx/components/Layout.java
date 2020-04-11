@@ -225,6 +225,14 @@ public class Layout {
         return new Tab(text);
     }
 
+    @Contract("_, _ -> new")
+    public static @NotNull Tab Tab(String title, @NotNull Component<? extends Node> component) {
+        component.beforeConstruction();
+        var element = new Tab(title, component.construct());
+        component.afterConstruction();
+        return element;
+    }
+
     public static @NotNull Component<TabPane> TabPane(@NotNull Tab... tabs) {
         return FX(new TabPane()).fluent(pane -> pane.getTabs().addAll(tabs));
     }
