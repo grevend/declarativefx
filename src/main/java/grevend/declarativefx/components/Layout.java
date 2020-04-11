@@ -220,6 +220,27 @@ public class Layout {
         return FX(new TreeView<>(root));
     }
 
+    @Contract("_ -> new")
+    public static @NotNull Tab Tab(@NotNull String text) {
+        return new Tab(text);
+    }
+
+    @Contract("_, _ -> new")
+    public static @NotNull Tab Tab(String title, @NotNull Component<? extends Node> component) {
+        component.beforeConstruction();
+        var element = new Tab(title, component.construct());
+        component.afterConstruction();
+        return element;
+    }
+
+    public static @NotNull Component<TabPane> TabPane(@NotNull Tab... tabs) {
+        return FX(new TabPane()).fluent(pane -> pane.getTabs().addAll(tabs));
+    }
+
+    public static @NotNull Component<TabPane> TabPane(@NotNull Collection<Tab> tabs) {
+        return FX(new TabPane()).fluent(pane -> pane.getTabs().addAll(tabs));
+    }
+
     @Deprecated
     public static @NotNull Component<TableView<String[]>> TableView(@NotNull Collection<String[]> row,
                                                                     @NotNull String... columns) {

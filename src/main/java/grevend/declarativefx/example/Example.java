@@ -47,12 +47,21 @@ public class Example extends Application {
 
         var root = Root(
             HBox(
-                VBox(
-                    Text("Value: 0").compute("text", counter, () -> "Value: " + counter.get()),
-                    Button("Increment").on((event, component) -> {
-                        counter.update(before -> (int) before + 1);
-                    })
+                TabPane(
+                    Tab("Davids",
+                        VBox(
+                            Text("Value: 0").compute("text", counter, () -> "Value: " + counter.get()),
+                            Button("Increment").on((event, component) -> {
+                                counter.update(before -> (int) before + 1);
+                            })
+                        )
+                        ),
+                    Tab("Duarts", HBox(
+                        Button("Hello!!"),
+                        Text("Value: 0").compute("text", counter, () -> "Value: " + counter.get())
+                    ))
                 )
+
             )
         );
 
