@@ -66,3 +66,6 @@ tmp/*
 # VisualStudioCode #
 .history
 .idea/jarRepositories.xml
+
+# JavaDoc #
+javadoc/
