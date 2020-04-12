@@ -1,6 +1,6 @@
 # DeclarativeFX
 
-An experimental thin and declarative wrapper for JavaFX.
+A thin experimental and declarative wrapper for JavaFX.
 
 ## Usage
 
