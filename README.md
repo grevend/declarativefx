@@ -19,7 +19,6 @@ DeclarativeFX.show(root, stage);
 
 ## Components
 
-* Root
 * FX
 * TextField
 * TextArea
@@ -31,8 +30,6 @@ DeclarativeFX.show(root, stage);
 * Separator
 * HBox
 * VBox
-* ListView
-* ScrollPane
 * BorderPane
 * GridPane
 * TreeItem
