@@ -43,17 +43,17 @@ public class Utils {
     public final static Map<Class<? extends Node>, Map<String, String>> propertyNames =
         new HashMap<>();
 
-    public static @NotNull <N extends Node> Map<String, String> getPropertyNames(@NotNull Class<N> nodeClass) {
+    @NotNull
+    public static <N extends Node> Map<String, String> getPropertyNames(@NotNull Class<N> nodeClass) {
         return Arrays.stream(nodeClass.getMethods()).filter(
             m -> m.getName().contains("Property") && Observable.class.isAssignableFrom(m.getReturnType()) &&
                 Modifier.isPublic(m.getModifiers()))
             .collect(Collectors.toMap(m -> m.getName().replaceAll("Property", "").toLowerCase(), Method::getName));
     }
 
+    @Nullable
     @SuppressWarnings("unchecked")
-    public static synchronized @Nullable <N extends Node> ObservableValue<?> getObservableValue(@NotNull N node,
-                                                                                                @NotNull Map<String, ObservableValue<Object>> properties,
-                                                                                                @NotNull String property) {
+    public static synchronized <N extends Node> ObservableValue<?> getObservableValue(@NotNull N node, @NotNull Map<String, ObservableValue<Object>> properties, @NotNull String property) {
         var nodeClass = node.getClass();
         if (properties.containsKey(property.toLowerCase())) {
             return properties.get(property.toLowerCase());

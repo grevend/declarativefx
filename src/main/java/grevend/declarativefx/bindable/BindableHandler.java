@@ -31,7 +31,7 @@ import java.util.function.Function;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
-public class BindableHandler<T> extends Handler {
+public class BindableHandler<T> extends Handler implements Bindable {
 
     private final BindableCollection<T> records;
     private final Function<LogRecord, T> mapper;
@@ -46,7 +46,8 @@ public class BindableHandler<T> extends Handler {
         return new BindableHandler<>(BindableCollection.empty(), LogRecord::getMessage);
     }
 
-    public @NotNull BindableCollection<T> getRecords() {
+    @NotNull
+    public BindableCollection<T> getRecords() {
         return records;
     }
 
@@ -56,11 +57,9 @@ public class BindableHandler<T> extends Handler {
     }
 
     @Override
-    public void flush() {
-    }
+    public void flush() {}
 
     @Override
-    public void close() throws SecurityException {
-    }
+    public void close() throws SecurityException {}
 
 }

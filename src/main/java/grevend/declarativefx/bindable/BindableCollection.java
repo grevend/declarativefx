@@ -36,7 +36,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class BindableCollection<E> implements Collection<E> {
+public class BindableCollection<E> implements Collection<E>, Bindable {
 
     private final Collection<E> collection;
     private final Collection<BiConsumer<Change, Collection<? extends E>>> consumers;
@@ -58,8 +58,7 @@ public class BindableCollection<E> implements Collection<E> {
     }
 
     @Contract("_, _ -> new")
-    public static @NotNull <E> BindableCollection<E> of(@NotNull Collection<E> collection,
-                                                        @NotNull Predicate<E> filter) {
+    public static @NotNull <E> BindableCollection<E> of(@NotNull Collection<E> collection, @NotNull Predicate<E> filter) {
         return new BindableCollection<>(collection.stream().filter(filter).collect(Collectors.toList()));
     }
 
@@ -178,15 +177,15 @@ public class BindableCollection<E> implements Collection<E> {
         consumers.forEach(consumer -> consumer.accept(Change.REMOVE, elements));
     }
 
-    public @NotNull ObservableList<E> toObservableList() {
+    @NotNull
+    public ObservableList<E> toObservableList() {
         return FXCollections.observableArrayList(this);
     }
 
+    @NotNull
     @Override
     public String toString() {
-        return "BindableCollection{" +
-            "collection=" + collection +
-            '}';
+        return "BindableCollection{collection=" + collection + '}';
     }
 
     public enum Change {

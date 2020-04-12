@@ -41,14 +41,17 @@ public class Triplet<A, B, C> {
         this.c = c;
     }
 
+    @Nullable
     public A getA() {
         return a;
     }
 
+    @Nullable
     public B getB() {
         return b;
     }
 
+    @Nullable
     public C getC() {
         return c;
     }
@@ -68,13 +71,10 @@ public class Triplet<A, B, C> {
         return Objects.hash(getA(), getB(), getC());
     }
 
+    @NotNull
     @Override
     public String toString() {
-        return "Triplet{" +
-            "a=" + a +
-            ", b=" + b +
-            ", c=" + c +
-            '}';
+        return "Triplet{a=" + a + ", b=" + b + ", c=" + c + '}';
     }
 
 }

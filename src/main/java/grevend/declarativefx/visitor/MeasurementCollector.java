@@ -22,16 +22,48 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.event;
+package grevend.declarativefx.visitor;
 
 import grevend.declarativefx.component.Component;
-import javafx.event.Event;
+import grevend.declarativefx.decorator.MeasuredComponent;
 import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
 
-@FunctionalInterface
-public interface EventHandler<E extends Event> {
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
-    void onEvent(@NotNull E event, @NotNull Component<? extends Node> component);
+public class MeasurementCollector extends HierarchyVisitor {
+
+    private final Map<String, Duration> measurements;
+
+    public MeasurementCollector() {
+        this.measurements = new HashMap<>();
+    }
+
+    @NotNull
+    public Map<String, Duration> getMeasurements() {
+        return measurements;
+    }
+
+    @NotNull
+    public Map<String, Duration> collect(@NotNull Component<? extends Node> root) {
+        this.start(root);
+        return this.getMeasurements();
+    }
+
+    @Override
+    public <N extends Node> void visit(@NotNull Component<N> component) {
+        if (component instanceof MeasuredComponent) {
+            var measured = ((MeasuredComponent<N>) component);
+            measured.getMeasurements().forEach((measurement, duration) -> {
+                if (!this.measurements.containsKey(measurement)) {
+                    this.measurements.put(measurement, duration);
+                } else {
+                    this.measurements.put(measurement, this.measurements.get(measurement).plus(duration));
+                }
+            });
+        }
+    }
 
 }

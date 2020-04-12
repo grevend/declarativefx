@@ -22,9 +22,8 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.components.builder;
+package grevend.declarativefx.component;
 
-import grevend.declarativefx.Component;
 import grevend.declarativefx.util.Triplet;
 import javafx.scene.Node;
 import org.jetbrains.annotations.Contract;
@@ -36,7 +35,7 @@ import java.util.Collection;
 
 public class GridBuilder {
 
-    private Collection<Triplet<Component<? extends Node>, Integer, Integer>> components;
+    private final Collection<Triplet<Component<? extends Node>, Integer, Integer>> components;
 
     @Contract(pure = true)
     public GridBuilder() {
@@ -50,7 +49,8 @@ public class GridBuilder {
         return this;
     }
 
-    public Collection<Triplet<Component<? extends Node>, Integer, Integer>> getComponents() {
+    @NotNull
+    protected Collection<Triplet<Component<? extends Node>, Integer, Integer>> getComponents() {
         return this.components;
     }
 
