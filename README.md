@@ -7,20 +7,14 @@ An experimental thin and declarative wrapper for JavaFX.
 ```java
 BindableValue counter = new BindableValue(0);
 
-var root = Root(
-  HBox(
-    VBox(
-      VBox(
-        Text("Value: 0").compute(counter, () -> "Value: " + counter.get()),
-        Button("Increment").on((event, component) -> {
-          counter.update(before -> (int) before + 1);
-        })
-      )
-    )
-  )
+var root = HBox(
+    Text("Value: 0").compute("text", counter, () -> "Value: " + counter.get()),
+    Button("Increment").on((event, component) -> {
+        counter.update(before -> (int) before + 1);
+    })
 );
 
-root.launch(stage);
+DeclarativeFX.show(root, stage);
 ```
 
 ## Components
