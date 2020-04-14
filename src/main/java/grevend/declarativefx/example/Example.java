@@ -56,6 +56,7 @@ public class Example extends Application {
 
         DeclarativeFX.show(root, stage);
         System.out.println(DeclarativeFX.stringifyHierarchy(root, Verbosity.DETAILED));
+        System.out.println(DeclarativeFX.treeifyHierarchy(root, Verbosity.DETAILED));
     }
 
 }

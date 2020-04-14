@@ -25,6 +25,7 @@
 package grevend.declarativefx;
 
 import grevend.declarativefx.component.Component;
+import grevend.declarativefx.util.MarkedTreeItem;
 import grevend.declarativefx.util.Verbosity;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -44,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
-import static grevend.declarativefx.component.Layout.TreeItem;
 import static grevend.declarativefx.component.Layout.TreeView;
 
 public class DeclarativeFX {
@@ -99,15 +99,19 @@ public class DeclarativeFX {
 
     @NotNull
     public static <N extends Node> Component<TreeView<String>> treeifyHierarchy(@NotNull Component<N> component, @NotNull Verbosity verbosity) {
-        var item = TreeItem(component.stringify(verbosity), true);
-        component.getChildren().forEach(child -> treeifyHierarchy(child, item, verbosity));
+        var item = new MarkedTreeItem<>(component.stringify(verbosity), 0);
+        item.setExpanded(true);
+        int[] marker = new int[]{0};
+        component.getChildren().forEach(child -> treeifyHierarchy(child, marker[0]++, item, verbosity));
         return TreeView(item);
     }
 
-    private static <N extends Node> void treeifyHierarchy(@NotNull Component<N> component, @NotNull TreeItem<String> parent, @NotNull Verbosity verbosity) {
-        var item = TreeItem(component.stringify(verbosity), true);
+    private static <N extends Node> void treeifyHierarchy(@NotNull Component<N> component, int parentMarker, @NotNull TreeItem<String> parent, @NotNull Verbosity verbosity) {
+        var item = new MarkedTreeItem<>(component.stringify(verbosity), parentMarker);
+        item.setExpanded(true);
         parent.getChildren().add(item);
-        component.getChildren().forEach(child -> treeifyHierarchy(child, item, verbosity));
+        int[] marker = new int[]{parentMarker};
+        component.getChildren().forEach(child -> treeifyHierarchy(child, marker[0]++, item, verbosity));
     }
 
     @Nullable
@@ -194,6 +198,7 @@ public class DeclarativeFX {
 
     @Contract(pure = true)
     public void show(@NotNull Component<? extends Parent> component) {
+        this.root = component;
         stage.setScene((this.scene = new Scene(component.getNode())));
         stage.show();
     }
@@ -267,8 +272,10 @@ public class DeclarativeFX {
 
     @NotNull
     public Component<TreeView<String>> treeifyHierarchy(@NotNull Verbosity verbosity) {
-        var item = TreeItem(this.root.stringify(verbosity), true);
-        this.root.getChildren().forEach(child -> treeifyHierarchy(child, item, verbosity));
+        var item = new MarkedTreeItem<>(this.root.stringify(verbosity), 0);
+        item.setExpanded(true);
+        int[] marker = new int[]{0};
+        this.root.getChildren().forEach(child -> treeifyHierarchy(child, marker[0]++, item, verbosity));
         return TreeView(item);
     }
 
