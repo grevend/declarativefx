@@ -40,6 +40,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -162,6 +163,12 @@ public abstract class ComponentDecorator<N extends Node> implements Component<N>
     @Override
     public Object get(@NotNull String property) {
         return this.target.get(property);
+    }
+
+    @NotNull
+    @Override
+    public Map<String, BindableValue> getProperties() {
+        return this.target.getProperties();
     }
 
     @NotNull

@@ -148,7 +148,8 @@ public abstract class ComponentBase<N extends Node> implements Component<N> {
     }
 
     @NotNull
-    protected Map<String, BindableValue> getProperties() {
+    @Override
+    public Map<String, BindableValue> getProperties() {
         return this.properties;
     }
 

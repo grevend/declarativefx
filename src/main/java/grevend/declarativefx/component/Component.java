@@ -38,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -111,6 +112,9 @@ public interface Component<N extends Node> extends Iterable<Component<? extends 
 
     @Nullable
     Object get(@NotNull String property);
+
+    @NotNull
+    Map<String, BindableValue> getProperties();
 
     @NotNull
     String stringify(@NotNull Verbosity verbosity);
