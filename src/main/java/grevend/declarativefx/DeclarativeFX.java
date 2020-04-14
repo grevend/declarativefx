@@ -25,6 +25,7 @@
 package grevend.declarativefx;
 
 import grevend.declarativefx.component.Component;
+import grevend.declarativefx.util.Verbosity;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -49,6 +50,7 @@ public class DeclarativeFX {
     private Mode mode;
     private Stage stage;
     private Scene scene;
+    private Component<? extends Parent> root;
 
     @Contract(pure = true)
     private DeclarativeFX() {
@@ -61,12 +63,33 @@ public class DeclarativeFX {
         getInstance().show(component);
     }
 
-    public static void launch(@NotNull Component<? extends Parent> component, @NotNull Stage parentStage, @NotNull Modality modality) {
+    @NotNull
+    public static Stage launch(@NotNull Component<? extends Parent> component, @NotNull Stage parentStage, @NotNull Modality modality) {
         var stage = new Stage();
         stage.initModality(modality);
         stage.initOwner(parentStage);
         stage.setScene(new Scene(component.getNode()));
         stage.show();
+        return stage;
+    }
+
+    @NotNull
+    public static <N extends Node> String stringifyHierarchy(@NotNull Component<N> component, @NotNull Verbosity verbosity) {
+        var builder = new StringBuilder();
+        stringifyHierarchy(component, builder, "", "", verbosity);
+        return builder.toString();
+    }
+
+    private static <N extends Node> void stringifyHierarchy(@NotNull Component<N> component, @NotNull StringBuilder builder, @NotNull String prefix, @NotNull String childPrefix, @NotNull Verbosity verbosity) {
+        builder.append(prefix).append(component.stringify(verbosity)).append(System.lineSeparator());
+        for (var componentIter = component.getChildren().iterator(); componentIter.hasNext(); ) {
+            var nextComponent = componentIter.next();
+            if (nextComponent != component) {
+                var hasNextComponent = componentIter.hasNext();
+                stringifyHierarchy(nextComponent, builder, childPrefix + (hasNextComponent ? "├── " : "└── "),
+                    childPrefix + (hasNextComponent ? "│   " : "    "), verbosity);
+            }
+        }
     }
 
     @Nullable
@@ -215,6 +238,83 @@ public class DeclarativeFX {
                 this.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.F5), this::reloadStylesheets);
             }
         }
+    }
+
+    @NotNull
+    public String stringifyHierarchy(@NotNull Verbosity verbosity) {
+        var builder = new StringBuilder();
+        stringifyHierarchy(this.root, builder, "", "", verbosity);
+        return builder.toString();
+    }
+
+    @Nullable
+    @Contract(pure = true)
+    public Component<? extends Node> findById(@NotNull String id) {
+        for (Component<?> component : this.root) {
+            var componentId = component.get("id");
+            if (componentId != null && componentId.equals(id)) {
+                return component;
+            }
+        }
+        return null;
+    }
+
+    @NotNull
+    @SuppressWarnings("unchecked")
+    public Collection<Component<? extends Node>> findByClass(@NotNull String clazz) {
+        var components = new ArrayList<Component<? extends Node>>();
+        for (Component<?> component : this.root) {
+            if (((Collection<String>) Objects.requireNonNull(component.get("styleclass"))).contains(clazz)) {
+                components.add(component);
+            }
+        }
+        return components;
+    }
+
+    @NotNull
+    @SuppressWarnings("unchecked")
+    public <N extends Node> Collection<Component<N>> findByNode(@NotNull Class<N> clazz) {
+        var components = new ArrayList<Component<N>>();
+        for (Component<?> component : this.root) {
+            if (clazz.isInstance(component.getNode())) {
+                components.add((Component<N>) component);
+            }
+        }
+        return components;
+    }
+
+    @Nullable
+    @Contract(pure = true)
+    public Component<? extends Node> findByMarker(int marker) {
+        for (Component<?> component : this.root) {
+            var componentMarker = component.get("marker");
+            if (componentMarker != null && componentMarker.equals(marker)) {
+                return component;
+            }
+        }
+        return null;
+    }
+
+    @NotNull
+    public Collection<Component<? extends Node>> findMarked() {
+        var components = new ArrayList<Component<? extends Node>>();
+        for (Component<?> component : this.root) {
+            if (component.isMarked()) {
+                components.add(component);
+            }
+        }
+        return components;
+    }
+
+    @NotNull
+    public Collection<Component<? extends Node>> findDecorated() {
+        var components = new ArrayList<Component<? extends Node>>();
+        for (Component<?> component : this.root) {
+            if (component.isDecorated()) {
+                components.add(component);
+            }
+        }
+        return components;
     }
 
     @Nullable

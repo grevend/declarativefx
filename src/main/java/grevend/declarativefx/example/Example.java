@@ -26,6 +26,7 @@ package grevend.declarativefx.example;
 
 import grevend.declarativefx.DeclarativeFX;
 import grevend.declarativefx.bindable.BindableValue;
+import grevend.declarativefx.util.Verbosity;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -54,6 +55,7 @@ public class Example extends Application {
         );
 
         DeclarativeFX.show(root, stage);
+        System.out.println(DeclarativeFX.stringifyHierarchy(root, Verbosity.DETAILED));
     }
 
 }
