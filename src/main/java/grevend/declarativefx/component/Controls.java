@@ -22,9 +22,8 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.components;
+package grevend.declarativefx.component;
 
-import grevend.declarativefx.Component;
 import javafx.collections.FXCollections;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -36,64 +35,75 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-import static grevend.declarativefx.components.Compat.FX;
+import static grevend.declarativefx.component.Compat.FX;
 
 public class Controls {
 
-    public static @NotNull Component<TextField> TextField(@NotNull String placeholder) {
+    @NotNull
+    public static Component<TextField> TextField(@NotNull String placeholder) {
         return FX(new TextField()).set("prompttext", placeholder);
     }
 
-    public static @NotNull Component<PasswordField> PasswordField(@NotNull String placeholder) {
+    @NotNull
+    public static Component<PasswordField> PasswordField(@NotNull String placeholder) {
         return FX(new PasswordField()).set("prompttext", placeholder);
     }
 
-    public static @NotNull Component<TextArea> TextArea(@NotNull String placeholder) {
+    @NotNull
+    public static Component<TextArea> TextArea(@NotNull String placeholder) {
         return FX(new TextArea()).set("prompttext", placeholder);
     }
 
-    public static @NotNull <T> Component<ChoiceBox<T>> ChoiceBox(@NotNull Collection<T> items) {
+    @NotNull
+    public static <T> Component<ChoiceBox<T>> ChoiceBox(@NotNull Collection<T> items) {
         return FX(new ChoiceBox<>(FXCollections.observableArrayList(items)));
     }
 
-    public static @NotNull <T> Component<ChoiceBox<T>> ChoiceBox(@NotNull Collection<T> items, @NotNull T value) {
+    @NotNull
+    public static <T> Component<ChoiceBox<T>> ChoiceBox(@NotNull Collection<T> items, @NotNull T value) {
         return FX(new ChoiceBox<>(FXCollections.observableArrayList(items))).set("value", value);
     }
 
+    @NotNull
     @SafeVarargs
-    public static @NotNull <T> Component<ChoiceBox<T>> ChoiceBox(T... items) {
+    public static <T> Component<ChoiceBox<T>> ChoiceBox(T... items) {
         return FX(new ChoiceBox<>(FXCollections.observableArrayList(Arrays.asList(items))));
     }
 
-    public static @NotNull Component<Button> Button(@NotNull String text) {
+    @NotNull
+    public static Component<Button> Button(@NotNull String text) {
         return FX(new Button(text));
     }
 
-    public static @NotNull Component<Button> Button(@NotNull String text, @NotNull String img, double[] imgSize) {
+    @NotNull
+    public static Component<Button> Button(@NotNull String text, @NotNull String img, double[] imgSize) {
         var node = new Button(text);
         if (img.contains("http") || img.contains("https")) {
             Image image = imgSize[0] == -1 ? new Image(img) : new Image(img, imgSize[0], imgSize[1], true, true);
             node.setGraphic(new ImageView(image));
         } else {
-            //TODO: loading via file currently cannot take a size.
-            node.setGraphic(Layout.Image(img).construct());
+            node.setGraphic(Layout.Image(img).getNode());
         }
         return FX(node);
     }
 
-    public static @NotNull Component<Button> Button(@NotNull String text, @NotNull String img) {
+    @NotNull
+    public static Component<Button> Button(@NotNull String text, @NotNull String img) {
         return Button(text, img, new double[]{-1, -1});
     }
 
-    public static @NotNull Component<Label> Label(@NotNull String text) {
+    @NotNull
+    public static Component<Label> Label(@NotNull String text) {
         return FX(new Label(text));
     }
 
-    public static @NotNull Component<Hyperlink> Hyperlink(@NotNull String text) {
+    @NotNull
+    public static Component<Hyperlink> Hyperlink(@NotNull String text) {
         return FX(new Hyperlink(text));
     }
 
-    public static @NotNull Component<VBox> MenuBar(@NotNull Consumer<Collection<Menu>> builder) {
+    @NotNull
+    public static Component<VBox> MenuBar(@NotNull Consumer<Collection<Menu>> builder) {
         var menuBar = new MenuBar();
         builder.accept(menuBar.getMenus());
         return FX(new VBox(menuBar));

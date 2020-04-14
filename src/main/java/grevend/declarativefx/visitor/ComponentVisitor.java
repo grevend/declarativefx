@@ -22,33 +22,15 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.components.properties;
+package grevend.declarativefx.visitor;
 
-import grevend.declarativefx.Component;
+import grevend.declarativefx.component.Component;
 import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
+@FunctionalInterface
+public interface ComponentVisitor {
 
-public interface Findable {
-
-    @Nullable Component<? extends Node> findById(@NotNull String id, boolean root);
-
-    default @Nullable Component<? extends Node> findById(@NotNull String id) {
-        return this.findById(id, true);
-    }
-
-    @NotNull Collection<Component<? extends Node>> findByClass(
-        @NotNull Collection<Component<? extends Node>> components, @NotNull String clazz, boolean root);
-
-    default @NotNull Collection<Component<? extends Node>> findByClass(@NotNull String clazz, boolean root) {
-        return this.findByClass(new ArrayList<>(), clazz, root);
-    }
-
-    default @NotNull Collection<Component<? extends Node>> findByClass(@NotNull String clazz) {
-        return this.findByClass(new ArrayList<>(), clazz, true);
-    }
+    <N extends Node> void visit(@NotNull Component<N> component);
 
 }

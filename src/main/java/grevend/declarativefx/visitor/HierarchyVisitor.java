@@ -22,37 +22,37 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.components.properties;
+package grevend.declarativefx.visitor;
 
-import grevend.declarativefx.Component;
-import grevend.declarativefx.event.EventHandler;
-import javafx.beans.InvalidationListener;
-import javafx.beans.value.ChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventType;
+import grevend.declarativefx.component.Component;
 import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.function.BiConsumer;
+import java.util.Iterator;
 
-public interface Listenable<N extends Node> {
+public abstract class HierarchyVisitor implements ComponentVisitor {
 
-    @NotNull <E extends Event> Component<N> on(@NotNull EventType<E> type, @NotNull EventHandler<E> handler);
+    private Component<? extends Node> root;
+    private Iterator<Component<? extends Node>> iterator;
 
-    default @NotNull Component<N> on(@NotNull EventHandler<ActionEvent> handler) {
-        return this.on(ActionEvent.ACTION, handler);
+    protected void start(@NotNull Component<? extends Node> root) {
+        this.root = root;
+        this.iterator = root.iterator();
+        this.visit(this.root);
+        while (this.iterator.hasNext()) {
+            this.visit(this.iterator.next());
+        }
     }
 
-    default @NotNull Component<N> on(@NotNull String property,
-                                     @NotNull BiConsumer<Component<? extends Node>, Object> consumer) {
-        this.on(property,
-            (observable, oldValue, newValue) -> consumer.accept((Component<? extends Node>) this, newValue));
-        return (Component<N>) this;
+    @Nullable
+    public Component<? extends Node> getRoot() {
+        return root;
     }
 
-    @NotNull <T> Component<N> on(@NotNull String property, @NotNull ChangeListener<T> listener);
-
-    @NotNull Component<N> on(@NotNull String property, @NotNull InvalidationListener listener);
+    @Nullable
+    public Iterator<Component<? extends Node>> getIterator() {
+        return iterator;
+    }
 
 }

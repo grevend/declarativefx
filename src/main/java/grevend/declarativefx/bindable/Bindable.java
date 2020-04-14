@@ -22,23 +22,6 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.components.properties;
+package grevend.declarativefx.bindable;
 
-import grevend.declarativefx.Component;
-import javafx.scene.Node;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Consumer;
-
-public interface Fluent<N extends Node> {
-
-    @NotNull Component<N> fluent(@NotNull Consumer<N> consumer);
-
-    @NotNull Component<N> self(@NotNull Consumer<Component<N>> consumer);
-
-    @NotNull Component<N> set(@NotNull String property, @Nullable Object value);
-
-    @Nullable Object get(@NotNull String property);
-
-}
+public interface Bindable {}

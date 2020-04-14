@@ -24,13 +24,15 @@
 
 package grevend.declarativefx.example;
 
+import grevend.declarativefx.DeclarativeFX;
 import grevend.declarativefx.bindable.BindableValue;
+import grevend.declarativefx.util.Verbosity;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import static grevend.declarativefx.components.Compat.Root;
-import static grevend.declarativefx.components.Controls.Button;
-import static grevend.declarativefx.components.Layout.*;
+import static grevend.declarativefx.component.Controls.Button;
+import static grevend.declarativefx.component.Layout.HBox;
+import static grevend.declarativefx.component.Layout.Text;
 
 public class Example extends Application {
 
@@ -45,28 +47,15 @@ public class Example extends Application {
 
         BindableValue counter = new BindableValue(0);
 
-        var root = Root(
-            HBox(
-                TabPane(
-                    Tab("Davids",
-                        VBox(
-                            Text("Value: 0").compute("text", counter, () -> "Value: " + counter.get()),
-                            Button("Increment").on((event, component) -> {
-                                counter.update(before -> (int) before + 1);
-                            })
-                        )
-                        ),
-                    Tab("Duarts", HBox(
-                        Button("Hello!!"),
-                        Text("Value: 0").compute("text", counter, () -> "Value: " + counter.get())
-                    ))
-                )
-
-            )
+        var root = HBox(
+            Text("Value: 0").compute("text", counter, () -> "Value: " + counter.get()),
+            Button("Increment").on((event, component) -> {
+                counter.update(before -> (int) before + 1);
+            })
         );
 
-        root.launch(stage);
-        System.out.println(root.stringifyHierarchy());
+        DeclarativeFX.show(root, stage);
+        System.out.println(DeclarativeFX.stringifyHierarchy(root, Verbosity.DETAILED));
     }
 
 }
