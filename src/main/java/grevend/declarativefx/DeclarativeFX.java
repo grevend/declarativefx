@@ -29,6 +29,8 @@ import grevend.declarativefx.util.Verbosity;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.stage.Modality;
@@ -41,6 +43,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+
+import static grevend.declarativefx.component.Layout.TreeItem;
+import static grevend.declarativefx.component.Layout.TreeView;
 
 public class DeclarativeFX {
 
@@ -90,6 +95,19 @@ public class DeclarativeFX {
                     childPrefix + (hasNextComponent ? "│   " : "    "), verbosity);
             }
         }
+    }
+
+    @NotNull
+    public static <N extends Node> Component<TreeView<String>> treeifyHierarchy(@NotNull Component<N> component, @NotNull Verbosity verbosity) {
+        var item = TreeItem(component.stringify(verbosity), true);
+        component.getChildren().forEach(child -> treeifyHierarchy(child, item, verbosity));
+        return TreeView(item);
+    }
+
+    private static <N extends Node> void treeifyHierarchy(@NotNull Component<N> component, @NotNull TreeItem<String> parent, @NotNull Verbosity verbosity) {
+        var item = TreeItem(component.stringify(verbosity), true);
+        parent.getChildren().add(item);
+        component.getChildren().forEach(child -> treeifyHierarchy(child, item, verbosity));
     }
 
     @Nullable
@@ -245,6 +263,13 @@ public class DeclarativeFX {
         var builder = new StringBuilder();
         stringifyHierarchy(this.root, builder, "", "", verbosity);
         return builder.toString();
+    }
+
+    @NotNull
+    public Component<TreeView<String>> treeifyHierarchy(@NotNull Verbosity verbosity) {
+        var item = TreeItem(this.root.stringify(verbosity), true);
+        this.root.getChildren().forEach(child -> treeifyHierarchy(child, item, verbosity));
+        return TreeView(item);
     }
 
     @Nullable
