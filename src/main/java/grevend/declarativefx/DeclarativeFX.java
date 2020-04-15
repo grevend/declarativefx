@@ -72,7 +72,7 @@ public class DeclarativeFX {
         getInstance().stage = stage;
         getInstance().show(component);
     }
-    
+
     @NotNull
     @Contract("_, _, _ -> new")
     public static DeclarativeFX launch(@NotNull Component<? extends Parent> component, @NotNull Stage parentStage, @NotNull Modality modality) {
