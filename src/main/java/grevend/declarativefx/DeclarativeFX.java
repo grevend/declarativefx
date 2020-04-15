@@ -30,8 +30,8 @@ import grevend.declarativefx.util.Verbosity;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.stage.Modality;
@@ -75,6 +75,11 @@ public class DeclarativeFX {
         stage.setScene(new Scene(component.getNode()));
         stage.show();
         return stage;
+    }
+
+    @NotNull
+    public static WritableImage snapshot(@NotNull Component<? extends Node> component) {
+        return component.getNode().snapshot(null, null);
     }
 
     @NotNull
@@ -205,6 +210,11 @@ public class DeclarativeFX {
         this.root = component;
         stage.setScene((this.scene = new Scene(component.getNode())));
         stage.show();
+    }
+
+    @NotNull
+    public WritableImage snapshot() {
+        return this.scene.snapshot(null);
     }
 
     public void addStylesheet(@NotNull String stylesheet, @NotNull Class<?> clazz) {
