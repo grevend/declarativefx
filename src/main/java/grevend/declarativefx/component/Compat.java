@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -83,6 +84,7 @@ public class Compat {
                 for (E element : collection) {
                     components.add(build.apply(element));
                 }
+                components.removeIf(Objects::isNull);
                 component.getChildren().addAll(components);
             });
             ((BindableCollection<E>) collection).getConsumers()
@@ -104,6 +106,7 @@ public class Compat {
                     components.add(build.apply(element, i));
                     i++;
                 }
+                components.removeIf(Objects::isNull);
                 component.getChildren().addAll(components);
             });
             ((BindableCollection<E>) collection).getConsumers()

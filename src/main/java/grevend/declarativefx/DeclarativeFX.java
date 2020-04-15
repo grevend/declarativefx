@@ -51,7 +51,6 @@ public class DeclarativeFX {
 
     private static final Object MUTEX = new Object();
     private static volatile DeclarativeFX INSTANCE;
-
     private Mode mode;
     private Stage stage;
     private Scene scene;
@@ -99,19 +98,24 @@ public class DeclarativeFX {
 
     @NotNull
     public static <N extends Node> Component<TreeView<String>> treeifyHierarchy(@NotNull Component<N> component, @NotNull Verbosity verbosity) {
-        var item = new MarkedTreeItem<>(component.stringify(verbosity), 0);
+        Integer[] marker = new Integer[]{0};
+        var item = new MarkedTreeItem<>(component.stringify(verbosity), marker[0]);
         item.setExpanded(true);
-        int[] marker = new int[]{0};
-        component.getChildren().forEach(child -> treeifyHierarchy(child, marker[0]++, item, verbosity));
+        component.getChildren().forEach(child -> {
+            marker[0]++;
+            treeifyHierarchy(child, marker, item, verbosity);
+        });
         return TreeView(item);
     }
 
-    private static <N extends Node> void treeifyHierarchy(@NotNull Component<N> component, int parentMarker, @NotNull TreeItem<String> parent, @NotNull Verbosity verbosity) {
-        var item = new MarkedTreeItem<>(component.stringify(verbosity), parentMarker);
+    private static <N extends Node> void treeifyHierarchy(@NotNull Component<N> component, @NotNull Integer[] marker, @NotNull MarkedTreeItem<String> parent, @NotNull Verbosity verbosity) {
+        var item = new MarkedTreeItem<>(component.stringify(verbosity), marker[0]);
         item.setExpanded(true);
         parent.getChildren().add(item);
-        int[] marker = new int[]{parentMarker};
-        component.getChildren().forEach(child -> treeifyHierarchy(child, marker[0]++, item, verbosity));
+        component.getChildren().forEach(child -> {
+            marker[0]++;
+            treeifyHierarchy(child, marker, item, verbosity);
+        });
     }
 
     @Nullable
@@ -272,11 +276,12 @@ public class DeclarativeFX {
 
     @NotNull
     public Component<TreeView<String>> treeifyHierarchy(@NotNull Verbosity verbosity) {
-        var item = new MarkedTreeItem<>(this.root.stringify(verbosity), 0);
+        /*var item = new MarkedTreeItem<>(this.root.stringify(verbosity), 0);
         item.setExpanded(true);
         int[] marker = new int[]{0};
         this.root.getChildren().forEach(child -> treeifyHierarchy(child, marker[0]++, item, verbosity));
-        return TreeView(item);
+        return TreeView(item);*/
+        return treeifyHierarchy(this.root, verbosity);
     }
 
     @Nullable
@@ -347,6 +352,11 @@ public class DeclarativeFX {
             }
         }
         return components;
+    }
+
+    @Nullable
+    public Component<? extends Parent> getRoot() {
+        return this.root;
     }
 
     @Nullable
