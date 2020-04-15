@@ -62,19 +62,26 @@ public class DeclarativeFX {
     }
 
     @Contract(pure = true)
+    private DeclarativeFX(@NotNull Component<? extends Parent> component, @NotNull Stage stage) {
+        this.root = component;
+        this.stage = stage;
+    }
+
+    @Contract(pure = true)
     public static void show(@NotNull Component<? extends Parent> component, @NotNull Stage stage) {
         getInstance().stage = stage;
         getInstance().show(component);
     }
-
+    
     @NotNull
-    public static Stage launch(@NotNull Component<? extends Parent> component, @NotNull Stage parentStage, @NotNull Modality modality) {
+    @Contract("_, _, _ -> new")
+    public static DeclarativeFX launch(@NotNull Component<? extends Parent> component, @NotNull Stage parentStage, @NotNull Modality modality) {
         var stage = new Stage();
         stage.initModality(modality);
         stage.initOwner(parentStage);
         stage.setScene(new Scene(component.getNode()));
         stage.show();
-        return stage;
+        return new DeclarativeFX(component, stage);
     }
 
     @NotNull
