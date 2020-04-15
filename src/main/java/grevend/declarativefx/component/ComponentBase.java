@@ -35,10 +35,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public abstract class ComponentBase<N extends Node> implements Component<N> {
 
@@ -83,7 +80,8 @@ public abstract class ComponentBase<N extends Node> implements Component<N> {
 
     @NotNull
     @Override
-    public Component<N> setChildren(BindableCollection<Component<? extends Node>> children) {
+    public Component<N> setChildren(final @NotNull BindableCollection<Component<? extends Node>> children) {
+        children.removeIf(Objects::isNull);
         this.children = children;
         this.children.subscribe((change, components) -> addNodes());
         addNodes();

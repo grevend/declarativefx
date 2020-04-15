@@ -25,12 +25,13 @@
 package grevend.declarativefx;
 
 import grevend.declarativefx.component.Component;
+import grevend.declarativefx.util.MarkedTreeItem;
 import grevend.declarativefx.util.Verbosity;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.stage.Modality;
@@ -44,14 +45,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
-import static grevend.declarativefx.component.Layout.TreeItem;
 import static grevend.declarativefx.component.Layout.TreeView;
 
 public class DeclarativeFX {
 
     private static final Object MUTEX = new Object();
     private static volatile DeclarativeFX INSTANCE;
-
     private Mode mode;
     private Stage stage;
     private Scene scene;
@@ -63,19 +62,31 @@ public class DeclarativeFX {
     }
 
     @Contract(pure = true)
+    private DeclarativeFX(@NotNull Component<? extends Parent> component, @NotNull Stage stage) {
+        this.root = component;
+        this.stage = stage;
+    }
+
+    @Contract(pure = true)
     public static void show(@NotNull Component<? extends Parent> component, @NotNull Stage stage) {
         getInstance().stage = stage;
         getInstance().show(component);
     }
 
     @NotNull
-    public static Stage launch(@NotNull Component<? extends Parent> component, @NotNull Stage parentStage, @NotNull Modality modality) {
+    @Contract("_, _, _ -> new")
+    public static DeclarativeFX launch(@NotNull Component<? extends Parent> component, @NotNull Stage parentStage, @NotNull Modality modality) {
         var stage = new Stage();
         stage.initModality(modality);
         stage.initOwner(parentStage);
         stage.setScene(new Scene(component.getNode()));
         stage.show();
-        return stage;
+        return new DeclarativeFX(component, stage);
+    }
+
+    @NotNull
+    public static WritableImage snapshot(@NotNull Component<? extends Node> component) {
+        return component.getNode().snapshot(null, null);
     }
 
     @NotNull
@@ -99,15 +110,24 @@ public class DeclarativeFX {
 
     @NotNull
     public static <N extends Node> Component<TreeView<String>> treeifyHierarchy(@NotNull Component<N> component, @NotNull Verbosity verbosity) {
-        var item = TreeItem(component.stringify(verbosity), true);
-        component.getChildren().forEach(child -> treeifyHierarchy(child, item, verbosity));
+        Integer[] marker = new Integer[]{0};
+        var item = new MarkedTreeItem<>(component.stringify(verbosity), marker[0]);
+        item.setExpanded(true);
+        component.getChildren().forEach(child -> {
+            marker[0]++;
+            treeifyHierarchy(child, marker, item, verbosity);
+        });
         return TreeView(item);
     }
 
-    private static <N extends Node> void treeifyHierarchy(@NotNull Component<N> component, @NotNull TreeItem<String> parent, @NotNull Verbosity verbosity) {
-        var item = TreeItem(component.stringify(verbosity), true);
+    private static <N extends Node> void treeifyHierarchy(@NotNull Component<N> component, @NotNull Integer[] marker, @NotNull MarkedTreeItem<String> parent, @NotNull Verbosity verbosity) {
+        var item = new MarkedTreeItem<>(component.stringify(verbosity), marker[0]);
+        item.setExpanded(true);
         parent.getChildren().add(item);
-        component.getChildren().forEach(child -> treeifyHierarchy(child, item, verbosity));
+        component.getChildren().forEach(child -> {
+            marker[0]++;
+            treeifyHierarchy(child, marker, item, verbosity);
+        });
     }
 
     @Nullable
@@ -194,8 +214,14 @@ public class DeclarativeFX {
 
     @Contract(pure = true)
     public void show(@NotNull Component<? extends Parent> component) {
+        this.root = component;
         stage.setScene((this.scene = new Scene(component.getNode())));
         stage.show();
+    }
+
+    @NotNull
+    public WritableImage snapshot() {
+        return this.scene.snapshot(null);
     }
 
     public void addStylesheet(@NotNull String stylesheet, @NotNull Class<?> clazz) {
@@ -267,9 +293,12 @@ public class DeclarativeFX {
 
     @NotNull
     public Component<TreeView<String>> treeifyHierarchy(@NotNull Verbosity verbosity) {
-        var item = TreeItem(this.root.stringify(verbosity), true);
-        this.root.getChildren().forEach(child -> treeifyHierarchy(child, item, verbosity));
-        return TreeView(item);
+        /*var item = new MarkedTreeItem<>(this.root.stringify(verbosity), 0);
+        item.setExpanded(true);
+        int[] marker = new int[]{0};
+        this.root.getChildren().forEach(child -> treeifyHierarchy(child, marker[0]++, item, verbosity));
+        return TreeView(item);*/
+        return treeifyHierarchy(this.root, verbosity);
     }
 
     @Nullable
@@ -340,6 +369,11 @@ public class DeclarativeFX {
             }
         }
         return components;
+    }
+
+    @Nullable
+    public Component<? extends Parent> getRoot() {
+        return this.root;
     }
 
     @Nullable

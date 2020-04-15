@@ -1,3 +1,5 @@
+import grevend.declarativefx.util.logging.DeclarativeFXLoggerFinder;
+
 module DeclarativeFX {
     requires java.logging;
 
@@ -13,7 +15,10 @@ module DeclarativeFX {
     exports grevend.declarativefx.event;
     exports grevend.declarativefx.iterator;
     exports grevend.declarativefx.util;
+    exports grevend.declarativefx.util.logging;
     exports grevend.declarativefx.visitor;
 
     exports grevend.declarativefx.example to javafx.graphics;
+
+    provides System.LoggerFinder with DeclarativeFXLoggerFinder;
 }
