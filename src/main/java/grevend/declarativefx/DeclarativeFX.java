@@ -77,11 +77,14 @@ public class DeclarativeFX {
     @Contract("_, _, _ -> new")
     public static DeclarativeFX launch(@NotNull Component<? extends Parent> component, @NotNull Stage parentStage, @NotNull Modality modality) {
         var stage = new Stage();
+        var scene = new Scene(component.getNode());
+        var declarativeFX = new DeclarativeFX(component, stage);
         stage.initModality(modality);
         stage.initOwner(parentStage);
-        stage.setScene(new Scene(component.getNode()));
+        stage.setScene(scene);
         stage.show();
-        return new DeclarativeFX(component, stage);
+        declarativeFX.setScene(scene);
+        return declarativeFX;
     }
 
     @NotNull
@@ -112,6 +115,7 @@ public class DeclarativeFX {
     public static <N extends Node> Component<TreeView<String>> treeifyHierarchy(@NotNull Component<N> component, @NotNull Verbosity verbosity) {
         Integer[] marker = new Integer[]{0};
         var item = new MarkedTreeItem<>(component.stringify(verbosity), marker[0]);
+        component.set("marker", marker[0]);
         item.setExpanded(true);
         component.getChildren().forEach(child -> {
             marker[0]++;
@@ -122,6 +126,7 @@ public class DeclarativeFX {
 
     private static <N extends Node> void treeifyHierarchy(@NotNull Component<N> component, @NotNull Integer[] marker, @NotNull MarkedTreeItem<String> parent, @NotNull Verbosity verbosity) {
         var item = new MarkedTreeItem<>(component.stringify(verbosity), marker[0]);
+        component.set("marker", marker[0]);
         item.setExpanded(true);
         parent.getChildren().add(item);
         component.getChildren().forEach(child -> {
@@ -293,11 +298,6 @@ public class DeclarativeFX {
 
     @NotNull
     public Component<TreeView<String>> treeifyHierarchy(@NotNull Verbosity verbosity) {
-        /*var item = new MarkedTreeItem<>(this.root.stringify(verbosity), 0);
-        item.setExpanded(true);
-        int[] marker = new int[]{0};
-        this.root.getChildren().forEach(child -> treeifyHierarchy(child, marker[0]++, item, verbosity));
-        return TreeView(item);*/
         return treeifyHierarchy(this.root, verbosity);
     }
 

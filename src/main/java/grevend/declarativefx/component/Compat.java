@@ -25,6 +25,7 @@
 package grevend.declarativefx.component;
 
 import grevend.declarativefx.bindable.BindableCollection;
+import grevend.declarativefx.bindable.Change;
 import grevend.declarativefx.decorator.MeasuredComponent;
 import javafx.scene.Node;
 import org.jetbrains.annotations.Contract;
@@ -88,7 +89,7 @@ public class Compat {
                 component.getChildren().addAll(components);
             });
             ((BindableCollection<E>) collection).getConsumers()
-                .forEach(consumer -> consumer.accept(BindableCollection.Change.NONE, List.of()));
+                .forEach(consumer -> consumer.accept(Change.NONE, List.of()));
             return component;
         } else {
             return builder(component, of(collection), build);
@@ -110,7 +111,7 @@ public class Compat {
                 component.getChildren().addAll(components);
             });
             ((BindableCollection<E>) collection).getConsumers()
-                .forEach(consumer -> consumer.accept(BindableCollection.Change.NONE, List.of()));
+                .forEach(consumer -> consumer.accept(Change.NONE, List.of()));
             return component;
         } else {
             return builder(component, of(collection), build);

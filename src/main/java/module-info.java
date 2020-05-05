@@ -20,5 +20,5 @@ module DeclarativeFX {
 
     exports grevend.declarativefx.example to javafx.graphics;
 
-    provides System.LoggerFinder with DeclarativeFXLoggerFinder;
+    //provides System.LoggerFinder with DeclarativeFXLoggerFinder;
 }

@@ -188,8 +188,4 @@ public class BindableCollection<E> implements Collection<E>, Bindable {
         return "BindableCollection{collection=" + collection + '}';
     }
 
-    public enum Change {
-        NONE, ADD, REMOVE;
-    }
-
 }
