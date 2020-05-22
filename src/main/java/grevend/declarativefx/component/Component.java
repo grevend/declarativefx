@@ -88,6 +88,11 @@ public interface Component<N extends Node> extends Iterable<Component<? extends 
     }
 
     @NotNull
+    default Component<N> on(@NotNull Runnable handler) {
+        return this.on((event, component) -> handler.run());
+    }
+
+    @NotNull
     default Component<N> on(@NotNull String property, @NotNull BiConsumer<Component<? extends Node>, Object> consumer) {
         return this.on(property, (observable, oldValue, newValue) -> consumer.accept(this, newValue));
     }

@@ -50,6 +50,9 @@ public abstract class State implements Bindable {
         this.consumers.remove(consumer);
     }
 
+    /**
+     * @since 0.6.0
+     */
     public final void notifyChange() {
         this.consumers.forEach(consumer -> consumer.accept(this));
     }

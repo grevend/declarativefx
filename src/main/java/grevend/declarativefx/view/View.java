@@ -40,6 +40,18 @@ public interface View<State extends grevend.declarativefx.view.State, Accessor e
      * @since 0.6.0
      */
     @NotNull
-    Component<? extends Node> render(@NotNull Interactor interactor);
+    Component<? extends Node> render(@NotNull State state, @NotNull Interactor interactor);
+
+    /**
+     * @param interactor
+     *
+     * @return
+     *
+     * @since 0.6.0
+     */
+    @NotNull
+    default Component<? extends Node> render(@NotNull Interactor interactor) {
+        return this.render(interactor.state(), interactor);
+    }
 
 }
