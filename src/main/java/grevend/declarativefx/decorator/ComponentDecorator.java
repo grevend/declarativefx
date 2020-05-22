@@ -24,8 +24,8 @@
 
 package grevend.declarativefx.decorator;
 
+import grevend.declarativefx.bindable.Bindable;
 import grevend.declarativefx.bindable.BindableCollection;
-import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.component.Component;
 import grevend.declarativefx.event.EventHandler;
 import grevend.declarativefx.util.Verbosity;
@@ -137,19 +137,19 @@ public abstract class ComponentDecorator<N extends Node> implements Component<N>
 
     @NotNull
     @Override
-    public Component<N> bind(@NotNull String property, @NotNull BindableValue value) {
+    public Component<N> bind(@NotNull String property, @NotNull Bindable value) {
         return this.target.bind(property, value);
     }
 
     @NotNull
     @Override
-    public Component<N> compute(@NotNull String property, @NotNull BindableValue dependency, @NotNull Function<BindableValue, Object> function) {
+    public Component<N> compute(@NotNull String property, @NotNull Bindable dependency, @NotNull Function<Bindable, Object> function) {
         return this.target.compute(property, dependency, function);
     }
 
     @NotNull
     @Override
-    public Component<N> compute(@NotNull String property, @NotNull BindableValue dependency, @NotNull Supplier<Object> supplier) {
+    public Component<N> compute(@NotNull String property, @NotNull Bindable dependency, @NotNull Supplier<Object> supplier) {
         return this.target.compute(property, dependency, supplier);
     }
 
@@ -167,7 +167,7 @@ public abstract class ComponentDecorator<N extends Node> implements Component<N>
 
     @NotNull
     @Override
-    public Map<String, BindableValue> getProperties() {
+    public Map<String, Bindable> getProperties() {
         return this.target.getProperties();
     }
 

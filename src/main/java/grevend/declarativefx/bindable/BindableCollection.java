@@ -36,7 +36,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class BindableCollection<E> implements Collection<E>, Bindable {
+public class BindableCollection<E> implements Collection<E> {
 
     private final Collection<E> collection;
     private final Collection<BiConsumer<Change, Collection<? extends E>>> consumers;

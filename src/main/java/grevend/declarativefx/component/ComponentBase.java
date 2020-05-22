@@ -24,8 +24,8 @@
 
 package grevend.declarativefx.component;
 
+import grevend.declarativefx.bindable.Bindable;
 import grevend.declarativefx.bindable.BindableCollection;
-import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.iterator.ComponentIterator;
 import grevend.declarativefx.util.Verbosity;
 import javafx.scene.Node;
@@ -40,7 +40,7 @@ import java.util.*;
 public abstract class ComponentBase<N extends Node> implements Component<N> {
 
     private final N node;
-    private final Map<String, BindableValue> properties;
+    private final Map<String, Bindable> properties;
     private int marker;
     private BindableCollection<Component<? extends Node>> children;
 
@@ -147,17 +147,17 @@ public abstract class ComponentBase<N extends Node> implements Component<N> {
 
     @NotNull
     @Override
-    public Map<String, BindableValue> getProperties() {
+    public Map<String, Bindable> getProperties() {
         return this.properties;
     }
 
     @Nullable
-    protected BindableValue getProperty(@NotNull String property) {
+    protected Bindable getProperty(@NotNull String property) {
         return this.properties.get(property);
     }
 
     @NotNull
-    protected Component<N> setProperty(@NotNull String property, @NotNull BindableValue value) {
+    protected Component<N> setProperty(@NotNull String property, @NotNull Bindable value) {
         this.properties.put(property, value);
         return this;
     }
