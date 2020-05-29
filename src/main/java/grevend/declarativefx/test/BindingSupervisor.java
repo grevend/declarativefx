@@ -26,12 +26,64 @@ package grevend.declarativefx.test;
 
 import grevend.declarativefx.component.Component;
 import javafx.scene.Node;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
-public class BindingSupervisor<N extends Node, C extends Component<N>, F extends Fixture<N, C>> extends Supervisor<N, C, F> {
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+
+public class BindingSupervisor<N extends Node, C extends Component<N>, F extends Fixture<N, C>>
+    extends Supervisor<N, C, F> {
+
+    private RequiredChange requiredChange;
 
     public BindingSupervisor(@NotNull F fixture) {
         super(fixture);
+    }
+
+    @NotNull
+    public RequiredChange requireChange() {
+        return (this.requiredChange = new RequiredChange());
+    }
+
+    public void requireChangeNever() {
+        this.requiredChange = new RequiredChange().times(0);
+    }
+
+    @Override
+    public void verify() {
+        if (requiredChange == null) {
+            throw new IllegalStateException("No required changes defined.");
+        }
+        super.verify();
+    }
+
+    public static final class RequiredChange {
+
+        private int count = -1;
+        private final Collection<Map.Entry<Object, Object>> ways;
+
+        @Contract(pure = true)
+        private RequiredChange() {
+            this.ways = new ArrayList<>();
+        }
+
+        @Contract(value = "_ -> this", pure = true)
+        public RequiredChange times(@Range(from = 0, to = Long.MAX_VALUE) int count) {
+            this.count = count;
+            return this;
+        }
+
+        @Contract(value = "_, _ -> this", pure = true)
+        public RequiredChange way(@Nullable Object from, @Nullable Object to) {
+            this.ways.add(new AbstractMap.SimpleImmutableEntry<>(from, to));
+            return this;
+        }
+
     }
 
 }
