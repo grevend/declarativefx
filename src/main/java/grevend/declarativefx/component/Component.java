@@ -24,6 +24,7 @@
 
 package grevend.declarativefx.component;
 
+import grevend.declarativefx.bindable.Bindable;
 import grevend.declarativefx.bindable.BindableCollection;
 import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.event.EventHandler;
@@ -87,12 +88,17 @@ public interface Component<N extends Node> extends Iterable<Component<? extends 
     }
 
     @NotNull
+    default Component<N> on(@NotNull Runnable handler) {
+        return this.on((event, component) -> handler.run());
+    }
+
+    @NotNull
     default Component<N> on(@NotNull String property, @NotNull BiConsumer<Component<? extends Node>, Object> consumer) {
         return this.on(property, (observable, oldValue, newValue) -> consumer.accept(this, newValue));
     }
 
     @NotNull
-    Component<N> bind(@NotNull String property, @NotNull BindableValue value);
+    Component<N> bind(@NotNull String property, @NotNull Bindable value);
 
     @NotNull
     default <E, R> Component<N> compute(@NotNull String property, @NotNull BindableCollection<E> collection, @NotNull Function<BindableCollection<E>, R> function) {
@@ -102,10 +108,10 @@ public interface Component<N extends Node> extends Iterable<Component<? extends 
     }
 
     @NotNull
-    Component<N> compute(@NotNull String property, @NotNull BindableValue dependency, @NotNull Function<BindableValue, Object> function);
+    Component<N> compute(@NotNull String property, @NotNull Bindable dependency, @NotNull Function<Bindable, Object> function);
 
     @NotNull
-    Component<N> compute(@NotNull String property, @NotNull BindableValue dependency, @NotNull Supplier<Object> supplier);
+    Component<N> compute(@NotNull String property, @NotNull Bindable dependency, @NotNull Supplier<Object> supplier);
 
     @NotNull
     Component<N> set(@NotNull String property, @Nullable Object value);
@@ -114,7 +120,7 @@ public interface Component<N extends Node> extends Iterable<Component<? extends 
     Object get(@NotNull String property);
 
     @NotNull
-    Map<String, BindableValue> getProperties();
+    Map<String, Bindable> getProperties();
 
     @NotNull
     String stringify(@NotNull Verbosity verbosity);

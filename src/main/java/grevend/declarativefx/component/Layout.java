@@ -24,7 +24,7 @@
 
 package grevend.declarativefx.component;
 
-import grevend.declarativefx.bindable.BindableValue;
+import grevend.declarativefx.bindable.Bindable;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
@@ -89,7 +89,7 @@ public class Layout {
     }
 
     @NotNull
-    public static Component<ProgressBar> ProgressBar(@NotNull BindableValue bindableValue) {
+    public static Component<ProgressBar> ProgressBar(@NotNull Bindable bindableValue) {
         var element = new ProgressBar(0);
         bindableValue.subscribe((value) -> element.progressProperty().set((Double) value));
         return FX(element);
@@ -103,7 +103,7 @@ public class Layout {
     }
 
     @NotNull
-    public static Component<ProgressIndicator> ProgressIndicator(@NotNull BindableValue bindableValue) {
+    public static Component<ProgressIndicator> ProgressIndicator(@NotNull Bindable bindableValue) {
         var element = new ProgressIndicator(0);
         bindableValue.subscribe((value) -> element.progressProperty().set((Double) value));
         return FX(element);

@@ -22,44 +22,30 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.bindable;
+package grevend.declarativefx.view;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
+/**
+ * @author David Greven
+ * @since 0.6.0
+ */
+public abstract class Interactor<State extends grevend.declarativefx.view.State, Accessor extends grevend.declarativefx.view.Accessor> {
 
-public class BindableHandler<T> extends Handler {
+    protected final State state;
+    protected final Accessor accessor;
 
-    private final BindableCollection<T> records;
-    private final Function<LogRecord, T> mapper;
-
-    public BindableHandler(@NotNull BindableCollection<T> records, @NotNull Function<LogRecord, T> mapper) {
-        this.records = records;
-        this.mapper = mapper;
-    }
-
-    @Contract(" -> new")
-    public static @NotNull BindableHandler<String> bindableStringifier() {
-        return new BindableHandler<>(BindableCollection.empty(), LogRecord::getMessage);
+    @Contract(pure = true)
+    public Interactor(@NotNull State state, @Nullable Accessor accessor) {
+        this.state = state;
+        this.accessor = accessor;
     }
 
     @NotNull
-    public BindableCollection<T> getRecords() {
-        return records;
+    public State state() {
+        return this.state;
     }
-
-    @Override
-    public void publish(LogRecord record) {
-        this.records.add(this.mapper.apply(record));
-    }
-
-    @Override
-    public void flush() {}
-
-    @Override
-    public void close() throws SecurityException {}
 
 }

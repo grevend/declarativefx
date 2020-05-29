@@ -22,44 +22,36 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.bindable;
+package grevend.declarativefx.view;
 
-import org.jetbrains.annotations.Contract;
+import grevend.declarativefx.component.Component;
+import javafx.scene.Node;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
+/**
+ * @author David Greven
+ * @since 0.6.0
+ */
+public interface View<State extends grevend.declarativefx.view.State, Accessor extends grevend.declarativefx.view.Accessor, Interactor extends grevend.declarativefx.view.Interactor<State, Accessor>> {
 
-public class BindableHandler<T> extends Handler {
-
-    private final BindableCollection<T> records;
-    private final Function<LogRecord, T> mapper;
-
-    public BindableHandler(@NotNull BindableCollection<T> records, @NotNull Function<LogRecord, T> mapper) {
-        this.records = records;
-        this.mapper = mapper;
-    }
-
-    @Contract(" -> new")
-    public static @NotNull BindableHandler<String> bindableStringifier() {
-        return new BindableHandler<>(BindableCollection.empty(), LogRecord::getMessage);
-    }
-
+    /**
+     * @return
+     *
+     * @since 0.6.0
+     */
     @NotNull
-    public BindableCollection<T> getRecords() {
-        return records;
+    Component<? extends Node> render(@NotNull State state, @NotNull Interactor interactor);
+
+    /**
+     * @param interactor
+     *
+     * @return
+     *
+     * @since 0.6.0
+     */
+    @NotNull
+    default Component<? extends Node> render(@NotNull Interactor interactor) {
+        return this.render(interactor.state(), interactor);
     }
-
-    @Override
-    public void publish(LogRecord record) {
-        this.records.add(this.mapper.apply(record));
-    }
-
-    @Override
-    public void flush() {}
-
-    @Override
-    public void close() throws SecurityException {}
 
 }

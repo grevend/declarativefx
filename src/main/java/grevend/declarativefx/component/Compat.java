@@ -27,6 +27,10 @@ package grevend.declarativefx.component;
 import grevend.declarativefx.bindable.BindableCollection;
 import grevend.declarativefx.bindable.Change;
 import grevend.declarativefx.decorator.MeasuredComponent;
+import grevend.declarativefx.view.Accessor;
+import grevend.declarativefx.view.Interactor;
+import grevend.declarativefx.view.State;
+import grevend.declarativefx.view.View;
 import javafx.scene.Node;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -122,6 +126,11 @@ public class Compat {
     @Contract("_ -> new")
     public static <N extends Node, C extends Component<N>> MeasuredComponent<N> measure(@NotNull C component) {
         return new MeasuredComponent<>(component);
+    }
+
+    @NotNull
+    public static <S extends State, A extends Accessor, I extends Interactor<S, A>> Component<? extends Node> View(@NotNull View<S, A, I> view, @NotNull I interactor) {
+        return view.render(interactor);
     }
 
 }

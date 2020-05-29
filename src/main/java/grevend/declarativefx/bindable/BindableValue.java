@@ -30,7 +30,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.*;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 public class BindableValue implements Bindable {
 
@@ -58,60 +60,50 @@ public class BindableValue implements Bindable {
     }
 
     @Nullable
+    @Override
     public Object get() {
         return this.value == null ? this.defaultValue : this.value;
     }
 
     @Nullable
+    @Override
     public Object getDefault() {
         return defaultValue;
     }
 
+    @Override
     public void set(@Nullable Object value) {
         this.value = value;
         this.consumers.forEach(consumer -> consumer.accept(value));
     }
 
+    @Override
     public void update(@NotNull UnaryOperator<Object> function) {
         this.set(function.apply(this.get()));
     }
 
     @NotNull
+    @Override
     public Object get(@NotNull Object defaultValue) {
         return this.value == null ? defaultValue : this.value;
     }
 
+    @Override
     public boolean hasDefaultValue() {
         return this.defaultValue != null;
     }
 
     @NotNull
-    public BindableValue orElse(@NotNull Object defaultValue) {
+    @Override
+    public Bindable orElse(@NotNull Object defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }
 
     @NotNull
-    public BindableValue orElse(@NotNull Supplier<Object> supplier) {
+    @Override
+    public Bindable orElse(@NotNull Supplier<Object> supplier) {
         return this.orElse(supplier.get());
-    }
-
-    @NotNull
-    public BindableValue compute(@NotNull BindableValue dependency, @NotNull BiFunction<BindableValue, BindableValue, Object> function) {
-        dependency.subscribe((value) -> set(function.apply(dependency, this)));
-        return this;
-    }
-
-    @NotNull
-    public BindableValue compute(@NotNull BindableValue dependency, @NotNull Function<BindableValue, Object> function) {
-        dependency.subscribe((value) -> set(function.apply(this)));
-        return this;
-    }
-
-    @NotNull
-    public BindableValue compute(@NotNull BindableValue dependency, @NotNull Supplier<Object> supplier) {
-        dependency.subscribe((value) -> set(supplier.get()));
-        return this;
     }
 
     @NotNull
