@@ -52,6 +52,8 @@ import static grevend.declarativefx.component.Layout.TreeView;
 
 public class DeclarativeFX {
 
+    private static final String VERSION = "0.6.4";
+
     private static final Object MUTEX = new Object();
     private static volatile DeclarativeFX INSTANCE;
     private Mode mode;

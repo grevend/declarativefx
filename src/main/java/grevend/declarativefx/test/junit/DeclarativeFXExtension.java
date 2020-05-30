@@ -22,28 +22,22 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.test;
+package grevend.declarativefx.test.junit;
 
-import grevend.declarativefx.component.Component;
-import javafx.scene.Node;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-/**
- * @author David Greven
- * @since 0.6.1
- */
-public abstract class Supervisor<N extends Node, C extends Component<N>, F extends Fixture<N, C>> {
+public class DeclarativeFXExtension implements BeforeEachCallback, AfterEachCallback {
 
-    protected final F fixture;
-
-    @Contract(pure = true)
-    public Supervisor(@NotNull F fixture) {
-        this.fixture = fixture;
+    @Override
+    public void beforeEach(ExtensionContext extensionContext) throws Exception {
+        System.out.println("Before...");
     }
 
-    public void verify() {
-        throw new AssertionError();
+    @Override
+    public void afterEach(ExtensionContext extensionContext) throws Exception {
+        System.out.println("After...");
     }
 
 }

@@ -1,4 +1,4 @@
-module DeclarativeFX {
+open module DeclarativeFX {
     requires java.logging;
     requires java.desktop;
 
@@ -6,6 +6,9 @@ module DeclarativeFX {
     requires javafx.controls;
 
     requires org.jetbrains.annotations;
+    requires org.junit.jupiter.api;
+    requires org.junit.jupiter.engine;
+    requires org.junit.platform.launcher;
 
     exports grevend.declarativefx;
     exports grevend.declarativefx.bindable;
@@ -14,6 +17,7 @@ module DeclarativeFX {
     exports grevend.declarativefx.event;
     exports grevend.declarativefx.iterator;
     exports grevend.declarativefx.test;
+    exports grevend.declarativefx.test.junit;
     exports grevend.declarativefx.util;
     exports grevend.declarativefx.util.logging;
     exports grevend.declarativefx.view;

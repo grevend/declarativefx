@@ -34,6 +34,10 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
+/**
+ * @author David Greven
+ * @since 0.6.1
+ */
 public final class Robot {
 
     private final Scene scene;

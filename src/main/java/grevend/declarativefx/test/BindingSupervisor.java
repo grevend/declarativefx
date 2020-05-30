@@ -36,6 +36,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * @param <N>
+ * @param <C>
+ * @param <F>
+ *
+ * @author David Greven
+ * @since 0.6.1
+ */
 public class BindingSupervisor<N extends Node, C extends Component<N>, F extends Fixture<N, C>>
     extends Supervisor<N, C, F> {
 
@@ -64,8 +72,8 @@ public class BindingSupervisor<N extends Node, C extends Component<N>, F extends
 
     public static final class RequiredChange {
 
-        private int count = -1;
         private final Collection<Map.Entry<Object, Object>> ways;
+        private int count = -1;
 
         @Contract(pure = true)
         private RequiredChange() {

@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * @author David Greven
  * @since 0.6.1
  */
 public final class Fixture<N extends Node, C extends Component<N>> {

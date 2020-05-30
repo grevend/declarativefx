@@ -29,6 +29,13 @@ import javafx.scene.Node;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * @param <N>
+ * @param <C>
+ * @param <F>
+ *
+ * @since 0.6.1
+ */
 public final class PropertySupervisor<N extends Node, C extends Component<N>, F extends Fixture<N, C>>
     extends Supervisor<N, C, F> {
 

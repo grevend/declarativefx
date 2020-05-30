@@ -22,28 +22,19 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.test;
+package grevend.declarativefx.test.junit;
 
-import grevend.declarativefx.component.Component;
-import javafx.scene.Node;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-/**
- * @author David Greven
- * @since 0.6.1
- */
-public abstract class Supervisor<N extends Node, C extends Component<N>, F extends Fixture<N, C>> {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    protected final F fixture;
-
-    @Contract(pure = true)
-    public Supervisor(@NotNull F fixture) {
-        this.fixture = fixture;
-    }
-
-    public void verify() {
-        throw new AssertionError();
-    }
-
+@Target({ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Test
+@Tag("declarativefx")
+public @interface FXTest {
 }
