@@ -24,6 +24,7 @@
 
 package grevend.declarativefx.test.junit;
 
+import grevend.declarativefx.test.DeclarativeFXRuntime;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -32,12 +33,12 @@ public class DeclarativeFXExtension implements BeforeEachCallback, AfterEachCall
 
     @Override
     public void beforeEach(ExtensionContext extensionContext) throws Exception {
-        System.out.println("Before...");
+        DeclarativeFXRuntime.launch();
     }
 
     @Override
     public void afterEach(ExtensionContext extensionContext) throws Exception {
-        System.out.println("After...");
+        DeclarativeFXRuntime.exit();
     }
 
 }

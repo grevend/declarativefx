@@ -43,9 +43,8 @@ import java.util.concurrent.Executors;
  */
 public final class DeclarativeFXRuntime extends Application {
 
-    protected static boolean running = false;
-
-    private Stage stage;
+    protected static volatile Stage stage = null;
+    protected static volatile boolean running = false;
 
     /**
      * Starts the runtime that will be used for testing.
@@ -79,7 +78,6 @@ public final class DeclarativeFXRuntime extends Application {
     @Override
     @Contract(pure = true)
     public void start(Stage stage) {
-        this.stage = stage;
         DeclarativeFXRuntime.running = true;
     }
 
@@ -88,10 +86,61 @@ public final class DeclarativeFXRuntime extends Application {
      *
      * @since 0.6.1
      */
-    public synchronized void show(@NotNull Component<? extends Node> component) {
+    public final synchronized void show(@NotNull Component<? extends Node> component) {
         var node = component.getNode();
         var scene = new Scene(node instanceof Parent ? ((Parent) node) : new Group(node));
-        Platform.runLater(() -> stage.setScene(scene));
+        this.show(scene);
+    }
+
+    /**
+     * @param scene The {@link javafx.scene.Scene} that should be shown.
+     *
+     * @since 0.6.5
+     */
+    public final synchronized void show(@NotNull Scene scene) {
+        if (DeclarativeFXRuntime.stage != null) {
+            DeclarativeFXRuntime.stage.close();
+            DeclarativeFXRuntime.stage = null;
+        }
+        if (!DeclarativeFXRuntime.running) {
+            throw new IllegalStateException("DeclarativeFX test runtime is not running.");
+        } else {
+            Platform.runLater(() -> {
+                var stage = new Stage();
+                stage.setScene(scene);
+                stage.show();
+                DeclarativeFXRuntime.stage = stage;
+            });
+        }
+    }
+
+    /**
+     * @return The current {@link javafx.stage.Stage}.
+     *
+     * @since 0.6.5
+     */
+    @NotNull
+    public final synchronized Stage stage() {
+        if (!DeclarativeFXRuntime.running) {
+            throw new IllegalStateException("DeclarativeFX test runtime is not running.");
+        } else if (DeclarativeFXRuntime.stage == null) {
+            throw new IllegalStateException("No stage defined for the current test runtime.");
+        }
+        return DeclarativeFXRuntime.stage;
+    }
+
+    /**
+     * @return The current {@link javafx.scene.Scene}.
+     *
+     * @since 0.6.5
+     */
+    @NotNull
+    public final synchronized Scene scene() {
+        var scene = stage().getScene();
+        if (scene == null) {
+            throw new IllegalStateException("No scene defined for the current test stage.");
+        }
+        return scene;
     }
 
 }
