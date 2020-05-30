@@ -1,5 +1,6 @@
 module DeclarativeFX {
     requires java.logging;
+    requires java.desktop;
 
     requires javafx.graphics;
     requires javafx.controls;
@@ -12,6 +13,7 @@ module DeclarativeFX {
     exports grevend.declarativefx.decorator;
     exports grevend.declarativefx.event;
     exports grevend.declarativefx.iterator;
+    exports grevend.declarativefx.test;
     exports grevend.declarativefx.util;
     exports grevend.declarativefx.util.logging;
     exports grevend.declarativefx.view;
