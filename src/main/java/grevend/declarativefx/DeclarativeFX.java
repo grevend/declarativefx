@@ -52,7 +52,7 @@ import static grevend.declarativefx.component.Layout.TreeView;
 
 public class DeclarativeFX {
 
-    private static final String VERSION = "0.6.4";
+    private static final String VERSION = "0.6.5";
 
     private static final Object MUTEX = new Object();
     private static volatile DeclarativeFX INSTANCE;
@@ -109,6 +109,21 @@ public class DeclarativeFX {
 
     /**
      * @param scene
+     * @param headless
+     *
+     * @return
+     *
+     * @throws AWTException
+     * @since 0.6.5
+     */
+    @NotNull
+    @Contract(value = "_, _ -> new", pure = true)
+    public static Robot robot(@NotNull Scene scene, boolean headless) throws AWTException {
+        return new Robot(scene, headless);
+    }
+
+    /**
+     * @param scene
      *
      * @return
      *
@@ -118,7 +133,7 @@ public class DeclarativeFX {
     @NotNull
     @Contract(value = "_ -> new", pure = true)
     public static Robot robot(@NotNull Scene scene) throws AWTException {
-        return new Robot(scene);
+        return robot(scene, true);
     }
 
     //TODO supervisor support

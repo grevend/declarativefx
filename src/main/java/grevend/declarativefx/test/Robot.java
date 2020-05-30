@@ -60,6 +60,11 @@ public final class Robot {
     }
 
     @Contract(pure = true)
+    public Robot(@NotNull Scene scene, boolean headless) throws AWTException {
+        this(scene, headless, true, 100);
+    }
+
+    @Contract(pure = true)
     public final boolean headless() {
         return this.headless;
     }

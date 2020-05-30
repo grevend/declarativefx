@@ -47,13 +47,34 @@ public final class DeclarativeFXRuntime extends Application {
     protected static volatile boolean running = false;
 
     /**
+     * @return
+     *
+     * @since 0.6.5
+     */
+    @Contract(pure = true)
+    public static synchronized boolean running() {
+        return DeclarativeFXRuntime.running;
+    }
+
+    /**
      * Starts the runtime that will be used for testing.
      *
      * @since 0.6.1
      */
     @SuppressWarnings("unused")
     public static synchronized void launch() {
-        Executors.newSingleThreadExecutor().execute(() -> launch(new String[0]));
+        if (running) {
+            throw new IllegalStateException("Close previous test runtime before launching a new one.");
+        } else {
+            Executors.newSingleThreadExecutor().execute(() -> launch(new String[0]));
+            while (!running) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("Failed to launch JavaFX test application.", e);
+                }
+            }
+        }
     }
 
     /**
@@ -62,7 +83,81 @@ public final class DeclarativeFXRuntime extends Application {
      * @since 0.6.1
      */
     public static synchronized void exit() {
-        Platform.exit();
+        if (!running) {
+            throw new IllegalStateException("No test runtime currently running.");
+        } else {
+            Platform.exit();
+            DeclarativeFXRuntime.running = false;
+        }
+    }
+
+    /**
+     * @param component The {@link grevend.declarativefx.component.Component} that should be shown.
+     *
+     * @since 0.6.1
+     */
+    public static synchronized void show(@NotNull Component<? extends Node> component) {
+        var node = component.getNode();
+        var scene = new Scene(node instanceof Parent ? ((Parent) node) : new Group(node));
+        show(scene);
+    }
+
+    /**
+     * @param scene The {@link javafx.scene.Scene} that should be shown.
+     *
+     * @since 0.6.5
+     */
+    public static synchronized void show(@NotNull Scene scene) {
+        if (DeclarativeFXRuntime.stage != null) {
+            DeclarativeFXRuntime.stage.close();
+            DeclarativeFXRuntime.stage = null;
+        }
+        if (!DeclarativeFXRuntime.running) {
+            throw new IllegalStateException("DeclarativeFX test runtime is not running.");
+        } else {
+            Platform.runLater(() -> {
+                var stage = new Stage();
+                stage.setScene(scene);
+                stage.show();
+                DeclarativeFXRuntime.stage = stage;
+            });
+            while (DeclarativeFXRuntime.stage == null) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("Failed to create JavaFX test application stage.", e);
+                }
+            }
+        }
+    }
+
+    /**
+     * @return The current {@link javafx.stage.Stage}.
+     *
+     * @since 0.6.5
+     */
+    @NotNull
+    public static synchronized Stage stage() {
+        if (!DeclarativeFXRuntime.running) {
+            throw new IllegalStateException("DeclarativeFX test runtime is not running.");
+        } else if (DeclarativeFXRuntime.stage == null) {
+            throw new IllegalStateException("No stage defined for the current test runtime.");
+        }
+        return DeclarativeFXRuntime.stage;
+    }
+
+    /**
+     * @return The current {@link javafx.scene.Scene}.
+     *
+     * @since 0.6.5
+     */
+    @NotNull
+    public static synchronized Scene scene() {
+        var scene = stage().getScene();
+        if (scene == null) {
+            throw new IllegalStateException("No scene defined for the current test stage.");
+        }
+        return scene;
     }
 
     /**
@@ -79,68 +174,6 @@ public final class DeclarativeFXRuntime extends Application {
     @Contract(pure = true)
     public void start(Stage stage) {
         DeclarativeFXRuntime.running = true;
-    }
-
-    /**
-     * @param component The {@link grevend.declarativefx.component.Component} that should be shown.
-     *
-     * @since 0.6.1
-     */
-    public final synchronized void show(@NotNull Component<? extends Node> component) {
-        var node = component.getNode();
-        var scene = new Scene(node instanceof Parent ? ((Parent) node) : new Group(node));
-        this.show(scene);
-    }
-
-    /**
-     * @param scene The {@link javafx.scene.Scene} that should be shown.
-     *
-     * @since 0.6.5
-     */
-    public final synchronized void show(@NotNull Scene scene) {
-        if (DeclarativeFXRuntime.stage != null) {
-            DeclarativeFXRuntime.stage.close();
-            DeclarativeFXRuntime.stage = null;
-        }
-        if (!DeclarativeFXRuntime.running) {
-            throw new IllegalStateException("DeclarativeFX test runtime is not running.");
-        } else {
-            Platform.runLater(() -> {
-                var stage = new Stage();
-                stage.setScene(scene);
-                stage.show();
-                DeclarativeFXRuntime.stage = stage;
-            });
-        }
-    }
-
-    /**
-     * @return The current {@link javafx.stage.Stage}.
-     *
-     * @since 0.6.5
-     */
-    @NotNull
-    public final synchronized Stage stage() {
-        if (!DeclarativeFXRuntime.running) {
-            throw new IllegalStateException("DeclarativeFX test runtime is not running.");
-        } else if (DeclarativeFXRuntime.stage == null) {
-            throw new IllegalStateException("No stage defined for the current test runtime.");
-        }
-        return DeclarativeFXRuntime.stage;
-    }
-
-    /**
-     * @return The current {@link javafx.scene.Scene}.
-     *
-     * @since 0.6.5
-     */
-    @NotNull
-    public final synchronized Scene scene() {
-        var scene = stage().getScene();
-        if (scene == null) {
-            throw new IllegalStateException("No scene defined for the current test stage.");
-        }
-        return scene;
     }
 
 }

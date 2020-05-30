@@ -25,19 +25,32 @@
 package grevend.declarativefx.test.junit;
 
 import grevend.declarativefx.test.DeclarativeFXRuntime;
+import javafx.application.Platform;
+import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-public class DeclarativeFXExtension implements BeforeEachCallback, AfterEachCallback {
+/**
+ * @author David Greven
+ * @since 0.6.4
+ */
+public class DeclarativeFXExtension implements BeforeAllCallback, AfterEachCallback, AfterAllCallback {
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) throws Exception {
+    public void beforeAll(ExtensionContext extensionContext) throws Exception {
         DeclarativeFXRuntime.launch();
     }
 
     @Override
     public void afterEach(ExtensionContext extensionContext) throws Exception {
+        if (DeclarativeFXRuntime.running()) {
+            Platform.runLater(() -> DeclarativeFXRuntime.stage().close());
+        }
+    }
+
+    @Override
+    public void afterAll(ExtensionContext extensionContext) throws Exception {
         DeclarativeFXRuntime.exit();
     }
 

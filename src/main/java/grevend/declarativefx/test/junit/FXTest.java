@@ -32,9 +32,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * @author David Greven
+ * @since 0.6.4
+ */
 @Target({ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Test
 @Tag("declarativefx")
-public @interface FXTest {
-}
+public @interface FXTest {}
