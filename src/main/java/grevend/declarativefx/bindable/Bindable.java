@@ -24,4 +24,69 @@
 
 package grevend.declarativefx.bindable;
 
-public interface Bindable {}
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.function.*;
+
+public interface Bindable {
+
+    void subscribe(@NotNull Consumer<Object> consumer);
+
+    void unsubscribe(@NotNull Consumer<Object> consumer);
+
+    @Nullable
+    default Object get() {
+        return this;
+    }
+
+    @Nullable
+    default Object getDefault() {
+        return this;
+    }
+
+    default void set(@Nullable Object value) {
+        throw new UnsupportedOperationException();
+    }
+
+    default void update(@NotNull UnaryOperator<Object> function) {
+        throw new UnsupportedOperationException();
+    }
+
+    default Object get(@NotNull Object defaultValue) {
+        return this;
+    }
+
+    default boolean hasDefaultValue() {
+        return true;
+    }
+
+    @NotNull
+    default Bindable orElse(@NotNull Object defaultValue) {
+        return this;
+    }
+
+    @NotNull
+    default Bindable orElse(@NotNull Supplier<Object> supplier) {
+        return this.orElse(supplier.get());
+    }
+
+    @NotNull
+    default Bindable compute(@NotNull Bindable dependency, @NotNull BiFunction<Bindable, Bindable, Object> function) {
+        dependency.subscribe((value) -> set(function.apply(dependency, this)));
+        return this;
+    }
+
+    @NotNull
+    default Bindable compute(@NotNull Bindable dependency, @NotNull Function<Bindable, Object> function) {
+        dependency.subscribe((value) -> set(function.apply(this)));
+        return this;
+    }
+
+    @NotNull
+    default Bindable compute(@NotNull Bindable dependency, @NotNull Supplier<Object> supplier) {
+        dependency.subscribe((value) -> set(supplier.get()));
+        return this;
+    }
+
+}

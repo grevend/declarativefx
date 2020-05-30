@@ -16,6 +16,7 @@ module DeclarativeFX {
     exports grevend.declarativefx.test;
     exports grevend.declarativefx.util;
     exports grevend.declarativefx.util.logging;
+    exports grevend.declarativefx.view;
     exports grevend.declarativefx.visitor;
 
     exports grevend.declarativefx.example to javafx.graphics;

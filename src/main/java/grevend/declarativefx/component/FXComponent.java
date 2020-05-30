@@ -25,6 +25,7 @@
 package grevend.declarativefx.component;
 
 import grevend.declarativefx.bindable.BindException;
+import grevend.declarativefx.bindable.Bindable;
 import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.event.EventHandler;
 import grevend.declarativefx.util.Utils;
@@ -88,7 +89,7 @@ public class FXComponent<N extends Node> extends ComponentBase<N> {
     @NotNull
     @Override
     @SuppressWarnings("unchecked")
-    public Component<N> bind(@NotNull String property, @NotNull BindableValue value) {
+    public Component<N> bind(@NotNull String property, @NotNull Bindable value) {
         var observableValue = Utils.getObservableValue(this.getNode(), this.observableProperties, property);
         if (observableValue == null) {
             throw new IllegalArgumentException("Property " + property.toLowerCase() + " does not exist.");
@@ -103,7 +104,7 @@ public class FXComponent<N extends Node> extends ComponentBase<N> {
 
     @NotNull
     @Override
-    public Component<N> compute(@NotNull String property, @NotNull BindableValue dependency, @NotNull Function<BindableValue, Object> function) {
+    public Component<N> compute(@NotNull String property, @NotNull Bindable dependency, @NotNull Function<Bindable, Object> function) {
         if (this.getProperty(property) == null) {
             throw new BindException(this.toString());
         } else {
@@ -114,7 +115,7 @@ public class FXComponent<N extends Node> extends ComponentBase<N> {
 
     @NotNull
     @Override
-    public Component<N> compute(@NotNull String property, @NotNull BindableValue dependency, @NotNull Supplier<Object> supplier) {
+    public Component<N> compute(@NotNull String property, @NotNull Bindable dependency, @NotNull Supplier<Object> supplier) {
         if (this.getProperty(property) == null) {
             this.bind(property, new BindableValue(this.get(property)));
         }

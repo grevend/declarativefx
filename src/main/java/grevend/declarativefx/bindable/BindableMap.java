@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-public class BindableMap<K, V> implements Map<K, V>, Bindable {
+public class BindableMap<K, V> implements Map<K, V> {
 
     private final Map<K, V> map;
     private final Collection<BiConsumer<Change, Collection<? extends Entry<? extends K, ? extends V>>>> consumers;

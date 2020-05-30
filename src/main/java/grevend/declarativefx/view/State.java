@@ -22,44 +22,39 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.bindable;
+package grevend.declarativefx.view;
 
-import org.jetbrains.annotations.Contract;
+import grevend.declarativefx.bindable.Bindable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
-public class BindableHandler<T> extends Handler {
+/**
+ * @author David Greven
+ * @since 0.6.0
+ */
+public abstract class State implements Bindable {
 
-    private final BindableCollection<T> records;
-    private final Function<LogRecord, T> mapper;
+    private final List<Consumer<Object>> consumers = new ArrayList<>();
 
-    public BindableHandler(@NotNull BindableCollection<T> records, @NotNull Function<LogRecord, T> mapper) {
-        this.records = records;
-        this.mapper = mapper;
-    }
-
-    @Contract(" -> new")
-    public static @NotNull BindableHandler<String> bindableStringifier() {
-        return new BindableHandler<>(BindableCollection.empty(), LogRecord::getMessage);
-    }
-
-    @NotNull
-    public BindableCollection<T> getRecords() {
-        return records;
+    @Override
+    public final void subscribe(@NotNull Consumer<Object> consumer) {
+        this.consumers.add(consumer);
+        consumer.accept(this.get());
     }
 
     @Override
-    public void publish(LogRecord record) {
-        this.records.add(this.mapper.apply(record));
+    public final void unsubscribe(@NotNull Consumer<Object> consumer) {
+        this.consumers.remove(consumer);
     }
 
-    @Override
-    public void flush() {}
-
-    @Override
-    public void close() throws SecurityException {}
+    /**
+     * @since 0.6.0
+     */
+    public final void notifyChange() {
+        this.consumers.forEach(consumer -> consumer.accept(this));
+    }
 
 }
