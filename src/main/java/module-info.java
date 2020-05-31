@@ -6,9 +6,7 @@ open module DeclarativeFX {
     requires javafx.controls;
 
     requires org.jetbrains.annotations;
-    requires static org.junit.jupiter.api;
-    requires static org.junit.jupiter.engine;
-    requires static org.junit.platform.launcher;
+    requires org.junit.jupiter.api;
 
     exports grevend.declarativefx;
     exports grevend.declarativefx.bindable;

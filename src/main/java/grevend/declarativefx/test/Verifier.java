@@ -363,6 +363,12 @@ public final class Verifier {
         return new Verifier(predicate, Object.class, representation);
     }
 
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public static ValueVerifier value(@NotNull final Object val) {
+        return new ValueVerifier(val);
+    }
+
     public boolean verify(@Nullable final Object val) {
         return this.clazz.isInstance(val) && this.predicate.test(val);
     }
@@ -372,6 +378,46 @@ public final class Verifier {
     @Contract(pure = true)
     public String toString() {
         return this.representation;
+    }
+
+    /**
+     * @since 0.6.9
+     */
+    public static class ValueVerifier {
+
+        private final Object value;
+
+        @Contract(pure = true)
+        private ValueVerifier(@Nullable Object value) {
+            this.value = value;
+        }
+
+        /**
+         * @param val
+         *
+         * @since 0.6.9
+         */
+        public void matches(@Nullable Object val) {
+            if (val instanceof Verifier) {
+                throw new IllegalArgumentException(
+                    "Value cannot be matched with Verifier <" + val + ">. Please use the verify method instead.");
+            }
+            if (!Objects.equals(this.value, val)) {
+                throw new Assertion("'" + this.value + "' does not match " + val);
+            }
+        }
+
+        /**
+         * @param verifier
+         *
+         * @since 0.6.9
+         */
+        public void verify(@NotNull Verifier verifier) {
+            if (!verifier.verify(this.value)) {
+                throw new Assertion("'" + this.value + "' failed verification <" + verifier + ">.");
+            }
+        }
+
     }
 
 }
