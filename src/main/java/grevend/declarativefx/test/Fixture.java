@@ -45,7 +45,7 @@ public final class Fixture<N extends Node, C extends Component<N>> {
     }
 
     @Contract(pure = true)
-    public final C components() {
+    public final C component() {
         return this.component;
     }
 

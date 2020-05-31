@@ -25,6 +25,7 @@
 package grevend.declarativefx;
 
 import grevend.declarativefx.component.Component;
+import grevend.declarativefx.test.DeclarativeFXRuntime;
 import grevend.declarativefx.test.Fixture;
 import grevend.declarativefx.test.Robot;
 import grevend.declarativefx.util.MarkedTreeItem;
@@ -52,7 +53,7 @@ import static grevend.declarativefx.component.Layout.TreeView;
 
 public class DeclarativeFX {
 
-    private static final String VERSION = "0.6.5";
+    private static final String VERSION = "0.6.7";
 
     private static final Object MUTEX = new Object();
     private static volatile DeclarativeFX INSTANCE;
@@ -105,6 +106,21 @@ public class DeclarativeFX {
     @Contract(value = "_ -> new", pure = true)
     public static <N extends Node, C extends Component<N>> Fixture<N, C> fixture(@NotNull C component) {
         return new Fixture<>(component);
+    }
+
+
+    /**
+     * @param headless
+     *
+     * @return
+     *
+     * @throws AWTException
+     * @since 0.6.5
+     */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public static Robot robot(boolean headless) throws AWTException {
+        return new Robot(DeclarativeFXRuntime.scene(), headless);
     }
 
     /**

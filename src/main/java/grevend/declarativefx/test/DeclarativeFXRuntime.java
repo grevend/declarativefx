@@ -96,10 +96,13 @@ public final class DeclarativeFXRuntime extends Application {
      *
      * @since 0.6.1
      */
-    public static synchronized void show(@NotNull Component<? extends Node> component) {
+    @NotNull
+    @Contract("_ -> param1")
+    public static synchronized Component<? extends Node> show(@NotNull Component<? extends Node> component) {
         var node = component.getNode();
         var scene = new Scene(node instanceof Parent ? ((Parent) node) : new Group(node));
         show(scene);
+        return component;
     }
 
     /**
@@ -118,6 +121,7 @@ public final class DeclarativeFXRuntime extends Application {
             Platform.runLater(() -> {
                 var stage = new Stage();
                 stage.setScene(scene);
+                stage.setFullScreen(true);
                 stage.show();
                 DeclarativeFXRuntime.stage = stage;
             });
