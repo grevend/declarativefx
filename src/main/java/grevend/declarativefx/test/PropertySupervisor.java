@@ -28,6 +28,9 @@ import grevend.declarativefx.component.Component;
 import javafx.scene.Node;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * @param <N>
@@ -46,9 +49,50 @@ public final class PropertySupervisor<N extends Node, C extends Component<N>, F 
         this.property = property;
     }
 
+    /**
+     * @return
+     *
+     * @since 0.6.1
+     */
     @Contract(pure = true)
     public String property() {
         return this.property;
+    }
+
+    /**
+     * @return
+     *
+     * @since 0.6.8
+     */
+    @Nullable
+    public Object value() {
+        return this.fixture.component().get(this.property);
+    }
+
+    /**
+     * @param val
+     *
+     * @since 0.6.8
+     */
+    public void matches(@Nullable Object val) {
+        if (val instanceof Verifier) {
+            throw new IllegalArgumentException("Value of property '" + this.property +
+                "' cannot be matched with Verifier <" + val + ">. Please use the verify method instead.");
+        }
+        if (!Objects.equals(this.value(), val)) {
+            throw new Assertion("'" + this.value() + "' does not match " + val);
+        }
+    }
+
+    /**
+     * @param verifier
+     *
+     * @since 0.6.8
+     */
+    public void verify(@NotNull Verifier verifier) {
+        if (!verifier.verify(this.value())) {
+            throw new Assertion("'" + this.value() + "' failed verification <" + verifier + ">.");
+        }
     }
 
 }
