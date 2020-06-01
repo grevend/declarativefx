@@ -46,7 +46,7 @@ import java.util.Map;
  */
 public class BindingAssertion<N extends Node, C extends Component<N>, F extends ComponentFixture<N, C>> {
 
-    private F fixture;
+    private final F fixture;
     private RequiredChange requiredChange;
 
     @Contract(pure = true)
