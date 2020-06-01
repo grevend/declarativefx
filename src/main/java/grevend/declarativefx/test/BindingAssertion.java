@@ -44,13 +44,14 @@ import java.util.Map;
  * @author David Greven
  * @since 0.6.1
  */
-public class BindingSupervisor<N extends Node, C extends Component<N>, F extends Fixture<N, C>>
-    extends Supervisor<N, C, F> {
+public class BindingAssertion<N extends Node, C extends Component<N>, F extends ComponentFixture<N, C>> {
 
+    private F fixture;
     private RequiredChange requiredChange;
 
-    public BindingSupervisor(@NotNull F fixture) {
-        super(fixture);
+    @Contract(pure = true)
+    public BindingAssertion(@NotNull F fixture) {
+        this.fixture = fixture;
     }
 
     @NotNull
@@ -62,12 +63,10 @@ public class BindingSupervisor<N extends Node, C extends Component<N>, F extends
         this.requiredChange = new RequiredChange().times(0);
     }
 
-    @Override
     public void verify() {
         if (requiredChange == null) {
             throw new IllegalStateException("No required changes defined.");
         }
-        super.verify();
     }
 
     public static final class RequiredChange {

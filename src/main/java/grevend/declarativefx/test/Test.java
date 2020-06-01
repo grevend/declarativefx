@@ -24,26 +24,18 @@
 
 package grevend.declarativefx.test;
 
-import grevend.declarativefx.component.Component;
-import javafx.scene.Node;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import static grevend.declarativefx.component.Layout.Text;
+import static grevend.declarativefx.test.Verifier.*;
 
-/**
- * @author David Greven
- * @since 0.6.1
- */
-public abstract class Supervisor<N extends Node, C extends Component<N>, F extends Fixture<N, C>> {
+public class Test {
 
-    protected final F fixture;
+    public static void main(String[] args) {
+        var text = Text("Hello World").fixture();
+        text.prop("text").verify(string());
+        //text.prop("text").verify(numeric()); //Exception
+        text.prop("text").matches("Hello World");
 
-    @Contract(pure = true)
-    public Supervisor(@NotNull F fixture) {
-        this.fixture = fixture;
-    }
-
-    public void verify() {
-        throw new AssertionError();
+        value(12).verify(range(6, 24));
     }
 
 }

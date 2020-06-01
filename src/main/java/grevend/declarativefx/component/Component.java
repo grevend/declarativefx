@@ -28,7 +28,7 @@ import grevend.declarativefx.bindable.Bindable;
 import grevend.declarativefx.bindable.BindableCollection;
 import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.event.EventHandler;
-import grevend.declarativefx.test.Fixture;
+import grevend.declarativefx.test.ComponentFixture;
 import grevend.declarativefx.util.Verbosity;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
@@ -140,8 +140,8 @@ public interface Component<N extends Node> extends Iterable<Component<? extends 
     }
 
     @NotNull
-    default Fixture<N, Component<N>> fixture() {
-        return new Fixture<>(this);
+    default ComponentFixture<N, Component<N>> fixture() {
+        return new ComponentFixture<>(this);
     }
 
 }

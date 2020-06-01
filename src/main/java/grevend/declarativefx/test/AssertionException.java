@@ -30,9 +30,9 @@ import org.jetbrains.annotations.NotNull;
  * @author David Greven
  * @since 0.6.8
  */
-public class Assertion extends AssertionError {
+public class AssertionException extends AssertionError {
 
-    public Assertion(@NotNull String text) {
+    public AssertionException(@NotNull String text) {
         super(text);
     }
 

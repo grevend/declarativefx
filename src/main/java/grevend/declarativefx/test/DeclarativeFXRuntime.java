@@ -27,14 +27,15 @@ package grevend.declarativefx.test;
 import grevend.declarativefx.component.Component;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.concurrent.Executors;
 
 /**
@@ -83,6 +84,12 @@ public final class DeclarativeFXRuntime extends Application {
      * @since 0.6.1
      */
     public static synchronized void exit() {
+        Platform.runLater(() -> {
+            if (DeclarativeFXRuntime.stage != null) {
+                DeclarativeFXRuntime.stage.close();
+                DeclarativeFXRuntime.stage = null;
+            }
+        });
         if (!running) {
             throw new IllegalStateException("No test runtime currently running.");
         } else {
@@ -100,8 +107,25 @@ public final class DeclarativeFXRuntime extends Application {
     @Contract("_ -> param1")
     public static synchronized Component<? extends Node> show(@NotNull Component<? extends Node> component) {
         var node = component.getNode();
-        var scene = new Scene(node instanceof Parent ? ((Parent) node) : new Group(node));
+        var scene = new Scene(node instanceof Parent ? ((Parent) node) : new VBox(node));
         show(scene);
+        return component;
+    }
+
+
+    /**
+     * @param component The {@link grevend.declarativefx.component.Component} that should be shown.
+     * @param width     The width of the window.
+     * @param height    The height of the window.
+     *
+     * @since 0.6.9
+     */
+    @NotNull
+    @Contract("_, _, _ -> param1")
+    public static synchronized Component<? extends Node> show(@NotNull Component<? extends Node> component, double width, double height) {
+        var node = component.getNode();
+        var scene = new Scene(node instanceof Parent ? ((Parent) node) : new VBox(node));
+        show(scene, width, height);
         return component;
     }
 
@@ -110,24 +134,44 @@ public final class DeclarativeFXRuntime extends Application {
      *
      * @since 0.6.5
      */
-    public static synchronized void show(@NotNull Scene scene) {
-        if (DeclarativeFXRuntime.stage != null) {
-            DeclarativeFXRuntime.stage.close();
-            DeclarativeFXRuntime.stage = null;
-        }
+    public static synchronized void show(@NotNull Scene scene, double width, double height) {
         if (!DeclarativeFXRuntime.running) {
             throw new IllegalStateException("DeclarativeFX test runtime is not running.");
         } else {
             Platform.runLater(() -> {
-                var stage = new Stage();
-                stage.setScene(scene);
-                stage.setFullScreen(true);
-                stage.show();
-                DeclarativeFXRuntime.stage = stage;
+                DeclarativeFXRuntime.stage.setScene(scene);
+                DeclarativeFXRuntime.stage.setMinWidth(width);
+                DeclarativeFXRuntime.stage.setMaxWidth(width);
+                DeclarativeFXRuntime.stage.setMinHeight(height);
+                DeclarativeFXRuntime.stage.setMaxHeight(height);
+                DeclarativeFXRuntime.stage.setAlwaysOnTop(true);
+                DeclarativeFXRuntime.stage.setResizable(false);
+                DeclarativeFXRuntime.stage.show();
+            });
+            while (DeclarativeFXRuntime.stage == null || DeclarativeFXRuntime.stage.getScene() == null) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("Failed to create JavaFX test application stage.", e);
+                }
+            }
+        }
+    }
+
+    public static synchronized void show(@NotNull Scene scene) {
+        if (!DeclarativeFXRuntime.running) {
+            throw new IllegalStateException("DeclarativeFX test runtime is not running.");
+        } else {
+            Platform.runLater(() -> {
+                DeclarativeFXRuntime.stage.setScene(scene);
+                DeclarativeFXRuntime.stage.setFullScreen(true);
+                DeclarativeFXRuntime.stage.setAlwaysOnTop(true);
+                DeclarativeFXRuntime.stage.setResizable(false);
+                DeclarativeFXRuntime.stage.show();
             });
             while (DeclarativeFXRuntime.stage == null) {
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     throw new RuntimeException("Failed to create JavaFX test application stage.", e);
                 }
@@ -165,6 +209,49 @@ public final class DeclarativeFXRuntime extends Application {
     }
 
     /**
+     * @param headless
+     *
+     * @return
+     *
+     * @throws java.awt.AWTException
+     * @since 0.6.9
+     */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public static Robot robot(boolean headless) throws AWTException {
+        return new Robot(DeclarativeFXRuntime.scene(), headless);
+    }
+
+    /**
+     * @param scene
+     * @param headless
+     *
+     * @return
+     *
+     * @throws AWTException
+     * @since 0.6.9
+     */
+    @NotNull
+    @Contract(value = "_, _ -> new", pure = true)
+    public static Robot robot(@NotNull Scene scene, boolean headless) throws AWTException {
+        return new Robot(scene, headless);
+    }
+
+    /**
+     * @param scene
+     *
+     * @return
+     *
+     * @throws AWTException
+     * @since 0.6.9
+     */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public static Robot robot(@NotNull Scene scene) throws AWTException {
+        return robot(scene, true);
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @param stage the primary stage for this application, onto which
@@ -177,6 +264,7 @@ public final class DeclarativeFXRuntime extends Application {
     @Override
     @Contract(pure = true)
     public void start(Stage stage) {
+        DeclarativeFXRuntime.stage = stage;
         DeclarativeFXRuntime.running = true;
     }
 

@@ -39,13 +39,20 @@ import java.util.Objects;
  *
  * @since 0.6.1
  */
-public final class PropertySupervisor<N extends Node, C extends Component<N>, F extends Fixture<N, C>>
-    extends Supervisor<N, C, F> {
+public final class PropertyAssertion<N extends Node, C extends Component<N>, F extends ComponentFixture<N, C>> {
 
+    private final F fixture;
     private final String property;
 
-    public PropertySupervisor(@NotNull F fixture, @NotNull String property) {
-        super(fixture);
+    /**
+     * @param fixture
+     * @param property
+     *
+     * @since 0.6.1
+     */
+    @Contract(pure = true)
+    public PropertyAssertion(@NotNull F fixture, @NotNull String property) {
+        this.fixture = fixture;
         this.property = property;
     }
 
@@ -80,7 +87,7 @@ public final class PropertySupervisor<N extends Node, C extends Component<N>, F 
                 "' cannot be matched with Verifier <" + val + ">. Please use the verify method instead.");
         }
         if (!Objects.equals(this.value(), val)) {
-            throw new Assertion("'" + this.value() + "' does not match " + val);
+            throw new AssertionException("'" + this.value() + "' does not match " + val);
         }
     }
 
@@ -91,7 +98,7 @@ public final class PropertySupervisor<N extends Node, C extends Component<N>, F 
      */
     public void verify(@NotNull Verifier verifier) {
         if (!verifier.verify(this.value())) {
-            throw new Assertion("'" + this.value() + "' failed verification <" + verifier + ">.");
+            throw new AssertionException("'" + this.value() + "' failed verification <" + verifier + ">.");
         }
     }
 

@@ -403,7 +403,7 @@ public final class Verifier {
                     "Value cannot be matched with Verifier <" + val + ">. Please use the verify method instead.");
             }
             if (!Objects.equals(this.value, val)) {
-                throw new Assertion("'" + this.value + "' does not match " + val);
+                throw new AssertionException("'" + this.value + "' does not match " + val);
             }
         }
 
@@ -414,7 +414,7 @@ public final class Verifier {
          */
         public void verify(@NotNull Verifier verifier) {
             if (!verifier.verify(this.value)) {
-                throw new Assertion("'" + this.value + "' failed verification <" + verifier + ">.");
+                throw new AssertionException("'" + this.value + "' failed verification <" + verifier + ">.");
             }
         }
 

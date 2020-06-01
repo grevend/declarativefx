@@ -35,12 +35,12 @@ import org.jetbrains.annotations.NotNull;
  * @author David Greven
  * @since 0.6.1
  */
-public final class Fixture<N extends Node, C extends Component<N>> {
+public final class ComponentFixture<N extends Node, C extends Component<N>> {
 
     private final C component;
 
     @Contract(pure = true)
-    public Fixture(@NotNull C component) {
+    public ComponentFixture(@NotNull C component) {
         this.component = component;
     }
 
@@ -63,8 +63,8 @@ public final class Fixture<N extends Node, C extends Component<N>> {
 
     @NotNull
     @Contract("_ -> new")
-    public final PropertySupervisor<N, C, Fixture<N, C>> prop(@NotNull String property) {
-        return new PropertySupervisor<>(this, property);
+    public final PropertyAssertion<N, C, ComponentFixture<N, C>> prop(@NotNull String property) {
+        return new PropertyAssertion<>(this, property);
     }
 
     /**
