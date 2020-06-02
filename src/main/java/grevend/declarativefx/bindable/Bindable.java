@@ -24,6 +24,7 @@
 
 package grevend.declarativefx.bindable;
 
+import grevend.declarativefx.test.BindingAssertion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,6 +88,11 @@ public interface Bindable {
     default Bindable compute(@NotNull Bindable dependency, @NotNull Supplier<Object> supplier) {
         dependency.subscribe((value) -> set(supplier.get()));
         return this;
+    }
+
+    @NotNull
+    default BindingAssertion assertion() {
+        return new BindingAssertion(this);
     }
 
 }

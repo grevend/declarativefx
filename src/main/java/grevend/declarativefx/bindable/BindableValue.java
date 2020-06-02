@@ -118,9 +118,4 @@ public class BindableValue implements Bindable {
         return "BindableValue{value=" + value + '}';
     }
 
-    @NotNull
-    public BindingAssertion assertion() {
-        return new BindingAssertion(this);
-    }
-
 }
