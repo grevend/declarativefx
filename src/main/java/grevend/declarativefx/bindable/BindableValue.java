@@ -24,6 +24,7 @@
 
 package grevend.declarativefx.bindable;
 
+import grevend.declarativefx.test.BindingAssertion;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -115,6 +116,11 @@ public class BindableValue implements Bindable {
     @Override
     public String toString() {
         return "BindableValue{value=" + value + '}';
+    }
+
+    @NotNull
+    public BindingAssertion assertion() {
+        return new BindingAssertion(this);
     }
 
 }

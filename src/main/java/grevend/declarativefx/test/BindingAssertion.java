@@ -24,73 +24,96 @@
 
 package grevend.declarativefx.test;
 
-import grevend.declarativefx.component.Component;
-import javafx.scene.Node;
+import grevend.declarativefx.bindable.Bindable;
+import grevend.declarativefx.util.Pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
 /**
- * @param <N>
- * @param <C>
- * @param <F>
- *
  * @author David Greven
- * @since 0.6.1
+ * @since 0.7.0
  */
-public class BindingAssertion<N extends Node, C extends Component<N>, F extends ComponentFixture<N, C>> {
+public final class BindingAssertion {
 
-    private final F fixture;
-    private RequiredChange requiredChange;
+    private final Bindable bindable;
+    private final Collection<TransitionVerifier> transitions;
+    private final Collection<Pair<Object, Object>> values;
+    private CountVerifier counter = CountVerifier.any();
+    private Object previous;
+    private int count = -1;
 
     @Contract(pure = true)
-    public BindingAssertion(@NotNull F fixture) {
-        this.fixture = fixture;
+    public BindingAssertion(@NotNull Bindable bindable) {
+        this.bindable = bindable;
+        this.transitions = new ArrayList<>();
+        this.values = new ArrayList<>();
+        this.bindable.subscribe(val -> {
+            System.out.println("Prev: " + previous);
+            System.out.println("Next: " + val);
+            values.add(new Pair<>(previous, val));
+            previous = val;
+            count++;
+        });
+
+    }
+
+    public void changes(CountVerifier verifier) {
+        this.counter = verifier;
+    }
+
+    public void changes(int times) {
+        this.counter = CountVerifier.times(times);
     }
 
     @NotNull
-    public RequiredChange requireChange() {
-        return (this.requiredChange = new RequiredChange());
+    @Contract("_, _ -> this")
+    public BindingAssertion change(@Nullable Object from, @Nullable Object to) {
+        this.transitions.add(TransitionVerifier.transition(from, to));
+        return this;
     }
 
-    public void requireChangeNever() {
-        this.requiredChange = new RequiredChange().times(0);
+    @NotNull
+    @Contract("_, _ -> this")
+    public BindingAssertion change(@NotNull Verifier from, @Nullable Object to) {
+        this.transitions.add(TransitionVerifier.transition(from, to));
+        return this;
+    }
+
+    @NotNull
+    @Contract("_, _ -> this")
+    public BindingAssertion change(@Nullable Object from, @NotNull Verifier to) {
+        this.transitions.add(TransitionVerifier.transition(from, to));
+        return this;
+    }
+
+    @NotNull
+    @Contract("_, _ -> this")
+    public BindingAssertion change(@NotNull Verifier from, @NotNull Verifier to) {
+        this.transitions.add(TransitionVerifier.transition(from, to));
+        return this;
     }
 
     public void verify() {
-        if (requiredChange == null) {
-            throw new IllegalStateException("No required changes defined.");
+        if (!this.counter.verify(this.count)) {
+            throw new AssertionException(
+                "Times of change " + this.count + " failed verification <" + this.counter + ">.");
+        } else if (this.transitions.size() > this.values.size()) {
+            throw new AssertionException("Amount of required transitions does not match given values.");
         }
-    }
-
-    public static final class RequiredChange {
-
-        private final Collection<Map.Entry<Object, Object>> ways;
-        private int count = -1;
-
-        @Contract(pure = true)
-        private RequiredChange() {
-            this.ways = new ArrayList<>();
+        var verifierIter = this.transitions.iterator();
+        var valuesIter = this.values.iterator();
+        while (verifierIter.hasNext() && valuesIter.hasNext()) {
+            var transitionValue = valuesIter.next();
+            var verifier = verifierIter.next();
+            if (!verifier.verify(transitionValue.getA(), transitionValue.getB())) {
+                throw new AssertionException("Value of property transition '" + transitionValue.getA() +
+                    "' -> '" + transitionValue.getB() + "' failed verification <" + verifier + ">.");
+            }
         }
-
-        @Contract(value = "_ -> this", pure = true)
-        public RequiredChange times(@Range(from = 0, to = Long.MAX_VALUE) int count) {
-            this.count = count;
-            return this;
-        }
-
-        @Contract(value = "_, _ -> this", pure = true)
-        public RequiredChange way(@Nullable Object from, @Nullable Object to) {
-            this.ways.add(new AbstractMap.SimpleImmutableEntry<>(from, to));
-            return this;
-        }
-
     }
 
 }

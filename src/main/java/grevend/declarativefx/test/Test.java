@@ -24,18 +24,33 @@
 
 package grevend.declarativefx.test;
 
-import static grevend.declarativefx.component.Layout.Text;
-import static grevend.declarativefx.test.Verifier.*;
+import grevend.declarativefx.bindable.BindableValue;
+
+import static grevend.declarativefx.test.Verifier.bool;
+import static grevend.declarativefx.test.Verifier.string;
 
 public class Test {
 
     public static void main(String[] args) {
-        var text = Text("Hello World").fixture();
+        /*var text = Text("Hello World").fixture();
         text.prop("text").verify(string());
         //text.prop("text").verify(numeric()); //Exception
         text.prop("text").matches("Hello World");
 
-        value(12).verify(range(6, 24));
+        value(12).verify(range(6, 24));*/
+
+        BindableValue bindableValue = new BindableValue(12);
+        var assertion = bindableValue.assertion();
+        assertion.changes(3);
+        assertion.change(12, 4);
+        assertion.change(4, string());
+        assertion.change(string(), bool());
+
+        bindableValue.set(4);
+        bindableValue.set("Hello World!");
+        bindableValue.set(true);
+
+        assertion.verify();
     }
 
 }

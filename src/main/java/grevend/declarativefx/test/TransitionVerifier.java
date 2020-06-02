@@ -28,13 +28,14 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.function.BiPredicate;
 
 /**
  * @author David Greven
  * @since 0.7.0
  */
-public class TransitionVerifier {
+public final class TransitionVerifier {
 
     private final BiPredicate<Object, Object> predicate;
     private final String representation;
@@ -48,19 +49,22 @@ public class TransitionVerifier {
     @NotNull
     @Contract(value = "_, _ -> new", pure = true)
     public static TransitionVerifier transition(@Nullable Object from, @Nullable Object to) {
-        return new TransitionVerifier((a, b) -> a.equals(from) && b.equals(to), "transition[from -> to]");
+        return new TransitionVerifier((a, b) -> Objects.equals(a, from) && Objects.equals(b, to),
+            "transition[from = " + from + " -> to = " + to + "]");
     }
 
     @NotNull
     @Contract(value = "_, _ -> new", pure = true)
     public static TransitionVerifier transition(@NotNull Verifier from, @Nullable Object to) {
-        return new TransitionVerifier((a, b) -> from.verify(a) && b.equals(to), "transition[" + from + " from -> to]");
+        return new TransitionVerifier((a, b) -> from.verify(a) && Objects.equals(b, to),
+            "transition[" + from + " from -> to = " + to + "]");
     }
 
     @NotNull
     @Contract(value = "_, _ -> new", pure = true)
     public static TransitionVerifier transition(@Nullable Object from, @NotNull Verifier to) {
-        return new TransitionVerifier((a, b) -> a.equals(from) && to.verify(b), "transition[from -> " + to + " to]");
+        return new TransitionVerifier((a, b) -> Objects.equals(a, from) && to.verify(b),
+            "transition[from " + from + " -> " + to + " to]");
     }
 
     @NotNull

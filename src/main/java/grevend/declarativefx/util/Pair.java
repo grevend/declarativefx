@@ -22,18 +22,54 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.test;
+package grevend.declarativefx.util;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-/**
- * @author David Greven
- * @since 0.6.8
- */
-public final class AssertionException extends AssertionError {
+import java.util.Objects;
 
-    public AssertionException(@NotNull String text) {
-        super(text);
+public class Pair<A, B> {
+
+    private final A a;
+    private final B b;
+
+    @Contract(pure = true)
+    public Pair(@Nullable A a, @NotNull B b) {
+        this.a = a;
+        this.b = b;
+    }
+
+    @Nullable
+    public A getA() {
+        return a;
+    }
+
+    @Nullable
+    public B getB() {
+        return b;
+    }
+
+    @Override
+    @Contract(value = "null -> false", pure = true)
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pair<?, ?> pair = (Pair<?, ?>) o;
+        return Objects.equals(getA(), pair.getA()) &&
+            Objects.equals(getB(), pair.getB());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getA(), getB());
+    }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return "Triplet{a=" + a + ", b=" + b + '}';
     }
 
 }
