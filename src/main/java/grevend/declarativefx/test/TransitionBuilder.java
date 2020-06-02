@@ -26,57 +26,51 @@ package grevend.declarativefx.test;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.IntPredicate;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author David Greven
  * @since 0.7.0
  */
-public final class CountVerifier {
+public class TransitionBuilder {
 
-    private final IntPredicate predicate;
-    private final String representation;
+    private final BindingAssertion bindingAssertion;
+    private Object previous;
 
     @Contract(pure = true)
-    private CountVerifier(@NotNull IntPredicate predicate, @NotNull String representation) {
-        this.predicate = predicate;
-        this.representation = representation;
+    protected TransitionBuilder(@Nullable Object from, @NotNull BindingAssertion bindingAssertion) {
+        this.previous = from;
+        this.bindingAssertion = bindingAssertion;
+    }
+
+    @Contract(pure = true)
+    protected TransitionBuilder(@NotNull Verifier verifier, @NotNull BindingAssertion bindingAssertion) {
+        this.previous = verifier;
+        this.bindingAssertion = bindingAssertion;
     }
 
     @NotNull
-    @Contract(pure = true)
-    public static CountVerifier any() {
-        return verifier(val -> val > 0, "any[count >= 0]");
+    public TransitionBuilder to(@Nullable Object to) {
+        if (this.previous instanceof Verifier && to instanceof Verifier) {
+            this.bindingAssertion.change((Verifier) this.previous, (Verifier) to);
+        } else if (this.previous instanceof Verifier) {
+            this.bindingAssertion.change((Verifier) this.previous, to);
+        } else if (to instanceof Verifier) {
+            this.bindingAssertion.change(this.previous, (Verifier) to);
+        } else {
+            this.bindingAssertion.change(this.previous, to);
+        }
+        this.previous = to;
+        return this;
     }
 
     @NotNull
-    @Contract(pure = true)
-    public static CountVerifier never() {
-        return verifier(val -> val <= 0, "never[count < 0]");
+    public TransitionBuilder to(@NotNull Verifier verifier) {
+        return this.to((Object) verifier);
     }
 
-    @NotNull
-    @Contract(pure = true)
-    public static CountVerifier times(int times) {
-        return verifier(val -> val == times, "times[count == times]");
-    }
-
-    @NotNull
-    @Contract(value = "_, _ -> new", pure = true)
-    private static CountVerifier verifier(@NotNull IntPredicate predicate, @NotNull String representation) {
-        return new CountVerifier(predicate, representation);
-    }
-
-    public boolean verify(final int count) {
-        return this.predicate.test(count);
-    }
-
-    @NotNull
-    @Override
-    @Contract(pure = true)
-    public String toString() {
-        return this.representation;
+    public void verify() {
+        this.bindingAssertion.verify();
     }
 
 }

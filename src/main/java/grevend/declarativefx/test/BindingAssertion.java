@@ -44,7 +44,8 @@ public final class BindingAssertion {
     private final Collection<Pair<Object, Object>> values;
     private CountVerifier counter = CountVerifier.any();
     private Object previous;
-    private int count = -1;
+    private int count = 0;
+    private boolean first = true;
 
     @Contract(pure = true)
     public BindingAssertion(@NotNull Bindable bindable) {
@@ -52,21 +53,28 @@ public final class BindingAssertion {
         this.transitions = new ArrayList<>();
         this.values = new ArrayList<>();
         this.bindable.subscribe(val -> {
-            System.out.println("Prev: " + previous);
-            System.out.println("Next: " + val);
-            values.add(new Pair<>(previous, val));
+            if (this.first) {
+                this.first = false;
+            } else {
+                values.add(new Pair<>(previous, val));
+                count++;
+            }
             previous = val;
-            count++;
         });
-
     }
 
-    public void changes(CountVerifier verifier) {
+    @NotNull
+    @Contract("_ -> this")
+    public BindingAssertion changes(CountVerifier verifier) {
         this.counter = verifier;
+        return this;
     }
 
-    public void changes(int times) {
+    @NotNull
+    @Contract("_ -> this")
+    public BindingAssertion changes(int times) {
         this.counter = CountVerifier.times(times);
+        return this;
     }
 
     @NotNull
@@ -95,6 +103,18 @@ public final class BindingAssertion {
     public BindingAssertion change(@NotNull Verifier from, @NotNull Verifier to) {
         this.transitions.add(TransitionVerifier.transition(from, to));
         return this;
+    }
+
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public TransitionBuilder from(@Nullable Object from) {
+        return new TransitionBuilder(from, this);
+    }
+
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public TransitionBuilder from(@NotNull Verifier verifier) {
+        return new TransitionBuilder(verifier, this);
     }
 
     public void verify() {

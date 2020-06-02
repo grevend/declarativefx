@@ -40,11 +40,15 @@ public class Test {
         value(12).verify(range(6, 24));*/
 
         BindableValue bindableValue = new BindableValue(12);
-        var assertion = bindableValue.assertion();
+        /*var assertion = bindableValue.assertion();
         assertion.changes(3);
         assertion.change(12, 4);
         assertion.change(4, string());
-        assertion.change(string(), bool());
+        assertion.change(string(), bool());*/
+
+        var assertion = bindableValue.assertion()
+            .changes(3)
+            .from(12).to(4).to(string()).to(bool());
 
         bindableValue.set(4);
         bindableValue.set("Hello World!");
