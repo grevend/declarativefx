@@ -52,13 +52,13 @@ public final class ComponentFixture<N extends Node, C extends Component<N>> {
     @NotNull
     @Contract("_ -> new")
     public final Mouse mouse(@NotNull Robot robot) {
-        return new Mouse(robot);
+        return new Mouse(component, robot);
     }
 
     @NotNull
     @Contract("_ -> new")
     public final Keyboard keyboard(@NotNull Robot robot) {
-        return new Keyboard(robot);
+        return new Keyboard(component, robot);
     }
 
     @NotNull
@@ -72,10 +72,12 @@ public final class ComponentFixture<N extends Node, C extends Component<N>> {
      */
     public static abstract class Input {
 
+        protected final Component<? extends Node> component;
         protected final Robot robot;
 
         @Contract(pure = true)
-        private Input(@NotNull Robot robot) {
+        private Input(@NotNull Component<? extends Node> component, @NotNull Robot robot) {
+            this.component = component;
             this.robot = robot;
         }
 
@@ -86,8 +88,8 @@ public final class ComponentFixture<N extends Node, C extends Component<N>> {
      */
     public static final class Mouse extends Input {
 
-        private Mouse(@NotNull Robot robot) {
-            super(robot);
+        private Mouse(@NotNull Component<? extends Node> node, @NotNull Robot robot) {
+            super(node, robot);
         }
 
         @Contract("_ -> this")
@@ -98,6 +100,7 @@ public final class ComponentFixture<N extends Node, C extends Component<N>> {
 
         @Contract("_ -> this")
         public Mouse press(@NotNull MouseButton button) {
+            this.robot.snap(component);
             this.robot.pressMouse(button);
             return this;
         }
@@ -110,18 +113,19 @@ public final class ComponentFixture<N extends Node, C extends Component<N>> {
 
         @Contract("_ -> this")
         public Mouse click(@NotNull MouseButton button) {
+            this.robot.snap(component);
             this.robot.clickMouse(button);
             return this;
+        }
+
+        @Contract(" -> this")
+        public Mouse click() {
+            return this.click(MouseButton.PRIMARY);
         }
 
         @Contract("_ -> this")
         public Mouse wheel(int amount) {
             this.robot.wheelMouse(amount);
-            return this;
-        }
-
-        @Contract(value = " -> this", pure = true)
-        public Mouse snap() {
             return this;
         }
 
@@ -132,8 +136,8 @@ public final class ComponentFixture<N extends Node, C extends Component<N>> {
      */
     public static final class Keyboard extends Input {
 
-        private Keyboard(@NotNull Robot robot) {
-            super(robot);
+        private Keyboard(@NotNull Component<? extends Node> node, @NotNull Robot robot) {
+            super(node, robot);
         }
 
         @Contract("_ -> this")

@@ -104,14 +104,11 @@ public final class DeclarativeFXRuntime extends Application {
      * @since 0.6.1
      */
     @NotNull
-    @Contract("_ -> param1")
-    public static synchronized Component<? extends Node> show(@NotNull Component<? extends Node> component) {
+    public static synchronized Robot show(@NotNull Component<? extends Node> component) throws AWTException {
         var node = component.getNode();
         var scene = new Scene(node instanceof Parent ? ((Parent) node) : new VBox(node));
-        show(scene);
-        return component;
+        return robot(show(scene), false);
     }
-
 
     /**
      * @param component The {@link grevend.declarativefx.component.Component} that should be shown.
@@ -121,12 +118,11 @@ public final class DeclarativeFXRuntime extends Application {
      * @since 0.6.9
      */
     @NotNull
-    @Contract("_, _, _ -> param1")
-    public static synchronized Component<? extends Node> show(@NotNull Component<? extends Node> component, double width, double height) {
+    public static synchronized Robot show(@NotNull Component<? extends Node> component, double width, double height)
+        throws AWTException {
         var node = component.getNode();
         var scene = new Scene(node instanceof Parent ? ((Parent) node) : new VBox(node));
-        show(scene, width, height);
-        return component;
+        return robot(show(scene, width, height), false);
     }
 
     /**
@@ -134,7 +130,9 @@ public final class DeclarativeFXRuntime extends Application {
      *
      * @since 0.6.5
      */
-    public static synchronized void show(@NotNull Scene scene, double width, double height) {
+    @NotNull
+    @Contract("_, _, _ -> param1")
+    public static synchronized Scene show(@NotNull Scene scene, double width, double height) {
         if (!DeclarativeFXRuntime.running) {
             throw new IllegalStateException("DeclarativeFX test runtime is not running.");
         } else {
@@ -156,9 +154,12 @@ public final class DeclarativeFXRuntime extends Application {
                 }
             }
         }
+        return scene;
     }
 
-    public static synchronized void show(@NotNull Scene scene) {
+    @NotNull
+    @Contract("_ -> param1")
+    public static synchronized Scene show(@NotNull Scene scene) {
         if (!DeclarativeFXRuntime.running) {
             throw new IllegalStateException("DeclarativeFX test runtime is not running.");
         } else {
@@ -177,6 +178,7 @@ public final class DeclarativeFXRuntime extends Application {
                 }
             }
         }
+        return scene;
     }
 
     /**
@@ -222,6 +224,19 @@ public final class DeclarativeFXRuntime extends Application {
         return new Robot(DeclarativeFXRuntime.scene(), headless);
     }
 
+
+    /**
+     * @return
+     *
+     * @throws java.awt.AWTException
+     * @since 0.7.1
+     */
+    @NotNull
+    @Contract(value = " -> new", pure = true)
+    public static Robot robot() throws AWTException {
+        return new Robot(DeclarativeFXRuntime.scene(), false);
+    }
+
     /**
      * @param scene
      * @param headless
@@ -248,7 +263,7 @@ public final class DeclarativeFXRuntime extends Application {
     @NotNull
     @Contract(value = "_ -> new", pure = true)
     public static Robot robot(@NotNull Scene scene) throws AWTException {
-        return robot(scene, true);
+        return robot(scene, false);
     }
 
     /**

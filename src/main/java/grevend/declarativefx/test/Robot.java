@@ -24,6 +24,8 @@
 
 package grevend.declarativefx.test;
 
+import grevend.declarativefx.component.Component;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -125,6 +127,20 @@ public final class Robot {
 
     public void wheelMouse(int amount) {
         this.robot.mouseWheel(amount);
+    }
+
+    public void snap(@NotNull Node node) {
+        var nodeBounds = node.getBoundsInLocal();
+        var screenBounds = node.localToScreen(nodeBounds);
+        int x = (int) screenBounds.getMinX();
+        int y = (int) screenBounds.getMinY();
+        int width = (int) screenBounds.getWidth();
+        int height = (int) screenBounds.getHeight();
+        this.robot.mouseMove(x + (width / 2), y + (height / 2));
+    }
+
+    public void snap(@NotNull Component<? extends Node> component) {
+        this.snap(component.getNode());
     }
 
 }

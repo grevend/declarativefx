@@ -47,13 +47,13 @@ public final class CountVerifier {
     @NotNull
     @Contract(pure = true)
     public static CountVerifier any() {
-        return verifier(val -> val > 0, "any[count >= 0]");
+        return verifier(val -> val > 0, "any[count > 0]");
     }
 
     @NotNull
     @Contract(pure = true)
     public static CountVerifier never() {
-        return verifier(val -> val <= 0, "never[count < 0]");
+        return verifier(val -> val <= 0, "never[count <= 0]");
     }
 
     @NotNull
