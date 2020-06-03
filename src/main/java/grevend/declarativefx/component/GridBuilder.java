@@ -28,10 +28,13 @@ import grevend.declarativefx.util.Triplet;
 import javafx.scene.Node;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
 
 public class GridBuilder {
 
@@ -50,8 +53,19 @@ public class GridBuilder {
     }
 
     @NotNull
-    protected Collection<Triplet<Component<? extends Node>, Integer, Integer>> getComponents() {
-        return this.components;
+    public Collection<Triplet<Component<? extends Node>, Integer, Integer>> getComponents() {
+        return Collections.unmodifiableCollection(this.components);
+    }
+
+    @Nullable
+    public Component<? extends Node> getComponent(@Range(from = 0, to = Integer.MAX_VALUE) int column,
+                                                  @Range(from = 0, to = Integer.MAX_VALUE) int row) {
+        return this.components.stream()
+            .filter(Objects::nonNull)
+            .filter(triplet -> triplet.getB() == column && triplet.getC() == row)
+            .findFirst()
+            .map(Triplet::getA)
+            .orElse(null);
     }
 
 }
