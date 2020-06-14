@@ -22,27 +22,54 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.test;
+package grevend.declarativefx.util;
 
-import grevend.declarativefx.component.Component;
-import javafx.scene.Node;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-/**
- * @since 0.6.1
- */
-public abstract class Supervisor<N extends Node, C extends Component<N>, F extends Fixture<N, C>> {
+import java.util.Objects;
 
-    protected final F fixture;
+public class Pair<A, B> {
+
+    private final A a;
+    private final B b;
 
     @Contract(pure = true)
-    public Supervisor(@NotNull F fixture) {
-        this.fixture = fixture;
+    public Pair(@Nullable A a, @NotNull B b) {
+        this.a = a;
+        this.b = b;
     }
 
-    public void verify() {
-        throw new AssertionError();
+    @Nullable
+    public A getA() {
+        return a;
+    }
+
+    @Nullable
+    public B getB() {
+        return b;
+    }
+
+    @Override
+    @Contract(value = "null -> false", pure = true)
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pair<?, ?> pair = (Pair<?, ?>) o;
+        return Objects.equals(getA(), pair.getA()) &&
+            Objects.equals(getB(), pair.getB());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getA(), getB());
+    }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return "Triplet{a=" + a + ", b=" + b + '}';
     }
 
 }

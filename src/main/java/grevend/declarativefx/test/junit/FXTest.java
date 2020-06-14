@@ -22,26 +22,25 @@
  * SOFTWARE.
  */
 
-package grevend.declarativefx.test;
+package grevend.declarativefx.test.junit;
 
-import grevend.declarativefx.component.Component;
-import javafx.scene.Node;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
-public final class PropertySupervisor<N extends Node, C extends Component<N>, F extends Fixture<N, C>>
-    extends Supervisor<N, C, F> {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.concurrent.TimeUnit;
 
-    private final String property;
-
-    public PropertySupervisor(@NotNull F fixture, @NotNull String property) {
-        super(fixture);
-        this.property = property;
-    }
-
-    @Contract(pure = true)
-    public String property() {
-        return this.property;
-    }
-
-}
+/**
+ * @author David Greven
+ * @since 0.6.4
+ */
+@Target({ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Test
+@Timeout(value = 1, unit = TimeUnit.MINUTES)
+@Tag("declarativefx")
+public @interface FXTest {}

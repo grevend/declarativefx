@@ -24,6 +24,7 @@
 
 package grevend.declarativefx.bindable;
 
+import grevend.declarativefx.test.BindingAssertion;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

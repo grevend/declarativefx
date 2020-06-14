@@ -24,6 +24,8 @@
 
 package grevend.declarativefx.test;
 
+import grevend.declarativefx.component.Component;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -34,17 +36,18 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
+/**
+ * @author David Greven
+ * @since 0.6.1
+ */
 public final class Robot {
 
     private final Scene scene;
-    private final boolean headless;
     private final java.awt.Robot robot;
 
     @Contract(pure = true)
-    public Robot(@NotNull Scene scene, boolean headless, boolean waitForIdle, int delay) throws AWTException {
+    public Robot(@NotNull Scene scene, boolean waitForIdle, int delay) throws AWTException {
         this.scene = scene;
-        this.headless = headless;
-        System.setProperty("java.awt.headless", headless ? "true" : "false");
         robot = new java.awt.Robot();
         robot.setAutoWaitForIdle(waitForIdle);
         robot.setAutoDelay(delay);
@@ -52,12 +55,7 @@ public final class Robot {
 
     @Contract(pure = true)
     public Robot(@NotNull Scene scene) throws AWTException {
-        this(scene, true, true, 100);
-    }
-
-    @Contract(pure = true)
-    public final boolean headless() {
-        return this.headless;
+        this(scene, true, 100);
     }
 
     public final void delay(int delay) {
@@ -116,6 +114,20 @@ public final class Robot {
 
     public void wheelMouse(int amount) {
         this.robot.mouseWheel(amount);
+    }
+
+    public void snap(@NotNull Node node) {
+        var nodeBounds = node.getBoundsInLocal();
+        var screenBounds = node.localToScreen(nodeBounds);
+        int x = (int) screenBounds.getMinX();
+        int y = (int) screenBounds.getMinY();
+        int width = (int) screenBounds.getWidth();
+        int height = (int) screenBounds.getHeight();
+        this.robot.mouseMove(x + (width / 2), y + (height / 2));
+    }
+
+    public void snap(@NotNull Component<? extends Node> component) {
+        this.snap(component.getNode());
     }
 
 }

@@ -28,6 +28,7 @@ import grevend.declarativefx.bindable.Bindable;
 import grevend.declarativefx.bindable.BindableCollection;
 import grevend.declarativefx.bindable.BindableValue;
 import grevend.declarativefx.event.EventHandler;
+import grevend.declarativefx.test.ComponentFixture;
 import grevend.declarativefx.util.Verbosity;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
@@ -136,6 +137,11 @@ public interface Component<N extends Node> extends Iterable<Component<? extends 
     @NotNull
     default Stream<Component<? extends Node>> stream() {
         return StreamSupport.stream(this.spliterator(), false);
+    }
+
+    @NotNull
+    default ComponentFixture<N, Component<N>> fixture() {
+        return new ComponentFixture<>(this);
     }
 
 }

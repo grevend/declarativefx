@@ -25,8 +25,6 @@
 package grevend.declarativefx;
 
 import grevend.declarativefx.component.Component;
-import grevend.declarativefx.test.Fixture;
-import grevend.declarativefx.test.Robot;
 import grevend.declarativefx.util.MarkedTreeItem;
 import grevend.declarativefx.util.Verbosity;
 import javafx.scene.Node;
@@ -42,7 +40,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,6 +48,8 @@ import java.util.Objects;
 import static grevend.declarativefx.component.Layout.TreeView;
 
 public class DeclarativeFX {
+
+    private static final String VERSION = "0.7.4";
 
     private static final Object MUTEX = new Object();
     private static volatile DeclarativeFX INSTANCE;
@@ -89,37 +88,6 @@ public class DeclarativeFX {
         declarativeFX.setScene(scene);
         return declarativeFX;
     }
-
-    /**
-     * @param component
-     * @param <N>
-     * @param <C>
-     *
-     * @return
-     *
-     * @since 0.6.1
-     */
-    @NotNull
-    @Contract(value = "_ -> new", pure = true)
-    public static <N extends Node, C extends Component<N>> Fixture<N, C> fixture(@NotNull C component) {
-        return new Fixture<>(component);
-    }
-
-    /**
-     * @param scene
-     *
-     * @return
-     *
-     * @throws AWTException
-     * @since 0.6.1
-     */
-    @NotNull
-    @Contract(value = "_ -> new", pure = true)
-    public static Robot robot(@NotNull Scene scene) throws AWTException {
-        return new Robot(scene);
-    }
-
-    //TODO supervisor support
 
     @NotNull
     public static WritableImage snapshot(@NotNull Component<? extends Node> component) {
