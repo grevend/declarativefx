@@ -49,7 +49,7 @@ import static grevend.declarativefx.component.Layout.TreeView;
 
 public class DeclarativeFX {
 
-    private static final String VERSION = "0.7.2";
+    private static final String VERSION = "0.7.4";
 
     private static final Object MUTEX = new Object();
     private static volatile DeclarativeFX INSTANCE;

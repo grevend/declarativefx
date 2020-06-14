@@ -43,14 +43,11 @@ import java.awt.event.KeyEvent;
 public final class Robot {
 
     private final Scene scene;
-    private final boolean headless;
     private final java.awt.Robot robot;
 
     @Contract(pure = true)
-    public Robot(@NotNull Scene scene, boolean headless, boolean waitForIdle, int delay) throws AWTException {
+    public Robot(@NotNull Scene scene, boolean waitForIdle, int delay) throws AWTException {
         this.scene = scene;
-        this.headless = headless;
-        System.setProperty("java.awt.headless", headless ? "true" : "false");
         robot = new java.awt.Robot();
         robot.setAutoWaitForIdle(waitForIdle);
         robot.setAutoDelay(delay);
@@ -58,17 +55,7 @@ public final class Robot {
 
     @Contract(pure = true)
     public Robot(@NotNull Scene scene) throws AWTException {
-        this(scene, true, true, 100);
-    }
-
-    @Contract(pure = true)
-    public Robot(@NotNull Scene scene, boolean headless) throws AWTException {
-        this(scene, headless, true, 100);
-    }
-
-    @Contract(pure = true)
-    public final boolean headless() {
-        return this.headless;
+        this(scene, true, 100);
     }
 
     public final void delay(int delay) {

@@ -36,7 +36,9 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author David Greven
@@ -67,14 +69,10 @@ public final class DeclarativeFXRuntime extends Application {
         if (running) {
             throw new IllegalStateException("Close previous test runtime before launching a new one.");
         } else {
-            Executors.newSingleThreadExecutor().execute(() -> launch(new String[0]));
-            while (!running) {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException("Failed to launch JavaFX test application.", e);
-                }
-            }
+            Executors.newSingleThreadExecutor().execute(() -> {
+                Platform.setImplicitExit(false);
+                launch(new String[0]);
+            });
         }
     }
 
@@ -84,18 +82,17 @@ public final class DeclarativeFXRuntime extends Application {
      * @since 0.6.1
      */
     public static synchronized void exit() {
+        if (!running) {
+            throw new IllegalStateException("No test runtime currently running.");
+        }
         Platform.runLater(() -> {
             if (DeclarativeFXRuntime.stage != null) {
                 DeclarativeFXRuntime.stage.close();
                 DeclarativeFXRuntime.stage = null;
             }
-        });
-        if (!running) {
-            throw new IllegalStateException("No test runtime currently running.");
-        } else {
-            Platform.exit();
             DeclarativeFXRuntime.running = false;
-        }
+            Platform.exit();
+        });
     }
 
     /**
@@ -107,7 +104,7 @@ public final class DeclarativeFXRuntime extends Application {
     public static synchronized Robot show(@NotNull Component<? extends Node> component) throws AWTException {
         var node = component.getNode();
         var scene = new Scene(node instanceof Parent ? ((Parent) node) : new VBox(node));
-        return robot(show(scene), false);
+        return robot(show(scene));
     }
 
     /**
@@ -122,7 +119,7 @@ public final class DeclarativeFXRuntime extends Application {
         throws AWTException {
         var node = component.getNode();
         var scene = new Scene(node instanceof Parent ? ((Parent) node) : new VBox(node));
-        return robot(show(scene, width, height), false);
+        return robot(show(scene, width, height));
     }
 
     /**
@@ -136,22 +133,27 @@ public final class DeclarativeFXRuntime extends Application {
         if (!DeclarativeFXRuntime.running) {
             throw new IllegalStateException("DeclarativeFX test runtime is not running.");
         } else {
+            var latch = new CountDownLatch(1);
             Platform.runLater(() -> {
                 DeclarativeFXRuntime.stage.setScene(scene);
-                DeclarativeFXRuntime.stage.setMinWidth(width);
-                DeclarativeFXRuntime.stage.setMaxWidth(width);
-                DeclarativeFXRuntime.stage.setMinHeight(height);
-                DeclarativeFXRuntime.stage.setMaxHeight(height);
+                if (width < 0 || height < 0) {
+                    DeclarativeFXRuntime.stage.setFullScreen(true);
+                } else {
+                    DeclarativeFXRuntime.stage.setMinWidth(width);
+                    DeclarativeFXRuntime.stage.setMaxWidth(width);
+                    DeclarativeFXRuntime.stage.setMinHeight(height);
+                    DeclarativeFXRuntime.stage.setMaxHeight(height);
+                }
                 DeclarativeFXRuntime.stage.setAlwaysOnTop(true);
                 DeclarativeFXRuntime.stage.setResizable(false);
+                scene.getRoot().setVisible(true);
                 DeclarativeFXRuntime.stage.show();
+                latch.countDown();
             });
-            while (DeclarativeFXRuntime.stage == null || DeclarativeFXRuntime.stage.getScene() == null) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException("Failed to create JavaFX test application stage.", e);
-                }
+            try {
+                latch.await(15, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Failed to create JavaFX test application stage.", e);
             }
         }
         return scene;
@@ -160,25 +162,7 @@ public final class DeclarativeFXRuntime extends Application {
     @NotNull
     @Contract("_ -> param1")
     public static synchronized Scene show(@NotNull Scene scene) {
-        if (!DeclarativeFXRuntime.running) {
-            throw new IllegalStateException("DeclarativeFX test runtime is not running.");
-        } else {
-            Platform.runLater(() -> {
-                DeclarativeFXRuntime.stage.setScene(scene);
-                DeclarativeFXRuntime.stage.setFullScreen(true);
-                DeclarativeFXRuntime.stage.setAlwaysOnTop(true);
-                DeclarativeFXRuntime.stage.setResizable(false);
-                DeclarativeFXRuntime.stage.show();
-            });
-            while (DeclarativeFXRuntime.stage == null) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException("Failed to create JavaFX test application stage.", e);
-                }
-            }
-        }
-        return scene;
+        return show(scene, -1.0, -1.0);
     }
 
     /**
@@ -211,48 +195,6 @@ public final class DeclarativeFXRuntime extends Application {
     }
 
     /**
-     * @param headless
-     *
-     * @return
-     *
-     * @throws java.awt.AWTException
-     * @since 0.6.9
-     */
-    @NotNull
-    @Contract(value = "_ -> new", pure = true)
-    public static Robot robot(boolean headless) throws AWTException {
-        return new Robot(DeclarativeFXRuntime.scene(), headless);
-    }
-
-
-    /**
-     * @return
-     *
-     * @throws java.awt.AWTException
-     * @since 0.7.1
-     */
-    @NotNull
-    @Contract(value = " -> new", pure = true)
-    public static Robot robot() throws AWTException {
-        return new Robot(DeclarativeFXRuntime.scene(), false);
-    }
-
-    /**
-     * @param scene
-     * @param headless
-     *
-     * @return
-     *
-     * @throws AWTException
-     * @since 0.6.9
-     */
-    @NotNull
-    @Contract(value = "_, _ -> new", pure = true)
-    public static Robot robot(@NotNull Scene scene, boolean headless) throws AWTException {
-        return new Robot(scene, headless);
-    }
-
-    /**
      * @param scene
      *
      * @return
@@ -262,8 +204,8 @@ public final class DeclarativeFXRuntime extends Application {
      */
     @NotNull
     @Contract(value = "_ -> new", pure = true)
-    public static Robot robot(@NotNull Scene scene) throws AWTException {
-        return robot(scene, false);
+    private static Robot robot(@NotNull Scene scene) throws AWTException {
+        return new Robot(scene);
     }
 
     /**
