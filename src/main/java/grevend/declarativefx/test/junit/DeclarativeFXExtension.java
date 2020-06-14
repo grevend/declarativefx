@@ -42,7 +42,9 @@ public class DeclarativeFXExtension implements BeforeAllCallback, AfterAllCallba
 
     @Override
     public void afterAll(ExtensionContext extensionContext) {
-        DeclarativeFXRuntime.exit();
+        if(DeclarativeFXRuntime.running()) {
+            DeclarativeFXRuntime.exit();
+        }
     }
 
 }
