@@ -34,11 +34,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 import java.awt.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author David Greven
@@ -159,10 +161,84 @@ public final class DeclarativeFXRuntime extends Application {
         return scene;
     }
 
+    /**
+     * @param scene The {@link javafx.scene.Scene} that should be shown.
+     *
+     * @since 0.6.5
+     */
     @NotNull
     @Contract("_ -> param1")
     public static synchronized Scene show(@NotNull Scene scene) {
         return show(scene, -1.0, -1.0);
+    }
+
+    /**
+     * @param runnable The throwing runnable that should be executed on the JavaFX thread.
+     * @param timeout  The number of seconds after which execution is canceled.
+     *
+     * @since 0.7.5
+     */
+    @SuppressWarnings("unchecked")
+    public static synchronized <Thr extends Throwable> void runThrowing(@NotNull ThrowingRunnable<Thr> runnable, @Range(
+        from = 1, to = 60) int timeout) throws Thr {
+        var latch = new CountDownLatch(1);
+        AtomicReference<Thr> throwable = new AtomicReference<>(null);
+        Platform.runLater(() -> {
+            try {
+                runnable.run();
+            } catch (Throwable thr) {
+                try {
+                    throwable.set((Thr) thr);
+                } catch (ClassCastException ignored) {}
+            }
+            latch.countDown();
+        });
+        try {
+            latch.await(timeout, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Failed to run code on JavaFX test application thread.", e);
+        }
+        if (throwable.get() != null) {
+            throw throwable.get();
+        }
+    }
+
+    /**
+     * @param runnable The throwing runnable that should be executed on the JavaFX thread.
+     *
+     * @since 0.7.5
+     */
+    public static synchronized <Thr extends Throwable> void runThrowing(@NotNull ThrowingRunnable<Thr> runnable)
+        throws Thr {
+        runThrowing(runnable, 15);
+    }
+
+    /**
+     * @param runnable The runnable that should be executed on the JavaFX thread.
+     * @param timeout  The number of seconds after which execution is canceled.
+     *
+     * @since 0.7.5
+     */
+    public static synchronized void run(@NotNull Runnable runnable, @Range(from = 1, to = 60) int timeout) {
+        var latch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            runnable.run();
+            latch.countDown();
+        });
+        try {
+            latch.await(timeout, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Failed to run code on JavaFX test application thread.", e);
+        }
+    }
+
+    /**
+     * @param runnable The runnable that should be executed on the JavaFX thread.
+     *
+     * @since 0.7.5
+     */
+    public static synchronized void run(@NotNull Runnable runnable) {
+        run(runnable, 15);
     }
 
     /**
@@ -223,6 +299,13 @@ public final class DeclarativeFXRuntime extends Application {
     public void start(Stage stage) {
         DeclarativeFXRuntime.stage = stage;
         DeclarativeFXRuntime.running = true;
+    }
+
+    @FunctionalInterface
+    public interface ThrowingRunnable<Thr extends Throwable> {
+
+        void run() throws Thr;
+
     }
 
 }
