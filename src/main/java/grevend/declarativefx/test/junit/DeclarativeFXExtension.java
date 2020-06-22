@@ -29,6 +29,8 @@ import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author David Greven
  * @since 0.6.4
@@ -44,6 +46,11 @@ public class DeclarativeFXExtension implements BeforeAllCallback, AfterAllCallba
     public void afterAll(ExtensionContext extensionContext) {
         if(DeclarativeFXRuntime.running()) {
             DeclarativeFXRuntime.exit();
+        }
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

@@ -41,6 +41,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
 /**
  * @author David Greven
@@ -111,6 +112,60 @@ public final class DeclarativeFXRuntime extends Application {
 
     /**
      * @param component The {@link grevend.declarativefx.component.Component} that should be shown.
+     * @param delay     Delay in milliseconds.
+     *
+     * @since 0.7.6
+     */
+    @NotNull
+    public static synchronized Robot show(@NotNull Component<? extends Node> component, @Range(from = 1,
+        to = Integer.MAX_VALUE) int delay) throws AWTException {
+        var node = component.getNode();
+        var scene = new Scene(node instanceof Parent ? ((Parent) node) : new VBox(node));
+        return robot(show(scene), delay);
+    }
+
+    /**
+     * @param component   The {@link grevend.declarativefx.component.Component} that should be shown.
+     * @param delay       Delay in milliseconds.
+     * @param clazz
+     * @param stylesheets
+     *
+     * @return
+     *
+     * @throws AWTException
+     * @since 0.7.7
+     */
+    @NotNull
+    public static synchronized Robot show(@NotNull Component<? extends Node> component, @Range(from = 1,
+        to = Integer.MAX_VALUE) int delay, @NotNull Class<?> clazz, @NotNull String... stylesheets)
+        throws AWTException {
+        var node = component.getNode();
+        var scene = new Scene(node instanceof Parent ? ((Parent) node) : new VBox(node));
+
+        Stream.of(stylesheets).forEach(stylesheet ->
+            scene.getStylesheets().add(clazz.getResource(stylesheet).toExternalForm()));
+
+        return robot(show(scene), delay);
+    }
+
+    /**
+     * @param component   The {@link grevend.declarativefx.component.Component} that should be shown.
+     * @param clazz       Delay in milliseconds.
+     * @param stylesheets
+     *
+     * @return
+     *
+     * @throws AWTException
+     * @since 0.7.7
+     */
+    @NotNull
+    public static synchronized Robot show(@NotNull Component<? extends Node> component, @NotNull Class<?> clazz, @NotNull String... stylesheets)
+        throws AWTException {
+        return show(component, 100, clazz, stylesheets);
+    }
+
+    /**
+     * @param component The {@link grevend.declarativefx.component.Component} that should be shown.
      * @param width     The width of the window.
      * @param height    The height of the window.
      *
@@ -122,6 +177,27 @@ public final class DeclarativeFXRuntime extends Application {
         var node = component.getNode();
         var scene = new Scene(node instanceof Parent ? ((Parent) node) : new VBox(node));
         return robot(show(scene, width, height));
+    }
+
+    /**
+     * @param component   The {@link grevend.declarativefx.component.Component} that should be shown.
+     * @param width       The width of the window.
+     * @param height      The height of the window.
+     * @param clazz
+     * @param stylesheets
+     *
+     * @since 0.7.8
+     */
+    @NotNull
+    public static synchronized Robot show(@NotNull Component<? extends Node> component, double width, double height, @NotNull Class<?> clazz, @NotNull String... stylesheets)
+        throws AWTException {
+        var node = component.getNode();
+        var scene = show(new Scene(node instanceof Parent ? ((Parent) node) : new VBox(node)));
+
+        Stream.of(stylesheets).forEach(stylesheet ->
+            scene.getStylesheets().add(clazz.getResource(stylesheet).toExternalForm()));
+
+        return robot(scene);
     }
 
     /**
@@ -279,9 +355,27 @@ public final class DeclarativeFXRuntime extends Application {
      * @since 0.6.9
      */
     @NotNull
-    @Contract(value = "_ -> new", pure = true)
+    @Contract(pure = true)
     private static Robot robot(@NotNull Scene scene) throws AWTException {
-        return new Robot(scene);
+        return robot(scene, 100);
+    }
+
+
+    /**
+     * @param scene
+     * @param delay Delay in milliseconds.
+     *
+     * @return
+     *
+     * @throws AWTException
+     * @since 0.7.6
+     */
+    @NotNull
+    @Contract(value = "_, _ -> new", pure = true)
+    private static Robot robot(@NotNull Scene scene, @Range(from = 1, to = 60) int delay) throws AWTException {
+        var robot = new Robot(scene);
+        robot.delay(delay);
+        return robot;
     }
 
     /**

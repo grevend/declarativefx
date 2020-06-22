@@ -41,6 +41,6 @@ import java.util.concurrent.TimeUnit;
 @Target({ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Test
-@Timeout(value = 1, unit = TimeUnit.MINUTES)
+@Timeout(value = 5, unit = TimeUnit.MINUTES)
 @Tag("declarativefx")
 public @interface FXTest {}
